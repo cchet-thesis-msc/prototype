@@ -1,17 +1,22 @@
 package com.gepardec.esb.prototype.services.app.test.rest;
 
+import com.gepardec.esb.prototype.services.app.rest.api.ReportRestService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.security.RunAs;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 import java.net.URL;
 
 /**
@@ -24,10 +29,24 @@ public class ReportRestServiceTest {
     @ArquillianResource
     private URL deploymentUrl;
 
-    @Test
-    @RunAsClient
-    public void test(){
+    private ReportRestService reportRestClient;
 
+    @Before
+    public void before() {
+        reportRestClient = ProxyBuilder.builder(ReportRestService.class, ClientBuilder.newClient().target(deploymentUrl + "/rest-api"))
+                                       .defaultConsumes(MediaType.APPLICATION_JSON)
+                                       .build();
+    }
+
+    // -- Then --
+    @Test(expected = BadRequestException.class)
+    @RunAsClient
+    public void test_invalid_id() {
+        // -- Given --
+        final Long id = -1L;
+
+        // -- When --
+        reportRestClient.generate(id);
     }
 
     @Deployment

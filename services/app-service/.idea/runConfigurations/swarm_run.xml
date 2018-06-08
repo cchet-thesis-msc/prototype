@@ -14,6 +14,7 @@
               <option value="install" />
               <option value="wildfly-swarm:run" />
               <option value="-Dswarm.project.stage=dev" />
+              <option value="-DskipTests=true" />
             </list>
           </option>
           <option name="pomFileName" />
