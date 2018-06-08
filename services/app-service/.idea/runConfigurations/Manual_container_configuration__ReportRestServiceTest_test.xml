@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Manual container configuration: ReportRestServiceTest.test" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <module name="app-service" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.gepardec.esb.prototype.services.app.test.rest.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="arquillianRunConfiguration">
+      <value>
+        <option name="containerStateName" value="Manual container configuration" />
+      </value>
+    </option>
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="PACKAGE_NAME" value="com.gepardec.esb.prototype.services.app.test.rest" />
+    <option name="MAIN_CLASS_NAME" value="com.gepardec.esb.prototype.services.app.test.rest.ReportRestServiceTest" />
+    <option name="METHOD_NAME" value="test" />
+    <option name="TEST_OBJECT" value="method" />
+    <option name="VM_PARAMETERS" value="-Dswarm.project.stage=test" />
+    <option name="PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <option name="TEST_SEARCH_SCOPE">
+      <value defaultName="singleModule" />
+    </option>
+    <patterns />
+    <method />
+  </configuration>
+</component>
