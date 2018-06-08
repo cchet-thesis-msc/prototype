@@ -29,4 +29,9 @@ public interface ReportRestService {
     @ApiOperation(value = "Generates the report for the given customer", response = ReportModelDto.class)
     ReportModelDto generate(@QueryParam("id") @NotNull @Min(0) @Max(Long.MAX_VALUE) Long id);
 
+    @Path("/test/retry")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Generates the report for the given customer")
+    ReportModelDto testRetry();
 }

@@ -1,5 +1,6 @@
 package com.gepardec.esb.prototype.services.app.configuration;
 
+import com.gepardec.esb.prototype.services.app.interceptor.Logging;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 
@@ -20,6 +21,7 @@ public class DozerConfiguration {
     @Produces
     @Default
     @Dependent
+    @Logging
     Mapper createMapper() {
         return new DozerBeanMapper();
     }
