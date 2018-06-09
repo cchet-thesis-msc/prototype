@@ -1,0 +1,1 @@
+Place the current release of the keycloak config in form of an json export
