@@ -10,6 +10,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -48,6 +49,7 @@ public class KeycloakConfiguration {
     @Produces
     @OAuthToken
     @Dependent
+    @Counted(name = "retrieved-oauth-tokens", monotonic = true)
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_SECURITY, skipResult = true)
     @Retry(delay = 100L, maxRetries = 5, retryOn = {TokenResponseException.class, IOException.class})
     String obtainOauthToken() throws IOException {

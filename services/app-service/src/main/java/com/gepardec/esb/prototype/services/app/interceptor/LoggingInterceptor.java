@@ -57,10 +57,9 @@ public class LoggingInterceptor {
             if (!Logging.MDCConfig.EMPTY.equals(mdcConfig)) {
                 MDC.remove(mdcConfig.key);
             }
-            final String finalResult = (!ann.skipResult() && result != null)
-                    ? result.toString()
-                    : (ann.skipResult() && result != null)
-                    ? "skipped" : "null";
+            final String finalResult = (voidReturnType) ? "void"
+                    : (!ann.skipResult() && result != null) ? result.toString()
+                    : (ann.skipResult() && result != null) ? "skipped" : "null";
             log.info("Left method: {} -> {}", methodStr, finalResult);
         }
     }

@@ -5,6 +5,7 @@ import com.gepardec.esb.prototype.services.app.rest.api.ReportRestService;
 import com.gepardec.esb.prototype.services.app.rest.client.api.integration.database.ReportRestServiceApi;
 import com.gepardec.esb.prototype.services.app.rest.model.ReportModelDto;
 import org.dozer.Mapper;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -26,11 +27,13 @@ public class ReportRestServiceImpl implements ReportRestService {
     private ReportRestServiceApi reportRestServiceClient;
 
     @Override
+    @Counted(name = "report-downloads", monotonic = true)
     public ReportModelDto generate(Long id) {
         return new ReportModelDto("hello");
     }
 
     @Override
+    @Counted(name = "retry-tests", monotonic = true)
     public ReportModelDto testRetry() {
         return mapper.map(reportRestServiceClient.generate1(1L), ReportModelDto.class);
     }

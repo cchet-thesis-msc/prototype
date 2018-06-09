@@ -42,11 +42,11 @@ public class RestClientConfiguration {
         typeToBaseUrlCache.putIfAbsent(ReportRestServiceApi.class, baseUrlIntegrationDb);
     }
 
-
     public <T> T getOrCreateProxy(Class<T> clazz) {
         T proxy = (T) cache.getOrDefault(clazz,
                                          ProxyBuilder.builder(clazz,
                                                               ResteasyClientBuilder.newClient()
+                                                                                   // register OAuth filter
                                                                                    .register(appendOAuthFilter)
                                                                                    .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
                                                                                                           String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))

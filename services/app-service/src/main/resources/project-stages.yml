@@ -87,8 +87,10 @@ swarm:
         login-config:
           auth-method: KEYCLOAK
         security-constraints:
-          - url-pattern: /rest-api/*
+          - url-pattern: /rest-api/report/*
             roles: [client]
+          - url-pattern: /rest-api/metrics
+            roles: [admin]
   logging:
     file-handlers:
 #    custom-handlers:
