@@ -22,13 +22,14 @@ JAEGER_SAMPLER_PARAM: 1
 
 project:
   stage: dev
+swarm:
   # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
         APP:
           properties:
-            service.db.base-url: http://localhost:9080/
+            service.db.base-url: http://localhost:8080/rest-api
 ---
 project:
   stage: test
@@ -42,7 +43,7 @@ swarm:
       config-sources:
         APP:
           properties:
-            service.db.base-url: http://localhost:9080/
+            service.db.base-url: http://localhost:8080/rest-api
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 JAEGER_SERVICE_NAME: ${project.artifactId}
@@ -84,4 +85,4 @@ swarm:
     config:
       config-sources:
         SSH:
-          dir: "/config/ssh"
+          dir: "/config/app"

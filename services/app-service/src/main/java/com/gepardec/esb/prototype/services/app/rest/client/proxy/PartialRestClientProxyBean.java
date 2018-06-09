@@ -1,19 +1,17 @@
 package com.gepardec.esb.prototype.services.app.rest.client.proxy;
 
+import com.gepardec.esb.prototype.services.app.configuration.RestClientConfiguration;
 import com.gepardec.esb.prototype.services.app.interceptor.Logging;
 import org.eclipse.microprofile.faulttolerance.Retry;
-import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
+import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class implements the {@link PartialRetryRestProxy} annotated JAX-RS interface and delegates to the
@@ -26,30 +24,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @PartialRetryRestProxy
 public class PartialRestClientProxyBean implements InvocationHandler {
 
-    private static final Map<Class, Object> cache = new ConcurrentHashMap<>();
+    @Inject
+    private RestClientConfiguration restClientConfiguration;
 
     @Override
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
-    @Retry(delay = 100L, maxRetries = 5, retryOn = {ClientErrorException.class})
+    @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
     public Object invoke(Object proxy,
                          Method method,
                          Object[] args) throws Throwable {
         try {
             final PartialRetryRestProxy ann = Objects.requireNonNull(proxy.getClass().getAnnotation(PartialRetryRestProxy.class), "We should see the annotation here. Are you missing @Inherited ???");
             final Class<?> clazz = Objects.requireNonNull(ann.interfaceClass(), "Annotation must provide jax-rs class reference");
-            return method.invoke(getOrCreateProxy(clazz), args);
+            return method.invoke(restClientConfiguration.getOrCreateProxy(clazz), args);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
-    }
-
-    public <T> T getOrCreateProxy(Class<T> clazz) {
-        T proxy = (T) cache.getOrDefault(clazz,
-                                         ProxyBuilder.builder(clazz, ClientBuilder.newClient().target("http://localhost:8080/rest-api"))
-                                                     .defaultConsumes(MediaType.APPLICATION_JSON)
-                                                     .build());
-        cache.putIfAbsent(clazz, proxy);
-
-        return proxy;
     }
 }
