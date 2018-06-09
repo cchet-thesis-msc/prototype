@@ -1,0 +1,70 @@
+{
+  "swagger": "2.0",
+  "info": {},
+  "basePath": "/rest-api",
+  "tags": [
+    {
+      "name": "ReportRestService"
+    }
+  ],
+  "paths": {
+    "/report/generate": {
+      "get": {
+        "tags": [
+          "ReportRestService"
+        ],
+        "summary": "Generates the report for the given customer",
+        "description": "",
+        "operationId": "generate_1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/ReportModelDto"
+            }
+          }
+        }
+      }
+    },
+    "/report/test/retry": {
+      "get": {
+        "tags": [
+          "ReportRestService"
+        ],
+        "summary": "Generates the report for the given customer",
+        "description": "",
+        "operationId": "testRetry_1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/ReportModelDto"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ReportModelDto": {
+      "type": "object"
+    }
+  }
+}

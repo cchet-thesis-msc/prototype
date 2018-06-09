@@ -32,6 +32,7 @@
         <!-- Other Dependency versions -->
         <commons-io.commons-io.version>2.4</commons-io.commons-io.version> <!-- from camel-exec fractions modules.xml -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
+        <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -53,6 +54,7 @@
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+        <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +89,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.deltaspike.distribution</groupId>
+                <artifactId>distributions-bom</artifactId>
+                <version>${deltaspike.deltaspike-distribution.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -164,6 +175,27 @@
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>jaxrs-validator</artifactId>
+        </dependency>
+
+        <!-- Dependencies Deltaspike -->
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-partial-bean-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-partial-bean-module-impl</artifactId>
         </dependency>
 
         <!-- Dependencies commons -->
@@ -342,15 +374,77 @@
             </plugin>
 
             <plugin>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>${swagger-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <!-- Configuration for generating the swagger client for the integration ddatabase service -->
+                        <id>generate-swagger-integration-database</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/swagger/api/test-swagger.json</inputSpec>
+                            <output>${project.build.directory}/generated-sources/swagger/integration-database</output>
+                            <language>jaxrs-cxf</language>
+                            <apiPackage>${project.groupId}.app.rest.client.api.integration.database</apiPackage>
+                            <modelPackage>${project.groupId}.app.rest.client.model.integration.database</modelPackage>
+                            <addCompileSourceRoot>false</addCompileSourceRoot>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <modelNamePrefix>Db</modelNamePrefix>
+                            <templateDirectory>${project.basedir}/src/main/resources/swagger/templates</templateDirectory>
+                            <configOptions>
+                                <sourceFolder>/src</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven-clean-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <!-- We delete all other source, because only our template-based JAX-RS interface and models are needed -->
+                        <id>clean-swagger-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <directory>${project.build.directory}/generated-sources/swagger/integration-database/src/main/java</directory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <!-- Add swagger integration-database client sources -->
+                                <source>${project.build.directory}/generated-sources/swagger/integration-database/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

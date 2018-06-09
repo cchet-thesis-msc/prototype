@@ -20,14 +20,14 @@ import javax.ws.rs.core.MediaType;
  * @since 06/08/18
  */
 @Path("/report")
-@Api(value = "ReportRestService", description = "The api for generating reports for customers")
+@Api(value = "ReportRestServiceApi", description = "The api for generating reports for customers")
 public interface ReportRestService {
 
     @Path("/generate")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Generates the report for the given customer", response = ReportModelDto.class)
-    ReportModelDto generate(@QueryParam("id") @NotNull @Min(0) @Max(Long.MAX_VALUE) Long id);
+    ReportModelDto generate(@QueryParam("id") @NotNull @Min(0) Long id);
 
     @Path("/test/retry")
     @GET

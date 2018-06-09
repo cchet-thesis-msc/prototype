@@ -1,8 +1,8 @@
 package com.gepardec.esb.prototype.services.app.rest.impl;
 
-import com.gepardec.esb.prototype.services.app.configuration.RestClientConfiguration;
 import com.gepardec.esb.prototype.services.app.interceptor.Logging;
 import com.gepardec.esb.prototype.services.app.rest.api.ReportRestService;
+import com.gepardec.esb.prototype.services.app.rest.client.api.integration.database.ReportRestServiceApi;
 import com.gepardec.esb.prototype.services.app.rest.model.ReportModelDto;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
@@ -17,17 +17,14 @@ import javax.inject.Inject;
  * @since 06/08/18
  */
 @ApplicationScoped
-@Logging
+@Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_API)
 public class ReportRestServiceImpl implements ReportRestService {
 
     @Inject
     private Mapper mapper;
-    @Inject
-    private Logger log;
 
     @Inject
-    @RestClientConfiguration.RestClient
-    private ReportRestService reportRestServiceClient;
+    private ReportRestServiceApi reportRestServiceClient;
 
     @Override
     public ReportModelDto generate(Long id) {
@@ -36,6 +33,6 @@ public class ReportRestServiceImpl implements ReportRestService {
 
     @Override
     public ReportModelDto testRetry() {
-        return reportRestServiceClient.generate(-1L);
+        return mapper.map(reportRestServiceClient.generate1(-1L), ReportModelDto.class);
     }
 }

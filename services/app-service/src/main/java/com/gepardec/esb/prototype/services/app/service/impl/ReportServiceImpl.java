@@ -15,7 +15,7 @@ import javax.inject.Inject;
  */
 @ApplicationScoped
 @Traced
-@Logging
+@Logging(mdcConfig = Logging.MDCConfig.GROUP_SERVICE)
 public class ReportServiceImpl implements ReportService {
 
     @Inject
