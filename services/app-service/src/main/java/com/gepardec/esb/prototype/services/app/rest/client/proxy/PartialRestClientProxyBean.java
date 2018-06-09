@@ -1,7 +1,8 @@
 package com.gepardec.esb.prototype.services.app.rest.client.proxy;
 
+import com.gepardec.esb.prototype.services.app.annotation.PartialRetryRestProxy;
 import com.gepardec.esb.prototype.services.app.configuration.RestClientConfiguration;
-import com.gepardec.esb.prototype.services.app.interceptor.Logging;
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
 import javax.enterprise.context.ApplicationScoped;

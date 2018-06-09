@@ -12,7 +12,7 @@ swarm:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: ${project.artifactId}
+JAEGER_SERVICE_NAME: ${${project.build.finalName}}
 JAEGER_AGENT_HOST: localhost
 JAEGER_AGENT_PORT: 6831
 JAEGER_REPORTER_LOG_SPANS: true
@@ -23,6 +23,29 @@ JAEGER_SAMPLER_PARAM: 1
 project:
   stage: dev
 swarm:
+  # Secure the deployment
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/report/generate
+            roles: [client]
+  logging:
+    root-logger:
+      level: INFO
+      handlers:
+        - CONSOLE
+    loggers:
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+      com.google:
+        level: TRACE
+        handlers:
+          - CONSOLE
   # microprofile-config sources configuration
   microprofile:
     config:
@@ -30,13 +53,14 @@ swarm:
         APP:
           properties:
             service.db.base-url: http://localhost:8080/rest-api
+            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: service-app
+            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
 ---
 project:
   stage: test
 swarm:
   logging: INFO
-  debug:
-    port: 50000
   # microprofile-config sources configuration
   microprofile:
     config:
@@ -46,7 +70,7 @@ swarm:
             service.db.base-url: http://localhost:8080/rest-api
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: ${project.artifactId}
+JAEGER_SERVICE_NAME: ${project.build.finalName}
 JAEGER_AGENT_HOST: jaeger-agent
 JAEGER_AGENT_PORT: 6831
 JAEGER_REPORTER_LOG_SPANS: true
@@ -57,6 +81,14 @@ JAEGER_SAMPLER_PARAM: 1
 project:
   stage: openshift
 swarm:
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/*
+            roles: [client]
   logging:
     file-handlers:
 #    custom-handlers:
@@ -66,7 +98,7 @@ swarm:
 #        module: org.jboss.logmanager
 #        properties:
 #          serverHostname: graylog
-#          hostname: ${project.artifactId}
+#          hostname: ${project.build.finalName}
 #          port: 10514
 #          protocol: UDP
     root-logger:

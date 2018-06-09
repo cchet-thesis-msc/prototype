@@ -1,5 +1,6 @@
 package com.gepardec.esb.prototype.services.app.interceptor;
 
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -56,9 +57,11 @@ public class LoggingInterceptor {
             if (!Logging.MDCConfig.EMPTY.equals(mdcConfig)) {
                 MDC.remove(mdcConfig.key);
             }
-            log.info("Left method: {} -> {}", methodStr, (result != null)
+            final String finalResult = (!ann.skipResult() && result != null)
                     ? result.toString()
-                    : (voidReturnType) ? "void" : "null");
+                    : (ann.skipResult() && result != null)
+                    ? "skipped" : "null";
+            log.info("Left method: {} -> {}", methodStr, finalResult);
         }
     }
 }

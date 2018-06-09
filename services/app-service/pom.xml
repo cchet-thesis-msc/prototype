@@ -33,6 +33,7 @@
         <commons-io.commons-io.version>2.4</commons-io.commons-io.version> <!-- from camel-exec fractions modules.xml -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
+        <google.google-oauth-client>1.23.0</google.google-oauth-client>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -177,6 +178,11 @@
             <artifactId>jaxrs-validator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>keycloak</artifactId>
+        </dependency>
+
         <!-- Dependencies Deltaspike -->
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
@@ -198,8 +204,35 @@
             <artifactId>deltaspike-partial-bean-module-impl</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-proxy-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-proxy-module-impl-asm</artifactId>
+        </dependency>
+
         <!-- Dependencies commons -->
-        <!-- Bridge to jboss logging -->
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google.google-oauth-client}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson</artifactId>
+            <version>${google.google-oauth-client}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>

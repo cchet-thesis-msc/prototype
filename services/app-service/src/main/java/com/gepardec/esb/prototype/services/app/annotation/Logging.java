@@ -1,4 +1,4 @@
-package com.gepardec.esb.prototype.services.app.interceptor;
+package com.gepardec.esb.prototype.services.app.annotation;
 
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
@@ -26,6 +26,7 @@ public @interface Logging {
         EMPTY("", ""),
         GROUP_REST_API(GROUP, "REST-API"),
         GROUP_REST_CLIENT(GROUP, "REST-CLIENT"),
+        GROUP_REST_SECURITY(GROUP, "REST-SECURITY"),
         GROUP_SERVICE(GROUP, "SERVICE");
 
         public final String key;
@@ -44,4 +45,7 @@ public @interface Logging {
      */
     @Nonbinding
     MDCConfig mdcConfig() default MDCConfig.EMPTY;
+
+    @Nonbinding
+    boolean skipResult() default false;
 }

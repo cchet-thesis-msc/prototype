@@ -1,7 +1,9 @@
 package com.gepardec.esb.prototype.services.app.test.rest;
 
+import com.gepardec.esb.prototype.services.app.configuration.KeycloakConfiguration;
 import com.gepardec.esb.prototype.services.app.rest.api.ReportRestService;
 import com.gepardec.esb.prototype.services.app.rest.model.ReportModelDto;
+import com.gepardec.esb.prototype.services.app.test.mock.NoopKeycloakConfiguration;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -17,8 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import java.net.URL;
@@ -63,20 +63,25 @@ public class ReportRestServiceTest {
         final ReportModelDto actual = reportRestClient.generate(id);
 
         // -- Then --
-        Assert.assertNull(actual);
+        Assert.assertNotNull(actual);
     }
 
-    @Test(expected = ProcessingException.class)
+    @Test
     @RunAsClient
     public void test_testRetry() {
         // -- Given / When --
-        reportRestClient.testRetry();
+        final ReportModelDto actual = reportRestClient.testRetry();
+
+        // -- Then --
+        Assert.assertNotNull(actual);
     }
 
     @Deployment
     public static Archive createDeployment() {
         Archive archive = ShrinkWrap.create(WebArchive.class, "service-app-test.war")
                                     .addPackages(true, "com.gepardec.esb.prototype.services.app")
+                                    .deleteClass(KeycloakConfiguration.class)
+                                    .addClass(NoopKeycloakConfiguration.class)
                                     .addAsLibraries(
                                             Maven.resolver()
                                                  .loadPomFromFile("pom.xml")
@@ -86,7 +91,8 @@ public class ReportRestServiceTest {
                                                  .asFile()
                                     )
                                     .addAsResource("META-INF/beans.xml")
-                                    .addAsResource("project-stages.yml");
+                                    .addAsResource("project-stages.yml")
+                                    .addAsResource("swarm.swagger.conf");
 
         // If we want to see what has been packaged !!!!
         //        archive.as(ZipExporter.class).exportTo(new File(System.getenv("HOME") + "/" + archive.getName()), true);

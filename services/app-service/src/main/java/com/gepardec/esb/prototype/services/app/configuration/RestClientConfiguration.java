@@ -1,8 +1,10 @@
 package com.gepardec.esb.prototype.services.app.configuration;
 
 import com.gepardec.esb.prototype.services.app.rest.client.api.integration.database.ReportRestServiceApi;
+import com.gepardec.esb.prototype.services.app.rest.client.filter.AppendOAuthFilter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -25,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RestClientConfiguration {
 
     @Inject
+    private AppendOAuthFilter appendOAuthFilter;
+
+    @Inject
     @ConfigProperty(name = "service.db.base-url")
     private String baseUrlIntegrationDb;
 
@@ -41,8 +46,9 @@ public class RestClientConfiguration {
     public <T> T getOrCreateProxy(Class<T> clazz) {
         T proxy = (T) cache.getOrDefault(clazz,
                                          ProxyBuilder.builder(clazz,
-                                                              ClientBuilder.newClient()
-                                                                           .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
+                                                              ResteasyClientBuilder.newClient()
+                                                                                   .register(appendOAuthFilter)
+                                                                                   .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
                                                                                                           String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
                                                      .defaultConsumes(MediaType.APPLICATION_JSON)
                                                      .build());

@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
  * @since 06/08/18
  */
 @Path("/report")
-@Api(value = "ReportRestServiceApi", description = "The api for generating reports for customers")
+@Api(value = "ReportRestService", description = "The api for generating reports for customers")
 public interface ReportRestService {
 
     @Path("/generate")

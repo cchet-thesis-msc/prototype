@@ -1,6 +1,6 @@
 package com.gepardec.esb.prototype.services.app.configuration;
 
-import com.gepardec.esb.prototype.services.app.interceptor.Logging;
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 

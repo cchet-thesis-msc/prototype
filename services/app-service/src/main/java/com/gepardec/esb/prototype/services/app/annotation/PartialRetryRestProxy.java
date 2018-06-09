@@ -1,4 +1,4 @@
-package com.gepardec.esb.prototype.services.app.rest.client.proxy;
+package com.gepardec.esb.prototype.services.app.annotation;
 
 import org.apache.deltaspike.partialbean.api.PartialBeanBinding;
 

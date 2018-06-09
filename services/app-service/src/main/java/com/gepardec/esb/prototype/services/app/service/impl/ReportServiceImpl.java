@@ -1,6 +1,6 @@
 package com.gepardec.esb.prototype.services.app.service.impl;
 
-import com.gepardec.esb.prototype.services.app.interceptor.Logging;
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import com.gepardec.esb.prototype.services.app.service.api.ReportService;
 import com.gepardec.esb.prototype.services.app.service.model.ReportModel;
 import io.opentracing.contrib.cdi.Traced;

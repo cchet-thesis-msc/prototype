@@ -1,6 +1,6 @@
 package com.gepardec.esb.prototype.services.app.rest.provider;
 
-import com.gepardec.esb.prototype.services.app.interceptor.Logging;
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import io.opentracing.SpanContext;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
