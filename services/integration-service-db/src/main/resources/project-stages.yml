@@ -1,0 +1,124 @@
+swarm:
+  http:
+    port: 8080
+  contex:
+    path: "/"
+  logging:
+    pattern-formatters:
+      DEFAULT_LOG_PATTERN:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p (%t) [%C{2}] trace.id=%X{trace.id} | trace.group=%X{trace.group} - %m%n"
+    console-handlers:
+      CONSOLE:
+        named-formatter: DEFAULT_LOG_PATTERN
+---
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+#JAEGER_SERVICE_NAME: ${${project.build.finalName}}
+#JAEGER_AGENT_HOST: localhost
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
+
+project:
+  stage: dev
+swarm:
+  # Secure the deployment
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/customer
+            roles: [service]
+          - url-pattern: /rest-api/order
+            roles: [service]
+  logging:
+    root-logger:
+      level: INFO
+      handlers:
+        - CONSOLE
+    loggers:
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+      com.google:
+        level: TRACE
+        handlers:
+          - CONSOLE
+  # microprofile-config sources configuration
+  microprofile:
+    config:
+      config-sources:
+        db.secrets:
+          properties:
+            db.url: http://localhost:8080/rest-api
+            db.username: http://localhost:8080/rest-api
+            db.password: http://localhost:8080/rest-api
+            db.schema: http://localhost:8080/rest-api
+---
+project:
+  stage: test
+swarm:
+  logging: INFO
+  # microprofile-config sources configuration
+  microprofile:
+    config:
+      config-sources:
+        APP:
+          properties:
+            service.db.base-url: http://localhost:8080/rest-api
+---
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+#JAEGER_SERVICE_NAME: ${project.build.finalName}
+#JAEGER_AGENT_HOST: jaeger-agent
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
+
+project:
+  stage: openshift
+swarm:
+#  deployment:
+#    ${project.build.finalName}.war:
+#      web:
+#        login-config:
+#          auth-method: KEYCLOAK
+#        security-constraints:
+#          - url-pattern: /rest-api/customer
+#            roles: [service]
+#          - url-pattern: /rest-api/order
+#            roles: [service]
+  logging:
+    file-handlers:
+#    custom-handlers:
+#      SYSLOGGER:
+#        named-formatter: DEFAULT_LOG_PATTERN
+#        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+#        module: org.jboss.logmanager
+#        properties:
+#          serverHostname: graylog
+#          hostname: ${project.build.finalName}
+#          port: 10514
+#          protocol: UDP
+    root-logger:
+      level: WARN
+      handlers:
+        - CONSOLE
+        #- SYSLOGGER
+    loggers:
+      at.liwest:
+        level: INFO
+        handlers:
+          - CONSOLE
+          #- SYSLOGGER
+  # microprofile-config sources configuration
+  microprofile:
+    config:
+      config-sources:
+        db.secrets:
+          dir: ${oc.secret-integration-service-app.dir}

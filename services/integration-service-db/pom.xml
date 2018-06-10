@@ -4,12 +4,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>at.gepardec.esb.prototype.service</groupId>
-    <artifactId>integration-service</artifactId>
+    <groupId>com.gepardec.esb.prototype.integration.services</groupId>
+    <artifactId>integration-service-db</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>integration-service</name>
+    <name>integration-service-db</name>
 
     <properties>
         <!-- Build Properties -->
@@ -30,8 +30,10 @@
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
 
         <!-- Other Dependency versions -->
-        <commons-io.commons-io.version>2.4</commons-io.commons-io.version> <!-- from camel-exec fractions modules.xml -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
+        <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
+        <google.google-oauth-client>1.23.0</google.google-oauth-client>
+        <lombok.lombok.version>1.18.0</lombok.lombok.version>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -53,6 +55,10 @@
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+
+        <!-- Openshift constants -->
+        <oc.secret-integration-service-app>secret-integration-service-app</oc.secret-integration-service-app>
+        <oc.secret-integration-service-app.dir>/config/secret</oc.secret-integration-service-app.dir>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +93,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.deltaspike.distribution</groupId>
+                <artifactId>distributions-bom</artifactId>
+                <version>${deltaspike.deltaspike-distribution.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -111,16 +126,6 @@
 
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
-            <artifactId>camel-cdi</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>camel-ssh</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
             <artifactId>opentracing</artifactId>
         </dependency>
 
@@ -137,6 +142,12 @@
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>microprofile-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-microprofile-config-implementation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -149,10 +160,15 @@
             <artifactId>microprofile-metrics</artifactId>
         </dependency>
 
-        <!-- See: https://issues.jboss.org/browse/SWARM-1973 -->
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
-            <artifactId>camel-exec</artifactId>
+            <artifactId>microprofile-fault-tolerance</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -165,18 +181,77 @@
             <artifactId>jaxrs-validator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>keycloak</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jpa</artifactId>
+        </dependency>
+
+        <!-- Dependencies Deltaspike -->
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-partial-bean-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-partial-bean-module-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-proxy-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-proxy-module-impl-asm</artifactId>
+        </dependency>
+
         <!-- Dependencies commons -->
-        <!-- Bridge to jboss logging -->
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>${google.google-oauth-client}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson</artifactId>
+            <version>${google.google-oauth-client}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${org-jboss.resteasy-client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logging</artifactId>
             <version>${slf4j.jbopss-logging.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.commons-io.version}</version>
         </dependency>
 
         <dependency>
@@ -206,9 +281,10 @@
         </dependency>
 
         <dependency>
-            <groupId>at.liwest.esb.common</groupId>
-            <artifactId>liwestfsw-common-exception-cdi</artifactId>
-            <version>${liwest-esb.exception.version}</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
@@ -216,13 +292,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${org-jboss.resteasy-client.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -271,6 +340,10 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -382,6 +455,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!--<debugPort>5005</debugPort>-->
                     <bundleDependencies>true</bundleDependencies>
                 </configuration>
             </plugin>
