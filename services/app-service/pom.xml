@@ -30,7 +30,6 @@
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
 
         <!-- Other Dependency versions -->
-        <commons-io.commons-io.version>2.4</commons-io.commons-io.version> <!-- from camel-exec fractions modules.xml -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
         <google.google-oauth-client>1.23.0</google.google-oauth-client>
@@ -56,6 +55,10 @@
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
+
+        <!-- Openshift constants -->
+        <oc.secret-service-app>secret-service-app</oc.secret-service-app>
+        <oc.secret-service-app.dir>/config/secret</oc.secret-service-app.dir>
     </properties>
 
     <dependencyManagement>
@@ -541,7 +544,7 @@
                                 </config>
                             </generator>
                             <apiVersion>1</apiVersion>
-                            <createExternalUrls>false</createExternalUrls>
+                            <createExternalUrls>true</createExternalUrls>
                             <podName>${project.artifactId}</podName>
                             <mode>openshift</mode>
                             <buildStrategy>s2i</buildStrategy>

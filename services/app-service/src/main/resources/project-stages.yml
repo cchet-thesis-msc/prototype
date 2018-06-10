@@ -12,13 +12,13 @@ swarm:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: ${${project.build.finalName}}
-JAEGER_AGENT_HOST: localhost
-JAEGER_AGENT_PORT: 6831
-JAEGER_REPORTER_LOG_SPANS: true
-JAEGER_REPORTER_FLUSH_INTERVAL: 100
-JAEGER_SAMPLER_TYPE: const
-JAEGER_SAMPLER_PARAM: 1
+#JAEGER_SERVICE_NAME: ${${project.build.finalName}}
+#JAEGER_AGENT_HOST: localhost
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
 
 project:
   stage: dev
@@ -50,7 +50,7 @@ swarm:
   microprofile:
     config:
       config-sources:
-        APP:
+        app.secrets:
           properties:
             service.db.base-url: http://localhost:8080/rest-api
             keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
@@ -70,27 +70,27 @@ swarm:
             service.db.base-url: http://localhost:8080/rest-api
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: ${project.build.finalName}
-JAEGER_AGENT_HOST: jaeger-agent
-JAEGER_AGENT_PORT: 6831
-JAEGER_REPORTER_LOG_SPANS: true
-JAEGER_REPORTER_FLUSH_INTERVAL: 100
-JAEGER_SAMPLER_TYPE: const
-JAEGER_SAMPLER_PARAM: 1
+#JAEGER_SERVICE_NAME: ${project.build.finalName}
+#JAEGER_AGENT_HOST: jaeger-agent
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
 
 project:
   stage: openshift
 swarm:
-  deployment:
-    ${project.build.finalName}.war:
-      web:
-        login-config:
-          auth-method: KEYCLOAK
-        security-constraints:
-          - url-pattern: /rest-api/report/*
-            roles: [client]
-          - url-pattern: /rest-api/metrics
-            roles: [admin]
+#  deployment:
+#    ${project.build.finalName}.war:
+#      web:
+#        login-config:
+#          auth-method: KEYCLOAK
+#        security-constraints:
+#          - url-pattern: /rest-api/report/*
+#            roles: [client]
+#          - url-pattern: /rest-api/metrics
+#            roles: [admin]
   logging:
     file-handlers:
 #    custom-handlers:
@@ -118,5 +118,5 @@ swarm:
   microprofile:
     config:
       config-sources:
-        SSH:
-          dir: "/config/app"
+        app.secrets:
+          dir: ${oc.secret-service-app.dir}
