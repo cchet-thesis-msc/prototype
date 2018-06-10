@@ -33,6 +33,7 @@
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
         <google.google-oauth-client>1.23.0</google.google-oauth-client>
+        <lombok.lombok.version>1.18.0</lombok.lombok.version>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -273,6 +274,13 @@
             <groupId>io.opentracing.contrib</groupId>
             <artifactId>opentracing-cdi</artifactId>
             <version>${io-opentracing-contrib.opentracing-cdi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
