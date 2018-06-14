@@ -8,10 +8,6 @@ spec:
   replicas: 1
   template:
     spec:
-      volumes:
-        - name: app-config
-          secret:
-            secretName: ${oc.secret-service-app}
       containers:
         - name: ${project.artifactId}
           resources:
@@ -46,9 +42,6 @@ spec:
               protocol: TCP
             - containerPort: 9990
               protocol: TCP
-          volumeMounts:
-            - name: app-config
-              mountPath: ${oc.secret-service-app.dir}
           env:
               # Necessary, otherwise java console won't work in Openshift
             - name: "AB_JOLOKIA_HTTPS"

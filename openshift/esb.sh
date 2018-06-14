@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-ALL_SERVICES=(service-app service-integration-db)
+ALL_SERVICES=(app integration-db)
 
 function createMonitoringServices() {
   echo "Not impleted yet"
@@ -43,7 +43,7 @@ case ${1} in
       ${1}
       ;;
    *)
-     echo "${0} [createMonitoringServices|deleteMonitoringServices|recreateMonitoringServices|\
+     echo -e "${0} [createMonitoringServices|deleteMonitoringServices|recreateMonitoringServices|\n\
           createSecrets|deleteSecrets|recreateSecrets]"
      exit 1
       ;;

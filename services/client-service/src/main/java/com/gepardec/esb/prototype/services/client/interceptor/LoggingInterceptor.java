@@ -1,6 +1,6 @@
-package com.gepardec.esb.prototype.services.app.interceptor;
+package com.gepardec.esb.prototype.services.client.interceptor;
 
-import com.gepardec.esb.prototype.services.app.annotation.Logging;
+import com.gepardec.esb.prototype.services.client.annotation.Logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

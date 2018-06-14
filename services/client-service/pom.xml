@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.gepardec.esb.prototype.services</groupId>
-    <artifactId>app-service</artifactId>
+    <artifactId>client-service</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>app-service</name>
+    <name>client-service</name>
 
     <properties>
         <!-- Build Properties -->
@@ -28,6 +28,7 @@
         <io-opentracing-contrib.opentracing-cdi.version>0.1.0</io-opentracing-contrib.opentracing-cdi.version>
         <io-opentracing.opentracing-jaxrs2.version>0.1.4</io-opentracing.opentracing-jaxrs2.version>
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
+        <org-quartz-sheduler.quartz.version>2.3.0</org-quartz-sheduler.quartz.version>
 
         <!-- Other Dependency versions -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
@@ -56,10 +57,6 @@
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
-
-        <!-- Openshift constants -->
-        <oc.secret-service-app>secret-app-service</oc.secret-service-app>
-        <oc.secret-service-app.dir>/config/secret</oc.secret-service-app.dir>
     </properties>
 
     <dependencyManagement>
@@ -122,11 +119,6 @@
 
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
-            <artifactId>swagger</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
             <artifactId>opentracing</artifactId>
         </dependency>
 
@@ -172,21 +164,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>bean-validation</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>jaxrs-validator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>keycloak</artifactId>
-        </dependency>
-
         <!-- Dependencies Deltaspike -->
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
@@ -218,25 +195,27 @@
             <artifactId>deltaspike-proxy-module-impl-asm</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-scheduler-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-scheduler-module-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
+        </dependency>
+
         <!-- Dependencies commons -->
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client</artifactId>
-            <version>${google.google-oauth-client}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-jackson</artifactId>
-            <version>${google.google-oauth-client}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
@@ -251,9 +230,9 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId>
-            <version>${net.sf.dozer-dozer.version}</version>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${org-quartz-sheduler.quartz.version}</version>
         </dependency>
 
         <dependency>
@@ -276,6 +255,30 @@
             <version>${io-opentracing-contrib.opentracing-cdi.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-jaxrs2</artifactId>
+            <version>${io-opentracing.opentracing-jaxrs2.version}</version>
+            <!-- Already provided by wildfly swarm opentracing fraction -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-noop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-traceresolver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-web-servlet-filter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -429,18 +432,18 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/swagger/api/test-swagger.json</inputSpec>
-                            <output>${project.build.directory}/generated-sources/swagger/integration-database</output>
+                            <inputSpec>${project.basedir}/swagger/api/app-service.json</inputSpec>
+                            <output>${project.build.directory}/generated-sources/swagger/app-service</output>
                             <language>jaxrs-cxf</language>
-                            <apiPackage>${project.groupId}.app.rest.client.api.integration.database</apiPackage>
-                            <modelPackage>${project.groupId}.app.rest.client.model.integration.database</modelPackage>
+                            <apiPackage>${project.groupId}.app.rest.client.api.service.app</apiPackage>
+                            <modelPackage>${project.groupId}.app.rest.client.model.service.app</modelPackage>
                             <addCompileSourceRoot>false</addCompileSourceRoot>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateApiDocumentation>false</generateApiDocumentation>
-                            <modelNamePrefix>Db</modelNamePrefix>
+                            <modelNamePrefix>App</modelNamePrefix>
                             <templateDirectory>${project.basedir}/swagger/templates</templateDirectory>
                             <configOptions>
                                 <sourceFolder>/src</sourceFolder>
@@ -464,7 +467,7 @@
                             <goal>clean</goal>
                         </goals>
                         <configuration>
-                            <directory>${project.build.directory}/generated-sources/swagger/integration-database/src/main/java</directory>
+                            <directory>${project.build.directory}/generated-sources/swagger/app-service/src/main/java</directory>
                         </configuration>
                     </execution>
                 </executions>
@@ -484,7 +487,7 @@
                         <configuration>
                             <sources>
                                 <!-- Add swagger integration-database client sources -->
-                                <source>${project.build.directory}/generated-sources/swagger/integration-database/src</source>
+                                <source>${project.build.directory}/generated-sources/swagger/app-service/src</source>
                             </sources>
                         </configuration>
                     </execution>

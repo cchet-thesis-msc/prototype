@@ -2,7 +2,10 @@ package com.gepardec.esb.prototype.services.app.rest.impl;
 
 import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import com.gepardec.esb.prototype.services.app.rest.api.MetricRestService;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.Metric;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,10 +27,25 @@ public class MetricRestServiceImpl implements MetricRestService {
 
     @Override
     @Counted(name = "generated-metrics", monotonic = true)
-    public Map<String, Long> get() {
-        final SortedMap<String, Long> result = new TreeMap<>();
-        metricRegistry.getCounters().forEach((key, value) -> result.put(key, value.getCount()));
+    public SortedMap<String, SortedMap<String, String>> get() {
+        final SortedMap<String, SortedMap<String, String>> result = new TreeMap<>();
+        for (Map.Entry<String, Metric> map : metricRegistry.getMetrics().entrySet()) {
+            if(!result.containsKey(map.getValue().getClass().getSimpleName())) {
+                result.put(map.getKey(), new TreeMap<>());
+            }
+            result.get(map.getKey()).put(map.getKey(), extractValue(map.getValue()));
+        }
 
         return result;
+    }
+
+    private static String extractValue(final Metric metric){
+        if(Counter.class.isAssignableFrom(metric.getClass())){
+            return String.valueOf(((Counter)metric).getCount());
+        }else if(Timer.class.isAssignableFrom(metric.getClass())){
+            return ((Timer)metric).getSnapshot().getMean() + " millis";
+        }else {
+            return "unsupported";
+        }
     }
 }

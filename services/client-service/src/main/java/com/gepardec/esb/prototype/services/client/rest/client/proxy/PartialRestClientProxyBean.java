@@ -1,8 +1,8 @@
-package com.gepardec.esb.prototype.services.app.rest.client.proxy;
+package com.gepardec.esb.prototype.services.client.rest.client.proxy;
 
-import com.gepardec.esb.prototype.services.app.annotation.PartialRetryRestProxy;
-import com.gepardec.esb.prototype.services.app.configuration.RestClientConfiguration;
-import com.gepardec.esb.prototype.services.app.annotation.Logging;
+import com.gepardec.esb.prototype.services.client.annotation.Logging;
+import com.gepardec.esb.prototype.services.client.annotation.PartialRetryRestProxy;
+import com.gepardec.esb.prototype.services.client.configuration.RestClientConfiguration;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricUnits;
@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * This class implements the {@link PartialRetryRestProxy} annotated JAX-RS interface and delegates to the
+ * This class implements the {@link com.gepardec.esb.prototype.services.client.annotation.PartialRetryRestProxy} annotated JAX-RS interface and delegates to the
  * resteasy client proxy, but applies retries behaviours as intended for all rest clients.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -33,12 +33,11 @@ public class PartialRestClientProxyBean implements InvocationHandler {
     @Inject
     @Metric(name = "rest-client-method-failed")
     private Counter counter;
-
     @Inject
     private RestClientConfiguration restClientConfiguration;
 
     @Override
-    @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
+    @Logging(mdcConfig = Logging.MDCConfig.GROUP_TEST_REST_CLIENT)
     @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
     @Counted(name = "rest-client-method-calls", monotonic = true)
     @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.MILLISECONDS)

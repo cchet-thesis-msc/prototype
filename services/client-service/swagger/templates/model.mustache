@@ -1,0 +1,14 @@
+package {{package}};
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+{{#models}}
+    {{#model}}
+        {{#isEnum}}
+            {{>enumOuterClass}}
+        {{/isEnum}}
+        {{^isEnum}}
+            {{>pojo}}
+        {{/isEnum}}
+    {{/model}}
+{{/models}}

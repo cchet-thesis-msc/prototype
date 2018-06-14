@@ -1,4 +1,4 @@
-package com.gepardec.esb.prototype.services.app.annotation;
+package com.gepardec.esb.prototype.services.client.annotation;
 
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
@@ -23,11 +23,9 @@ public @interface Logging {
      * Don't forget to add the mdc context in the log formatter of your logging framework.
      */
     enum MDCConfig {
-        GROUP_REST_API(GROUP, "REST-API"),
-        GROUP_REST_CLIENT(GROUP, "REST-CLIENT"),
-        GROUP_REST_SECURITY(GROUP, "REST-SECURITY"),
-        GROUP_SERVICE(GROUP, "SERVICE"),
-        DEFAULT("", "");
+        GROUP_TEST(GROUP, "ESB-TEST"),
+        GROUP_TEST_REST_CLIENT(GROUP, "ESB-TEST-REST-CLIENT"),
+        DEFAULT(GROUP_TEST.key, GROUP_TEST.value);
 
         public final String key;
         public final String value;
@@ -41,10 +39,10 @@ public @interface Logging {
     }
 
     /**
-     * @return The intended MDCConfig instance, if {@link MDCConfig#DEFAULT} no mdc logic will be applied.
+     * @return The intended MDCConfig instance, if {@link MDCConfig#GROUP_TEST} no mdc logic will be applied.
      */
     @Nonbinding
-    MDCConfig mdcConfig() default MDCConfig.DEFAULT;
+    MDCConfig mdcConfig() default MDCConfig.GROUP_TEST;
 
     @Nonbinding
     boolean skipResult() default false;

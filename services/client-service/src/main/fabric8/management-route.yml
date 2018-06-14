@@ -1,0 +1,10 @@
+spec:
+  to:
+    kind: Service
+    name: ${project.artifactId}
+    weight: 100
+  port:
+    targetPort: ${project.artifactId}-management
+  tls:
+    termination: edge
+  wildcardPolicy: None

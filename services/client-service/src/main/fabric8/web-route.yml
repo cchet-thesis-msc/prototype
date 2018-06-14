@@ -5,7 +5,6 @@ spec:
     weight: 100
   port:
     targetPort: ${project.artifactId}-web
-  # Disabled because didn't want to import self signed certificates
-  #tls:
-  #  termination: edge
+  tls:
+    termination: edge
   wildcardPolicy: None

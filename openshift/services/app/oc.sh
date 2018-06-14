@@ -2,8 +2,9 @@
 
 # Execute in script dir
 cd $(dirname ${0})
-
-SECRET_SERVIVE_APP='secret-service-app'
+# secret-service-app
+SERVICE_NAME="app-service"
+SECRET_SERVIVE_APP="secret-${SERVICE_NAME}"
 
 function createSecrets() {
   ARGS=""
@@ -27,12 +28,23 @@ function recreateSecrets() {
   createSecrets
 }
 
+function scale() {
+  oc scale --replicas=${1} dc/${SERVICE_NAME}
+}
+
 case ${1} in
-   createSecrets|deleteSecrets|recreateSecrets)
+   scale)
+      if [ $# -ne 1 ]; then
+        scale ${2}
+      fi
+      ;;
+   createSecrets|deleteSecrets|recreateSecrets|\
+   scale)
       ${1}
       ;;
    *)
-     echo "${0} [createSecrets|deleteSecrets|recreateSecrets]"
+     echo "${0} [createSecrets|deleteSecrets|recreateSecrets\n\
+     scale]"
      exit 1
       ;;
 esac

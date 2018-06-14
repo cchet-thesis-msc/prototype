@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -16,5 +17,5 @@ public interface MetricRestService {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    Map<String, Long> get();
+    SortedMap<String, SortedMap<String, String>> get();
 }

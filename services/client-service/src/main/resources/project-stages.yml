@@ -1,0 +1,100 @@
+swarm:
+  deployment: "${project.build.finalName}.war"
+  http:
+    port: 8080
+  contex:
+    path: "/"
+  logging:
+    pattern-formatters:
+      DEFAULT_LOG_PATTERN:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p (%t) [%C{2}] trace.id=%X{trace.id} | trace.group=%X{trace.group} - %m%n"
+    console-handlers:
+      CONSOLE:
+        named-formatter: DEFAULT_LOG_PATTERN
+  microprofile:
+    config:
+      config-sources:
+        APP:
+          properties:
+          #http://app-service:8080/rest-api -> for openshift
+            service.app.base-url: http://app-service-myproject.10.0.75.2.nip.io/rest-api
+---
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+#JAEGER_SERVICE_NAME: ${${project.build.finalName}}
+#JAEGER_AGENT_HOST: localhost
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
+
+project:
+  stage: dev
+swarm:
+  # Secure the deployment
+  deployment: "${project.build.finalName}.war"
+  logging:
+    root-logger:
+      level: INFO
+      handlers:
+        - CONSOLE
+    loggers:
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+      com.google:
+        level: TRACE
+        handlers:
+          - CONSOLE
+  # microprofile-config sources configuration
+  microprofile:
+    config:
+      config-sources:
+        app.secrets:
+          properties:
+            service.db.base-url: http://localhost:8080/rest-api
+            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: service-app
+            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+---
+project:
+  stage: test
+swarm:
+  logging: INFO
+---
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+#JAEGER_SERVICE_NAME: ${project.build.finalName}
+#JAEGER_AGENT_HOST: jaeger-agent
+#JAEGER_AGENT_PORT: 6831
+#JAEGER_REPORTER_LOG_SPANS: true
+#JAEGER_REPORTER_FLUSH_INTERVAL: 100
+#JAEGER_SAMPLER_TYPE: const
+#JAEGER_SAMPLER_PARAM: 1
+
+project:
+  stage: openshift
+swarm:
+  logging:
+    file-handlers:
+#    custom-handlers:
+#      SYSLOGGER:
+#        named-formatter: DEFAULT_LOG_PATTERN
+#        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+#        module: org.jboss.logmanager
+#        properties:
+#          serverHostname: graylog
+#          hostname: ${project.build.finalName}
+#          port: 10514
+#          protocol: UDP
+    root-logger:
+      level: WARN
+      handlers:
+        - CONSOLE
+        #- SYSLOGGER
+    loggers:
+      at.liwest:
+        level: INFO
+        handlers:
+          - CONSOLE
+          #- SYSLOGGER
