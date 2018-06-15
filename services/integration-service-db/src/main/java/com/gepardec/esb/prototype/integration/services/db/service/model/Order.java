@@ -3,15 +3,12 @@ package com.gepardec.esb.prototype.integration.services.db.service.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -21,19 +18,22 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "customer")
+@Table(name = "customer_order")
 @NamedQueries({
-        @NamedQuery(name = Customer.QUERY_DELETE_ALL_CUSTOMER,
-                query = "Delete from Customer")
+        @NamedQuery(name = Order.QUERY_FIND_FOR_CUSTOMER,
+                query = "select ord from Order ord inner join fetch ord.customer cust where cust.id = :id"),
+        @NamedQuery(name = Order.QUERY_DELETE_ALL_ORDER,
+                query = "Delete from Order")
 })
-public class Customer extends AbstractEntity<Long> {
+public class Order extends AbstractEntity<Long>{
 
-    public static final String QUERY_DELETE_ALL_CUSTOMER = "QUERY_DELETE_ALL_CUSTOMER";
+    public static final String QUERY_FIND_FOR_CUSTOMER = "QUERY_FIND_FOR_CUSTOMER";
+    public static final String QUERY_DELETE_ALL_ORDER = "QUERY_DELETE_ALL_ORDER";
 
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name = "seq_customer_id", initialValue = 0, allocationSize = 1)
-    @GeneratedValue(generator = "seq_customer_id", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seq_order_id", initialValue = 0, allocationSize = 1)
+    @GeneratedValue(generator = "seq_order_id", strategy = GenerationType.SEQUENCE)
     @Min(0)
     private Long id;
 
@@ -45,28 +45,25 @@ public class Customer extends AbstractEntity<Long> {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
+    @NotNull
+    @Column(name = "delivered_at", updatable = false)
+    private LocalDateTime deliveredAt;
+
     /**
-     * Holds name in the form of 'first_name;last_name'
+     * Contains data in form of 'item;count;full_price[{,item;count;full_price}]'
      */
-    @Column(name = "full_name")
+    @Column(name = "data")
     @NotNull
     @Size(max = 255)
-    private String fullName;
+    private String data;
 
-    @Column(name = "email")
-    @NotNull
-    @Size(max = 100)
-    @Email
-    private String email;
-
-    @NotNull
     @Version
     @Column(name = "version")
     private Long version;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private Set<Order> orders = new HashSet<>(0);
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private Customer customer;
 
     @PrePersist
     public void prePersist() {

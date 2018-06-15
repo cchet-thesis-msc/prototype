@@ -1,0 +1,109 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ESB-Openshift",
+		"_postman_id": "08cfb217-399d-cc75-6a74-95941f3ad77f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Start tests (10)",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/rest-api/test/stop?group=test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"rest-api",
+						"test",
+						"stop"
+					],
+					"query": [
+						{
+							"key": "group",
+							"value": "test",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "text/plain",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Stop tests",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/rest-api/test/start?count=5&group=test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"rest-api",
+						"test",
+						"start"
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "5",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "group",
+							"value": "test",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "text/plain",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"service\": \"service\",\n\t\"action\" : \"action\",\n\t\"data\" : {\n\t\t\"orderList\": \"1\",\n\t\t\"active\": true,\n\t\t\"priority\": 1,\n\t\t\"productId\": \"myProduct\",\n\t\t\"subscriptionStart\": \"10.10.2018 10:10:00\",\n\t\t\"subscriptionEnd\": \"10.10.2018 10:10:00\",\n\t\t\"smartcard\": \"1234\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

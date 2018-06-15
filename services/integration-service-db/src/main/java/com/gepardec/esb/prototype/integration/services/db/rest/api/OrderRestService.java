@@ -15,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -28,22 +29,22 @@ public interface OrderRestService {
     @Path("/get/{orderNr}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets a Order by its orderNr", response = CustomerDto.class)
+    @ApiOperation(value = "Gets a Order by its orderNr")
     @ApiResponses({
             @ApiResponse(code = HttpStatus.SC_OK, message = "Order could be found for given orderNr", response = OrderDto.class),
             @ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "Order could not be found for given orderNr"),
             @ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "Error loading Order by orderNr")
     })
-    OrderDto get(@NotNull @Min(0) @PathParam("orderNr") Long id);
+    Response get(@NotNull @Min(0) @PathParam("orderNr") Long id);
 
-    @Path("/list/customer/{id}")
+    @Path("/list/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Gets a all Orders for a given Customer id", response = OrderDto.class, responseContainer = "List")
+    @ApiOperation(value = "Gets a all Orders for a given Customer id")
     @ApiResponses({
             @ApiResponse(code = HttpStatus.SC_OK, message = "All Order could be loaded for Customer id", response = OrderDto.class, responseContainer = "List"),
             @ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "Could find Customer by id"),
             @ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "Error loading Orders for Customer id")
     })
-    List<OrderDto> list();
+    Response list(@NotNull @Min(0) @PathParam("id") Long id);
 }

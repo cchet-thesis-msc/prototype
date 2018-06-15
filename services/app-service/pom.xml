@@ -429,7 +429,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/swagger/api/test-swagger.json</inputSpec>
+                            <inputSpec>${project.basedir}/swagger/api/integration-service-db.json</inputSpec>
                             <output>${project.build.directory}/generated-sources/swagger/integration-database</output>
                             <language>jaxrs-cxf</language>
                             <apiPackage>${project.groupId}.app.rest.client.api.integration.database</apiPackage>

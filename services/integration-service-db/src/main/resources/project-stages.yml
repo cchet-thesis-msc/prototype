@@ -1,8 +1,11 @@
 swarm:
+  deployment: ${project.build.finalName}.war
   http:
     port: 8080
   contex:
     path: "/"
+  ee:
+    jboss-descriptor-property-replacement: true
   logging:
     pattern-formatters:
       DEFAULT_LOG_PATTERN:
@@ -11,6 +14,11 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
+HBM_DIALECT: org.hibernate.dialect.H2Dialect
+HBM_DRIVER: org.h2.Driver
+HBM_USER: ${db.user}
+HBM_PASSWORD: ${db.password}
+HBM_SCHEMA: ${db.schema}
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 #JAEGER_SERVICE_NAME: ${${project.build.finalName}}
 #JAEGER_AGENT_HOST: localhost
@@ -23,20 +31,9 @@ swarm:
 project:
   stage: dev
 swarm:
-  # Secure the deployment
-  deployment:
-    ${project.build.finalName}.war:
-      web:
-        login-config:
-          auth-method: KEYCLOAK
-        security-constraints:
-          - url-pattern: /rest-api/customer
-            roles: [service]
-          - url-pattern: /rest-api/order
-            roles: [service]
   logging:
     root-logger:
-      level: INFO
+      level: DEBUG
       handlers:
         - CONSOLE
     loggers:
@@ -48,29 +45,57 @@ swarm:
         level: TRACE
         handlers:
           - CONSOLE
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
         db.secrets:
           properties:
-            db.url: http://localhost:8080/rest-api
-            db.username: http://localhost:8080/rest-api
-            db.password: http://localhost:8080/rest-api
-            db.schema: http://localhost:8080/rest-api
+            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: integration-service-db
+            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+
+  datasources:
+    data-sources:
+      DS:
+        driver-name: h2
+        connection-url: jdbc:h2:~/DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        jndi-name: java:/DS
+        user-name: ${db.password}
+        password: ${db.user}
 ---
+HBM_DIALECT: org.hibernate.dialect.H2Dialect
+HBM_DRIVER: org.h2.Driver
+HBM_USER: ${db.user}
+HBM_PASSWORD: ${db.password}
+HBM_SCHEMA: ${db.schema}
+
 project:
   stage: test
 swarm:
   logging: INFO
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
-        APP:
+        db.secrets:
           properties:
-            service.db.base-url: http://localhost:8080/rest-api
+            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: integration-service-db
+            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+  datasources:
+    data-sources:
+      DS:
+        driver-name: h2
+        connection-url: jdbc:h2:~/DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        jndi-name: java:/DS
+        user-name: ${db.password}
+        password: ${db.user}
 ---
+HBM_DIALECT: org.hibernate.dialect.H2Dialect
+HBM_DRIVER: org.h2.Driver
+HBM_USER: ${db.user}
+HBM_PASSWORD: ${db.password}
+HBM_SCHEMA: ${db.schema}
+
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 #JAEGER_SERVICE_NAME: ${project.build.finalName}
 #JAEGER_AGENT_HOST: jaeger-agent
@@ -83,16 +108,6 @@ swarm:
 project:
   stage: openshift
 swarm:
-#  deployment:
-#    ${project.build.finalName}.war:
-#      web:
-#        login-config:
-#          auth-method: KEYCLOAK
-#        security-constraints:
-#          - url-pattern: /rest-api/customer
-#            roles: [service]
-#          - url-pattern: /rest-api/order
-#            roles: [service]
   logging:
     file-handlers:
 #    custom-handlers:
@@ -116,9 +131,16 @@ swarm:
         handlers:
           - CONSOLE
           #- SYSLOGGER
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
         db.secrets:
           dir: ${oc.secret-integration-service-app.dir}
+  datasources:
+    data-sources:
+      DS:
+        driver-name: h2
+        connection-url: jdbc:h2:~/DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        jndi-name: java:/DS
+        user-name: ${db.password}
+        password: ${db.user}

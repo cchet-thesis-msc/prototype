@@ -5,4 +5,5 @@
     <interceptors>
         <class>io.opentracing.contrib.cdi.CdiOpenTracingInterceptor</class>
     </interceptors>
+
 </beans>

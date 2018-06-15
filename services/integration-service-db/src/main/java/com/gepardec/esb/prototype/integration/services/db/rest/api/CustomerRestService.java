@@ -14,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public interface CustomerRestService {
             @ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "Customer could not be found for given id"),
             @ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "Error loading customer by id")
     })
-    CustomerDto get(@NotNull @Min(0) @PathParam("id") Long id);
+    Response get(@NotNull @Min(0) @PathParam("id") Long id);
 
     @Path("/list")
     @GET
