@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
 {{/withXml}}
 import javax.validation.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 {{#withXml}}
     @XmlAccessorType(XmlAccessType.FIELD)
     {{#hasVars}} @XmlType(name = "{{classname}}", propOrder =

@@ -3,7 +3,7 @@
     <deployment type="docker-image">
       <settings>
         <option name="JSONFilePath" value="" />
-        <option name="command" value="-b 0.0.0.0 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/backup" />
+        <option name="command" value="-b 0.0.0.0 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/backup" />
         <option name="commandLineOptions" value="" />
         <option name="containerName" value="keycloak" />
         <option name="entrypoint" value="" />

@@ -20,4 +20,8 @@ public class ReportModelDto {
 
     @JsonProperty("name")
     private String name;
+
+    private Long orderCount;
+
+    private Double price;
 }

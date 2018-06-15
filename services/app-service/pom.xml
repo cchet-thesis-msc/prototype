@@ -245,6 +245,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logging</artifactId>
             <version>${slf4j.jbopss-logging.version}</version>
@@ -277,6 +283,31 @@
         </dependency>
 
         <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-jaxrs2</artifactId>
+            <version>${io-opentracing.opentracing-jaxrs2.version}</version>
+            <!-- Already provided by wildfly swarm opentracing fraction -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-noop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-traceresolver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-web-servlet-filter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.lombok.version}</version>
@@ -302,13 +333,6 @@
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
             <version>${org-jboss.resteasy-client.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${fasterxml.jackson.version}</version>
             <scope>test</scope>
         </dependency>
 

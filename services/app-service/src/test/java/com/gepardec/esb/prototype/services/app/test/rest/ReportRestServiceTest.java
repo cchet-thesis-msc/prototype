@@ -66,16 +66,6 @@ public class ReportRestServiceTest {
         Assert.assertNotNull(actual);
     }
 
-    @Test
-    @RunAsClient
-    public void test_testRetry() {
-        // -- Given / When --
-        final ReportModelDto actual = reportRestClient.testRetry();
-
-        // -- Then --
-        Assert.assertNotNull(actual);
-    }
-
     @Deployment
     public static Archive createDeployment() {
         Archive archive = ShrinkWrap.create(WebArchive.class, "service-app-test.war")

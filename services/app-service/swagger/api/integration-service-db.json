@@ -4,25 +4,28 @@
   "basePath": "/rest-api",
   "tags": [
     {
-      "name": "ReportRestService"
+      "name": "CustomerRest"
+    },
+    {
+      "name": "OrderRest"
     }
   ],
   "paths": {
-    "/report/generate": {
+    "/customer/get/{id}": {
       "get": {
         "tags": [
-          "ReportRestService"
+          "CustomerRest"
         ],
-        "summary": "Generates the report for the given customer",
+        "summary": "Gets a customer by its id",
         "description": "",
-        "operationId": "generate_1",
+        "operationId": "get_1",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "required": true,
             "type": "integer",
             "minimum": 0,
@@ -31,45 +34,243 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Customer could be found for given id",
             "schema": {
-              "$ref": "#/definitions/ReportModelDto"
+              "$ref": "#/definitions/Customer"
             }
+          },
+          "404": {
+            "description": "Customer could not be found for given id"
+          },
+          "500": {
+            "description": "Error loading customer by id"
           }
         }
       }
     },
-    "/report/test/retry": {
+    "/customer/list": {
       "get": {
         "tags": [
-          "ReportRestService"
+          "CustomerRest"
         ],
-        "summary": "Generates the report for the given customer",
+        "summary": "List all customers",
         "description": "",
-        "operationId": "testRetry_1",
+        "operationId": "list_1",
         "produces": [
           "application/json"
         ],
         "parameters": [],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "All Customers could be loaded",
             "schema": {
-              "$ref": "#/definitions/ReportModelDto"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Customer"
+              }
             }
+          },
+          "500": {
+            "description": "Error loading customers"
+          }
+        }
+      }
+    },
+    "/order/get/{orderNr}": {
+      "get": {
+        "tags": [
+          "OrderRest"
+        ],
+        "summary": "Gets a Order by its orderNr",
+        "description": "",
+        "operationId": "get_2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "orderNr",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order could be found for given orderNr",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          "404": {
+            "description": "Order could not be found for given orderNr"
+          },
+          "500": {
+            "description": "Error loading Order by orderNr"
+          }
+        }
+      }
+    },
+    "/order/list/{id}": {
+      "get": {
+        "tags": [
+          "OrderRest"
+        ],
+        "summary": "Gets a all Orders for a given Customer id",
+        "description": "",
+        "operationId": "list_2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All Order could be loaded for Customer id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Order"
+              }
+            }
+          },
+          "404": {
+            "description": "Could find Customer by id"
+          },
+          "500": {
+            "description": "Error loading Orders for Customer id"
           }
         }
       }
     }
   },
   "definitions": {
-    "ReportModelDto": {
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The customer id",
+          "readOnly": true
+        },
+        "version": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The customer version",
+          "readOnly": true
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The customer first name",
+          "readOnly": true
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The customer last name",
+          "readOnly": true
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The created date",
+          "readOnly": true
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "The last update date",
+          "readOnly": true
+        },
+        "email": {
+          "type": "string",
+          "description": "The customer email",
+          "readOnly": true
+        }
+      },
+      "description": "The model representing the customer"
+    },
+    "Item": {
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The item name, which is unique",
+          "readOnly": true
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The count of ordered items",
+          "readOnly": true
+        },
+        "price": {
+          "type": "number",
+          "format": "double",
+          "description": "The full price of the item",
+          "readOnly": true
         }
-      }
+      },
+      "description": "The model representing the order item"
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The order id",
+          "readOnly": true
+        },
+        "version": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The order version",
+          "readOnly": true
+        },
+        "customerId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Customer id",
+          "readOnly": true
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The creation date of the order",
+          "readOnly": true
+        },
+        "deliveredAt": {
+          "type": "string",
+          "description": "The modification date of the order",
+          "readOnly": true
+        },
+        "itemPrices": {
+          "type": "object",
+          "description": "Item prices",
+          "readOnly": true,
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "items": {
+          "type": "array",
+          "description": "The list of ordered items",
+          "readOnly": true,
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        }
+      },
+      "description": "The model representing the customer order"
     }
   }
 }
