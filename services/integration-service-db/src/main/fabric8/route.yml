@@ -1,0 +1,11 @@
+spec:
+  to:
+    kind: Service
+    name: ${project.artifactId}
+    weight: 100
+  port:
+    targetPort: ${project.artifactId}-web
+  # Disabled because didn't want to import self signed certificates
+  #tls:
+  #  termination: edge
+  wildcardPolicy: None

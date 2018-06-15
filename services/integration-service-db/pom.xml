@@ -57,8 +57,8 @@
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
 
         <!-- Openshift properties -->
-        <oc.secret-integration-service-app>secret-integration-service-app</oc.secret-integration-service-app>
-        <oc.secret-integration-service-app.dir>/config/secret</oc.secret-integration-service-app.dir>
+        <oc.secret-service-integration>secret-integration-service-db</oc.secret-service-integration>
+        <oc.secret-service-integration.dir>/config/secret</oc.secret-service-integration.dir>
         <!-- DB properties -->
         <db.user>user</db.user>
         <db.password>password</db.password>

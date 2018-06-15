@@ -21,12 +21,12 @@ public interface OrderRespoitory extends EntityRepository<OrderDto, Long> {
 
     @Query(named = Order.QUERY_FIND_FOR_CUSTOMER)
     @Counted(name = "findOrdersForCustomerId", monotonic = true)
-    @Timed(name = "duration-findOrdersForCustomerId", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-findOrdersForCustomerId", unit = MetricUnits.SECONDS)
     List<OrderDto> findOrdersForCustomerId(@QueryParam("id") Long id);
 
     @Query(named = Order.QUERY_DELETE_ALL_ORDER)
     @Modifying
     @Counted(name = "deleteAll", monotonic = true)
-    @Timed(name = "duration-deleteAll", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-deleteAll", unit = MetricUnits.SECONDS)
     void deleteAll();
 }

@@ -2,10 +2,7 @@ package com.gepardec.esb.prototype.integration.services.db.rest.api;
 
 import com.gepardec.esb.prototype.integration.services.db.rest.model.CustomerDto;
 import com.gepardec.esb.prototype.integration.services.db.rest.model.OrderDto;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.apache.http.HttpStatus;
 
 import javax.validation.constraints.Min;
@@ -23,7 +20,7 @@ import java.util.List;
  * @since 06/10/18
  */
 @Path("/order")
-@ApiModel(value = "OrderRest", description = "The rest interface for managing Orders")
+@Api(value = "OrderRest", description = "The rest interface for managing Orders")
 public interface OrderRestService {
 
     @Path("/get/{orderNr}")

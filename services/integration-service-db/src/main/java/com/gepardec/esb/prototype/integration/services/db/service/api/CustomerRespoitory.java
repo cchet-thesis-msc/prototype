@@ -23,12 +23,12 @@ public interface CustomerRespoitory extends EntityRepository<CustomerDto, Long> 
 
     @Override
     @Counted(name = "findBy", monotonic = true)
-    @Timed(name = "duration-findBy", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-findBy", unit = MetricUnits.SECONDS)
     CustomerDto findBy(Long primaryKey);
 
     @Query(named = Customer.QUERY_DELETE_ALL_CUSTOMER)
     @Modifying
     @Counted(name = "deleteAll", monotonic = true)
-    @Timed(name = "duration-deleteAll", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-deleteAll", unit = MetricUnits.SECONDS)
     void deleteAll();
 }

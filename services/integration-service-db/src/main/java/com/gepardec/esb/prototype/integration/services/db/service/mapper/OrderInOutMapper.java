@@ -9,6 +9,10 @@ import org.apache.deltaspike.data.api.mapping.SimpleQueryInOutMapperBase;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +44,8 @@ public class OrderInOutMapper extends SimpleQueryInOutMapperBase<Order, OrderDto
             final OrderDto dto = new OrderDto();
             dto.setId(order.getId());
             dto.setCustomerId(order.getCustomer().getId());
-            dto.setDeliveredAt(order.getDeliveredAt());
+            dto.setCreatedAt(Date.from(order.getCreatedAt().toInstant(ZoneOffset.UTC)));
+            dto.setDeliveredAt(Date.from(order.getDeliveredAt().toInstant(ZoneOffset.UTC)));
             dto.setItems(itemDtos);
             dto.setItemPrices(itemPrices);
 
@@ -57,7 +62,7 @@ public class OrderInOutMapper extends SimpleQueryInOutMapperBase<Order, OrderDto
             order = (order != null) ?order : new Order();
             order.setId(orderDto.getId());
             order.setCustomer(em.getReference(Customer.class, orderDto.getCustomerId()));
-            order.setDeliveredAt(orderDto.getDeliveredAt());
+            order.setDeliveredAt(LocalDateTime.ofInstant(orderDto.getDeliveredAt().toInstant(), ZoneId.systemDefault()));
             order.setData(buildDateFromItems(orderDto.getItems()));
 
             return order;

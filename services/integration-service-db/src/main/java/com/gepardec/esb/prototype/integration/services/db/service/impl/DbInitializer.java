@@ -13,7 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class DbInitializer implements Serializable {
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     @Counted(name = "clear", monotonic = true)
-    @Timed(name = "duration-clear", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-clear", unit = MetricUnits.SECONDS)
     public void clear() {
         orderRespoitory.deleteAll();
         orderRespoitory.flush();
@@ -42,11 +42,12 @@ public class DbInitializer implements Serializable {
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     @Counted(name = "initialize", monotonic = true)
-    @Timed(name = "duration-initialize", unit = MetricUnits.MILLISECONDS)
-    public void initialize() {
+    @Timed(name = "duration-initialize", unit = MetricUnits.SECONDS)
+    public void initialize(final Integer customerCount,
+                           final Integer customerOrderCount) {
         List<CustomerDto> customers = new LinkedList<>();
         if (customerRespoitory.findAll().size() == 0) {
-            for (int i = 1; i <= 10; i++) {
+            for (int i = 1; i <= customerCount; i++) {
                 final CustomerDto customer = new CustomerDto();
                 customer.setEmail(String.format("thomas-%d@gmail.com", i));
                 customer.setFirstName(String.format("thomas-%d", i));
@@ -61,9 +62,9 @@ public class DbInitializer implements Serializable {
             customers = customerRespoitory.findAll();
             List<OrderDto> orders = new LinkedList<>();
             for (CustomerDto customer : customers) {
-                for (int i = 1; i <= 10; i++) {
+                for (int i = 1; i <= customerOrderCount; i++) {
                     final List<ItemDto> itemDtos = new LinkedList<>();
-                    for (int j = 1; i <= 10; i++) {
+                    for (int j = 1; i <= (customerOrderCount / 2 + 1); i++) {
                         final ItemDto item = new ItemDto();
                         item.setName(String.format("Item-%d", j));
                         item.setCount(10L);
@@ -73,7 +74,7 @@ public class DbInitializer implements Serializable {
                     final OrderDto order = new OrderDto();
                     order.setCustomerId(customer.getId());
                     order.setItems(itemDtos);
-                    order.setDeliveredAt(LocalDateTime.now());
+                    order.setDeliveredAt(Calendar.getInstance().getTime());
 
                     orderRespoitory.save(order);
                 }

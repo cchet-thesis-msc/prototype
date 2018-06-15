@@ -5,6 +5,9 @@ import com.gepardec.esb.prototype.integration.services.db.service.model.Customer
 import org.apache.deltaspike.data.api.mapping.SimpleQueryInOutMapperBase;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.sql.Date;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +36,8 @@ public class CustomerInOutMapper extends SimpleQueryInOutMapperBase<Customer, Cu
             dto.setEmail(customer.getEmail());
             dto.setFirstName(nameParts.get(FIRST_NAME));
             dto.setLastName(nameParts.get(LAST_NAME));
-            dto.setCreatedAt(customer.getCreatedAt());
-            dto.setModifiedAt(customer.getModifiedAt());
+            dto.setCreatedAt(Date.from(customer.getCreatedAt().toInstant(ZoneOffset.UTC)));
+            dto.setModifiedAt(Date.from(customer.getModifiedAt().toInstant(ZoneOffset.UTC)));
             return dto;
         }
 

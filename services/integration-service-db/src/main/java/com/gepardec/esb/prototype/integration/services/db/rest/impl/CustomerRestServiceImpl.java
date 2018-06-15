@@ -27,19 +27,19 @@ public class CustomerRestServiceImpl implements CustomerRestService {
 
     @Override
     @Counted(name = "get", monotonic = true)
-    @Timed(name = "duration-get", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-get", unit = MetricUnits.SECONDS)
     @Transactional(value = Transactional.TxType.NEVER)
     public Response get(Long id) {
         final CustomerDto dto = customerRespoitory.findBy(id);
         if (dto == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(String.format("Customer not found for id '%d'", id)).build();
         }
         return Response.ok().entity(dto).build();
     }
 
     @Override
     @Counted(name = "list", monotonic = true)
-    @Timed(name = "duration-list", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-list", unit = MetricUnits.SECONDS)
     @Transactional(value = Transactional.TxType.NEVER)
     public List<CustomerDto> list() {
         return customerRespoitory.findAll();

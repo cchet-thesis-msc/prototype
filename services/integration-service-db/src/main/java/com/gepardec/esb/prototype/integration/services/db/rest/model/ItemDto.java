@@ -6,8 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/15/18
@@ -24,6 +22,6 @@ public class ItemDto {
     @ApiModelProperty(value = "The count of ordered items", readOnly = true)
     private Long count;
 
-    @ApiModelProperty(value = "The full price of the item", dataType = "number", readOnly = true)
+    @ApiModelProperty(value = "The full price of the item", readOnly = true)
     private Double price;
 }

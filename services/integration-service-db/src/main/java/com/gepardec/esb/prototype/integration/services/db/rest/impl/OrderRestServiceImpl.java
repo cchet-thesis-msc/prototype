@@ -29,7 +29,7 @@ public class OrderRestServiceImpl implements OrderRestService {
 
     @Override
     @Counted(name = "get", monotonic = true)
-    @Timed(name = "duration-get", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-get", unit = MetricUnits.SECONDS)
     public Response get(Long id) {
         final OrderDto dto = orderRespoitory.findBy(id);
         if (dto == null) {
@@ -40,7 +40,7 @@ public class OrderRestServiceImpl implements OrderRestService {
 
     @Override
     @Counted(name = "list", monotonic = true)
-    @Timed(name = "duration-list", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-list", unit = MetricUnits.SECONDS)
     public Response list(final Long id) {
         final CustomerDto customer = customerRespoitory.findBy(id);
         if (customer == null) {

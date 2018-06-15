@@ -1,10 +1,7 @@
 package com.gepardec.esb.prototype.integration.services.db.rest.api;
 
 import com.gepardec.esb.prototype.integration.services.db.rest.model.CustomerDto;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.apache.http.HttpStatus;
 
 import javax.validation.constraints.Min;
@@ -22,7 +19,7 @@ import java.util.List;
  * @since 06/10/18
  */
 @Path("/customer")
-@ApiModel(value = "CustomerRest", description = "The rest interface for managing Customers")
+@Api(value = "CustomerRest", description = "The rest interface for managing Customers")
 public interface CustomerRestService {
 
     @Path("/get/{id}")
