@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: jaeger-template-all-in-one
+  jaeger-infra: template-all-in-one
+metadata:
+  name: jaeger-template-all-in-one
+  annotations:
+    description: Jaeger Distributed Tracing Server (all-in-one)
+    iconClass: icon-go-gopher
+    openshift.io/display-name: Jaeger
+    tags: instant-app,tracing,opentracing,jaeger
+  labels:
+    name: jaeger-infra
+    jaeger-infra: jaeger-template-all-in-one
+
+parameters:
+  - name: "APP"
+    displayName: "App name"
+    description: "The name of the app label"
+    required: true
+
+  - name: JAEGER_SERVICE_NAME
+    description: The name of the Jaeger Service.
+    displayName: Jaeger Service Name
+    required: true
+    value: jaeger
+
+  - name: IMAGE_VERSION
+    description: The Jaeger image version to use
+    displayName: Image version
+    required: false
+    value: "latest"
+
+  - name: JAEGER_ZIPKIN_SERVICE_NAME
+    description: The name of the Jaeger Zipkin Service.
+    displayName: Jaeger Zipkin Service Name
+    required: true
+    value: zipkin
+
+objects:
+- apiVersion: extensions/v1beta1
+  kind: DeploymentConfig
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}
+    labels:
+      app: "${APP}"
+      jaeger-infra: jaeger-deployment
+  spec:
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: "${APP}"
+          jaeger-infra: jaeger-pod
+      spec:
+          containers:
+            - env:
+              - name: COLLECTOR_ZIPKIN_HTTP_PORT
+                value: "9411"
+              image: jaegertracing/all-in-one:${IMAGE_VERSION}
+              name: ${JAEGER_SERVICE_NAME}
+              ports:
+                - containerPort: 5775
+                  protocol: UDP
+                - containerPort: 6831
+                  protocol: UDP
+                - containerPort: 6832
+                  protocol: UDP
+                - containerPort: 16686
+                  protocol: TCP
+                - containerPort: 9411
+                  protocol: TCP
+                - containerPort: 5778
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 16686
+                  scheme: HTTP
+                successThreshold: 1
+                failureThreshold: 10
+                initialDelaySeconds: 5
+                periodSeconds: 5
+                timeoutSeconds: 5
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: 16686
+                  scheme: HTTP
+                successThreshold: 1
+                failureThreshold: 10
+                initialDelaySeconds: 30
+                periodSeconds: 30
+                timeoutSeconds: 5
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}-query
+    labels:
+      app: "${APP}"
+      jaeger-infra: jaeger-service
+  spec:
+    ports:
+      - name: query-http
+        port: 80
+        protocol: TCP
+        targetPort: 16686
+    selector:
+      jaeger-infra: jaeger-pod
+    type: LoadBalancer
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}-collector
+    labels:
+      app: "${APP}"
+      jaeger-infra: collector-service
+  spec:
+    ports:
+    - name: jaeger-collector-tchannel
+      port: 14267
+      protocol: TCP
+      targetPort: 14267
+    - name: jaeger-collector-http
+      port: 14268
+      protocol: TCP
+      targetPort: 14268
+    - name: jaeger-collector-zipkin
+      port: 9411
+      protocol: TCP
+      targetPort: 9411
+    selector:
+      jaeger-infra: jaeger-pod
+    type: ClusterIP
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}-agent
+    labels:
+      app: "${APP}"
+      jaeger-infra: agent-service
+  spec:
+    ports:
+    - name: agent-zipkin-thrift
+      port: 5775
+      protocol: UDP
+      targetPort: 5775
+    - name: agent-compact
+      port: 6831
+      protocol: UDP
+      targetPort: 6831
+    - name: agent-binary
+      port: 6832
+      protocol: UDP
+      targetPort: 6832
+    - name: agent-sampler-manager
+      port: 5778
+      protocol: TCP
+      targetPort: 5778
+    type: ClusterIP
+    selector:
+      jaeger-infra: jaeger-pod
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.alpha.openshift.io/dependencies: "[{\"name\": \"${JAEGER_SERVICE_NAME}-agent\", \"kind\": \"Service\"}, {\"name\": \"${JAEGER_SERVICE_NAME}-collector\", \"kind\": \"Service\"}, {\"name\": \"${JAEGER_SERVICE_NAME}-query\", \"kind\": \"Service\"}]"
+    name: ${JAEGER_ZIPKIN_SERVICE_NAME}
+    labels:
+      app: "${APP}"
+      jaeger-infra: zipkin-service
+  spec:
+    ports:
+    - name: jaeger-zipkin-http
+      port: 9411
+      protocol: TCP
+      targetPort: 9411
+    selector:
+      jaeger-infra: jaeger-pod
+    type: ClusterIP
+
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}-query
+    labels:
+      app: "${APP}"
+      jaeger-infra: query-route
+  spec:
+    to:
+      kind: Service
+      name: ${JAEGER_SERVICE_NAME}-query
+    port:
+      targetPort: query-http
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect

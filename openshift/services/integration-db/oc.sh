@@ -4,7 +4,7 @@
 cd $(dirname ${0})
 # secret-service-app
 SERVICE_NAME="integration-service-db"
-SECRET_SERVIVE_APP="secret-${SERVICE_NAME}"
+SECRET_SERVIVE="secret-${SERVICE_NAME}"
 
 function createSecrets() {
   ARGS=""
@@ -16,11 +16,11 @@ function createSecrets() {
   done
 
   # Need to do so, no --from-env-file option available in version 3.5
-  eval "oc create secret generic ${SECRET_SERVIVE_APP} ${ARGS}"
+  eval "oc create secret generic ${SECRET_SERVIVE} ${ARGS}"
 }
 
 function deleteSecrets() {
-  oc delete secret/${SECRET_SERVIVE_APP}
+  oc delete secret/${SECRET_SERVIVE}
 }
 
 function recreateSecrets() {
