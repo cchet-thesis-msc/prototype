@@ -11,10 +11,12 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class represents the rest client configuration, which injects config parameter and creates/caches the clients
@@ -47,7 +49,7 @@ public class RestClientConfiguration {
     public <T> T getOrCreateProxy(Class<T> clazz) {
         T proxy = (T) cache.getOrDefault(clazz,
                                          ProxyBuilder.builder(clazz,
-                                                              ResteasyClientBuilder.newClient()
+                                                              buildResteasyClient()
                                                                                    // register OAuth filter
                                                                                    .register(appendOAuthFilter)
                                                                                    .register(ClientTracingFeature.class)
@@ -58,5 +60,16 @@ public class RestClientConfiguration {
         cache.putIfAbsent(clazz, proxy);
 
         return proxy;
+    }
+
+    private Client buildResteasyClient() {
+        return new ResteasyClientBuilder().connectionCheckoutTimeout(5, TimeUnit.SECONDS)
+                                          .establishConnectionTimeout(5, TimeUnit.SECONDS)
+                                          .socketTimeout(5, TimeUnit.SECONDS)
+                                          .connectionTTL(5, TimeUnit.SECONDS)
+                                          .connectionPoolSize(5)
+                                          // Appends Tracing feature for jaxrs client
+                                          .register(ClientTracingFeature.class)
+                                          .build();
     }
 }

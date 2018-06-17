@@ -131,7 +131,7 @@ swarm:
         - CONSOLE
         #- SYSLOGGER
     loggers:
-      at.liwest:
+      com.gepardec:
         level: INFO
         handlers:
           - CONSOLE
