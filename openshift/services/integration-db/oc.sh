@@ -4,7 +4,11 @@
 cd $(dirname ${0})
 # secret-service-app
 SERVICE_NAME="integration-service-db"
+SERVICE_NAME_DB="${SERVICE_NAME}-db"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
+DB_NAME='postgres'
+DB_USER='postgres'
+DB_PASSWORD='postgres'
 
 function createSecrets() {
   ARGS=""
@@ -28,23 +32,43 @@ function recreateSecrets() {
   createSecrets
 }
 
+function createService() {
+  ../postgres/oc.sh createService ${SERVICE_NAME_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}
+}
+
+function deleteService() {
+  ../postgres/oc.sh deleteService ${SERVICE_NAME_DB}
+}
+
+function recreateService() {
+  deleteService
+  createService
+}
+
 function scale() {
   oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
+function deploy() {
+  cd ../../../services/${SERVICE_NAME}
+  mvn fabric8:deploy -Dpfabric8
+}
+
 case ${1} in
    scale)
-      if [ $# -ne 1 ]; then
+      if [ $# -eq 2 ]; then
         scale ${2}
       fi
       ;;
    createSecrets|deleteSecrets|recreateSecrets|\
-   scale)
+   createService|deleteService|recreateService|\
+   deploy)
       ${1}
       ;;
    *)
-     echo "${0} [createSecrets|deleteSecrets|recreateSecrets\n\
-     scale]"
+     echo "${0} [createSecrets|deleteSecrets|recreateSecrets|\
+     createService|deleteService|recreateService|\
+     scale|deploy]"
      exit 1
       ;;
 esac

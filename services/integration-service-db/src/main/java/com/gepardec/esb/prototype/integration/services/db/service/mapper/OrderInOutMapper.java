@@ -43,6 +43,7 @@ public class OrderInOutMapper extends SimpleQueryInOutMapperBase<Order, OrderDto
             final Map<String, Double> itemPrices = extractingItemPrices(itemDtos);
             final OrderDto dto = new OrderDto();
             dto.setId(order.getId());
+            dto.setVersion(order.getVersion());
             dto.setCustomerId(order.getCustomer().getId());
             dto.setCreatedAt(Date.from(order.getCreatedAt().toInstant(ZoneOffset.UTC)));
             dto.setDeliveredAt(Date.from(order.getDeliveredAt().toInstant(ZoneOffset.UTC)));
@@ -60,7 +61,7 @@ public class OrderInOutMapper extends SimpleQueryInOutMapperBase<Order, OrderDto
                              OrderDto orderDto) {
         if (orderDto != null) {
             order = (order != null) ?order : new Order();
-            order.setId(orderDto.getId());
+            order.setId((order.getId() != null) ? order.getId() : orderDto.getId());
             order.setCustomer(em.getReference(Customer.class, orderDto.getCustomerId()));
             order.setDeliveredAt(LocalDateTime.ofInstant(orderDto.getDeliveredAt().toInstant(), ZoneId.systemDefault()));
             order.setData(buildDateFromItems(orderDto.getItems()));

@@ -29,6 +29,7 @@
         <io-opentracing.opentracing-jaxrs2.version>0.1.4</io-opentracing.opentracing-jaxrs2.version>
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
         <h2-database.h2.version>1.4.197</h2-database.h2.version>
+        <org.postgresql.postgresql.version>42.2.2</org.postgresql.postgresql.version>
 
         <!-- Other Dependency versions -->
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
@@ -59,10 +60,6 @@
         <!-- Openshift properties -->
         <oc.secret-service-integration>secret-integration-service-db</oc.secret-service-integration>
         <oc.secret-service-integration.dir>/config/secret</oc.secret-service-integration.dir>
-        <!-- DB properties -->
-        <db.user>user</db.user>
-        <db.password>password</db.password>
-        <db.schema>DEMO</db.schema>
     </properties>
 
     <dependencyManagement>
@@ -201,10 +198,11 @@
             <artifactId>jpa</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2-database.h2.version}</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${org.postgresql.postgresql.version}</version>
         </dependency>
 
         <!-- Dependencies Deltaspike -->
@@ -317,6 +315,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-database.h2.version}</version>
             <scope>test</scope>
         </dependency>
 

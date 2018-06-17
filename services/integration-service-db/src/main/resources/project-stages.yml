@@ -14,26 +14,30 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
-HBM_DIALECT: org.hibernate.dialect.H2Dialect
-HBM_DRIVER: org.h2.Driver
-HBM_USER: ${db.user}
-HBM_PASSWORD: ${db.password}
-HBM_SCHEMA: ${db.schema}
+DB_ADDR: localhost
+DB_PORT: 5432
+DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+DB_DRIVER: org.postgresql.Driver
+DB_USER: "postgres"
+DB_PASSWORD: "postgres"
+DB_SCHEMA: "DEMO"
+DB_DATABASE: "postgres"
+
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-#JAEGER_SERVICE_NAME: ${${project.build.finalName}}
-#JAEGER_AGENT_HOST: localhost
+#JAEGER_SERVICE_NAME: "${project.build.finalName}"
+#JAEGER_AGENT_HOST: https://jaeger-tracing-agent-57-fis-prototype-infra.cloud.itandtel.at
 #JAEGER_AGENT_PORT: 6831
-#JAEGER_REPORTER_LOG_SPANS: true
-#JAEGER_REPORTER_FLUSH_INTERVAL: 100
-#JAEGER_SAMPLER_TYPE: const
-#JAEGER_SAMPLER_PARAM: 1
+#JAEGER_REPORTER_LOG_SPANS: "true"
+#JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+#JAEGER_SAMPLER_TYPE: "const"
+#JAEGER_SAMPLER_PARAM: "1"
 
 project:
   stage: dev
 swarm:
   logging:
     root-logger:
-      level: INFO
+      level: DEBUG
       handlers:
         - CONSOLE
     loggers:
@@ -46,24 +50,24 @@ swarm:
       config-sources:
         db.secrets:
           properties:
-            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
+            keycloak.token-url:  http://localhost:9080/auth/realms/master/protocol/openid-connect/token
             keycloak.client.id: integration-service-db
             keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
-
   datasources:
     data-sources:
       DS:
-        driver-name: h2
-        connection-url: jdbc:h2:~/DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        driver-name: postgresql
+        connection-url: jdbc:postgresql://${DB_ADDR}:${DB_PORT}/${DB_DATABASE}
         jndi-name: java:/DS
-        user-name: ${db.password}
-        password: ${db.user}
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}
 ---
-HBM_DIALECT: org.hibernate.dialect.H2Dialect
-HBM_DRIVER: org.h2.Driver
-HBM_USER: ${db.user}
-HBM_PASSWORD: ${db.password}
-HBM_SCHEMA: ${db.schema}
+DB_DIALECT: org.hibernate.dialect.H2Dialect
+DB_DRIVER: org.h2.Driver
+DB_USER: "user"
+DB_PASSWORD: "password"
+DB_SCHEMA: "DEMO"
+DB_DATABASE: "DEMO"
 
 project:
   stage: test
@@ -83,23 +87,28 @@ swarm:
         driver-name: h2
         connection-url: jdbc:h2:mem:DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
         jndi-name: java:/DS
-        user-name: ${db.password}
-        password: ${db.user}
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}
 ---
-HBM_DIALECT: org.hibernate.dialect.H2Dialect
-HBM_DRIVER: org.h2.Driver
-HBM_USER: ${db.user}
-HBM_PASSWORD: ${db.password}
-HBM_SCHEMA: ${db.schema}
+# Need to collect env vars as JAVA Opts with these variables
+# data-source#connection-url can resolve Java Opts but not env vars !!
+DB_DIALECT: "org.hibernate.dialect.PostgreSQLDialect"
+DB_DRIVER: "org.postgresql.Driver"
+DB_ADDR: "${env.DB_ADDR}"
+DB_PORT: "${env.DB_PORT}"
+DB_DATABASE: "${env.DB_DATABASE}"
+DB_SCHEMA: "${env.DB_SCHEMA}"
+DB_USER: "${env.DB_USER}"
+DB_PASSWORD: "${env.DB_PASSWORD}"
 
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-#JAEGER_SERVICE_NAME: ${project.build.finalName}
-#JAEGER_AGENT_HOST: jaeger-agent
-#JAEGER_AGENT_PORT: 6831
-#JAEGER_REPORTER_LOG_SPANS: true
-#JAEGER_REPORTER_FLUSH_INTERVAL: 100
-#JAEGER_SAMPLER_TYPE: const
-#JAEGER_SAMPLER_PARAM: 1
+JAEGER_SERVICE_NAME: "${project.build.finalName}"
+JAEGER_AGENT_HOST: "${env.JAEGER_HOST}"
+JAEGER_AGENT_PORT: "${env.JAEGER_PORT}"
+JAEGER_REPORTER_LOG_SPANS: "true"
+JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+JAEGER_SAMPLER_TYPE: "const"
+JAEGER_SAMPLER_PARAM: "1"
 
 project:
   stage: openshift
@@ -135,8 +144,8 @@ swarm:
   datasources:
     data-sources:
       DS:
-        driver-name: h2
-        connection-url: jdbc:h2:mem:DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        driver-name: postgresql
+        connection-url: jdbc:postgresql://${DB_ADDR}:${DB_PORT}/${DB_DATABASE}
         jndi-name: java:/DS
-        user-name: ${db.password}
-        password: ${db.user}
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}

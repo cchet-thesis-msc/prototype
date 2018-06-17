@@ -60,7 +60,7 @@ function scale() {
 
 case ${1} in
    scale)
-      if [ $# -ne 1 ]; then
+      if [ $# -eq 2 ]; then
         scale ${2}
       fi
       ;;

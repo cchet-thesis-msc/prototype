@@ -36,6 +36,9 @@ public class JAXRSContainerFilter {
                            ContainerResponseContext responseContext) throws IOException {
             responseContext.getHeaders().put(
                     "Access-Control-Allow-Origin", Collections.singletonList("*"));
+            responseContext.getHeaders().putSingle(
+                    "Content-Security-Policy", Collections.singletonList("block-all-mixed-content")
+            );
         }
     }
 

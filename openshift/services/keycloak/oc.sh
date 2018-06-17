@@ -9,6 +9,7 @@ SECRET_SERVICE_RESTORE="secret-restore-${SERVICE_NAME}"
 VERSION="4.0.0.Final"
 KEYCLOAK_USER='keycloak'
 KEYCLOAK_PASSWORD='keycloak'
+DB_NAME='postgres'
 DB_USER='postgres'
 DB_PASSWORD='psotgres'
 CPU_LIM='500m'
@@ -31,13 +32,16 @@ function recreateSecrets() {
 }
 
 function createService() {
-  ../postgres/oc.sh createService ${SERVICE_NAME_DB} ${DB_USER} ${DB_PASSWORD}
+  ../postgres/oc.sh createService ${SERVICE_NAME_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}
 
-  oc new-app -f ./keycloak-full.yml \
+  oc new-app -f ./keycloak-full.json \
     -p "APPLICATION_NAME=${SERVICE_NAME}" \
     -p "KEYCLOAK_USER=${KEYCLOAK_USER}" \
     -p "KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}" \
-    -p "DB_DATABASE=${SERVICE_NAME_DB}" \
+    -p "DB_ADDR=${SERVICE_NAME_DB}" \
+    -p "DB_PORT=5432" \
+    -p "DB_VENDOR=POSTGRES" \
+    -p "DB_DATABASE=${DB_NAME}" \
     -p "DB_USER=${DB_USER}" \
     -p "DB_PASSWORD=${DB_PASSWORD}" \
     -p "SECRET_NAME_RESTORE=${SECRET_SERVICE_RESTORE}"
@@ -46,7 +50,7 @@ function createService() {
 function deleteService() {
     oc delete all -l application=${SERVICE_NAME}
 
-    ../postgres/oc.sh deleteService
+    ../postgres/oc.sh deleteService ${SERVICE_NAME_DB}
 }
 
 function recreateService() {
@@ -75,7 +79,7 @@ function scale() {
 
 case ${1} in
    scale)
-      if [ $# -ne 1 ]; then
+      if [ $# -eq 2 ]; then
         scale ${2}
       fi
       ;;

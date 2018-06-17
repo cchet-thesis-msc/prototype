@@ -33,9 +33,12 @@ public class AdminRestServiceimpl implements AdminRestService {
                          final Integer customerOrderCount) {
         if (running.compareAndSet(false, true)) {
             clear();
-            dbInitializer.initialize(customerCount,
-                                     customerOrderCount);
-            running.set(false);
+            try {
+                dbInitializer.initialize(customerCount,
+                                         customerOrderCount);
+            } finally {
+                running.set(false);
+            }
             return Response.ok().entity("Initialized.").build();
         }
 

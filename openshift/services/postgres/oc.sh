@@ -6,26 +6,27 @@ cd $(dirname ${0})
 SERVICE_NAME=""
 VERSION="9.6"
 MEM_LIM='128Mi'
-VOL_LIM='512Mi'
+VOL_LIM='256Mi'
 USER='postgres'
 PASSWORD='postgres'
 
 function createService() {
-  oc new-app -f ./postgres-full.yml \
-    -p "APP=${1}" \
+  oc new-app -f ./postgres-full.json \
     -p "MEMORY_LIMIT=${MEM_LIM}" \
     -p "DATABASE_SERVICE_NAME=${1}" \
-    -p "POSTGRESQL_USER=${2}" \
-    -p "POSTGRESQL_PASSWORD=${3}" \
-    -p "POSTGRESQL_DATABASE=${1}" \
+    -p "POSTGRESQL_USER=${3}" \
+    -p "POSTGRESQL_PASSWORD=${4}" \
+    -p "POSTGRESQL_DATABASE=${2}" \
     -p "VOLUME_CAPACITY=${VOL_LIM}" \
-    -p "POSTGRESQL_VERSION=${VERSION}" \
+    -p "POSTGRESQL_VERSION=${VERSION}"
 } # createBc
 
 function deleteService() {
     oc delete all -l app=${1}
-    oc delete pv/${1}
+    oc delete pvc/${1}
     oc delete secret/${1}
+    oc delete svc/${1}
+    oc delete dc/${1}
 }
 
 function recreateService() {
@@ -39,7 +40,7 @@ function scale() {
 
 case ${1} in
    scale)
-      if [ $# -ne 1 ]; then
+      if [ $# -eq 2 ]; then
         scale ${2}
       else
         echo "Scaling count must be given !!!!"
@@ -47,15 +48,15 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -ne 3 ]; then
-       ${1} ${2} ${3} ${4}
+     if [ $# -eq 5 ]; then
+       ${1} ${2} ${3} ${4} ${5}
      else
-       echo "Service name / user / password must be given !!!!"
+       echo "Service name / db_name / db_user / db_password must be given !!!!"
        exit 1
      fi
       ;;
    deleteService)
-     if [ $# -ne 1 ]; then
+     if [ $# -eq 2 ]; then
        ${1} ${2}
      else
        echo "Service name must be given !!!!"
@@ -65,6 +66,6 @@ case ${1} in
    *)
      echo "${0} [createService|deleteService|recreateService|\
         scale]"
-     exit 1
+        exit 1
       ;;
 esac

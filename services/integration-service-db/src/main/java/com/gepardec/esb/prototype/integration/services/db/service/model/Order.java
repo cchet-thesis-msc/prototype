@@ -32,8 +32,8 @@ public class Order extends AbstractEntity<Long>{
 
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name = "seq_order_id", initialValue = 0, allocationSize = 1)
-    @GeneratedValue(generator = "seq_order_id", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "order_id_generator", sequenceName = "seq_order_id", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(generator = "order_id_generator", strategy = GenerationType.SEQUENCE)
     @Min(0)
     private Long id;
 

@@ -110,7 +110,7 @@
                             {
                                 "capabilities": {},
                                 "env": [
-                                    {
+                                  {
                                         "name": "POSTGRESQL_USER",
                                         "valueFrom": {
                                             "secretKeyRef": {
@@ -124,6 +124,15 @@
                                         "valueFrom": {
                                             "secretKeyRef": {
                                                 "key": "database-password",
+                                                "name": "${DATABASE_SERVICE_NAME}"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "POSTGRES_DB",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "database-name",
                                                 "name": "${DATABASE_SERVICE_NAME}"
                                             }
                                         }

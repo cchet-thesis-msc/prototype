@@ -137,10 +137,10 @@ objects:
               # On dedicated nodes we get 'insufficent cpu'
               resources:
                 requests:
-                  memory: "128Mi"
+                  memory: "32Mi"
                   cpu: "100m"
                 limits:
-                  memory: "512Mi"
+                  memory: "64Mi"
                   cpu: "500m"
               terminationMessagePath: "/dev/termination.log"
               capabilities:
@@ -161,6 +161,10 @@ objects:
       to:
         kind: "Service"
         name: "${SERVICE_NAME}"
+      targetPort: "${SERVICE_NAME}"
+#      tls:
+#        termination: edge
+#        insecureEdgeTerminationPolicy: Redirect
 
   - kind: "Service"
     apiVersion: "v1"

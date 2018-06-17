@@ -62,7 +62,7 @@ public class DbInitializer implements Serializable {
             customers = customerRespoitory.findAll();
             List<OrderDto> orders = new LinkedList<>();
             for (CustomerDto customer : customers) {
-                for (int i = 1; i <= customerOrderCount; i++) {
+                for (int i = 1; i <= 5; i++) {
                     final List<ItemDto> itemDtos = new LinkedList<>();
                     for (int j = 1; i <= (customerOrderCount / 2 + 1); i++) {
                         final ItemDto item = new ItemDto();
@@ -76,8 +76,9 @@ public class DbInitializer implements Serializable {
                     order.setItems(itemDtos);
                     order.setDeliveredAt(Calendar.getInstance().getTime());
 
-                    orderRespoitory.save(order);
+                    orders.add(order);
                 }
+                orders.forEach(orderRespoitory::save);
                 orderRespoitory.flush();
             }
         }

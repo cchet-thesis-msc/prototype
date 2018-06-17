@@ -43,6 +43,20 @@
             "required": true
         },
         {
+            "displayName": "DB Address",
+            "description": "DB address to connect to",
+            "name": "DB_ADDR",
+            "value": "H2",
+            "required": true
+        },
+        {
+            "displayName": "DB port",
+            "description": "DB port to connect to",
+            "name": "DB_PORT",
+            "value": "H2",
+            "required": true
+        },
+        {
             "displayName": "DB Name",
             "description": "DB name to connect to",
             "name": "DB_DATABASE",
@@ -103,7 +117,7 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                    "description": "The web server's http port."
+                   "description": "The web server's http port."
                 }
             }
         },
@@ -217,7 +231,7 @@
                             {
                                 "name": "${APPLICATION_NAME}",
                                 "image": "jboss/keycloak-openshift",
-                                "command": ["start-keycloak.sh", "-b", "0.0.0.0", "-D", "Dkeycloak.migration.action", "import", "-D", "Dkeycloak.migration.provider", "dir", "-D", "Dkeycloak.migration.dir", "/restore"],
+                                "command": ["start-keycloak.sh", "-b", "0.0.0.0", "-Dkeycloak.migration.action=import", "-Dkeycloak.migration.provider=dir", "-Dkeycloak.migration.dir=/restore"],
                                 "volumeMounts": [
                                     {
                                         "mountPath": "/restore",
@@ -247,6 +261,14 @@
                                     {
                                         "name": "DB_VENDOR",
                                         "value": "${DB_VENDOR}"
+                                    },
+                                    {
+                                        "name": "DB_ADDR",
+                                        "value": "${DB_ADDR}"
+                                    },
+                                    {
+                                        "name": "DB_PORT",
+                                        "value": "${DB_PORT}"
                                     },
                                     {
                                         "name": "DB_DATABASE",

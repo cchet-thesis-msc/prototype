@@ -3,39 +3,38 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-SECRET_SERVICES=(app integration-db)
-MANAGE_SERVICES=(integration-db)
+SERVICES=(swagger-ui jaeger keycloak)
 
 function createServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh createService
   done
 }
 
 function deleteServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh deleteService
   done
 }
 
 function recreateServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh recreateService
   done
 }
 
 function createSecrets() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh createSecrets
   done
 }
 
 function deleteSecrets() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh deleteSecrets
   done
@@ -61,25 +60,16 @@ function recreateAll() {
   createAll
 }
 
-function deployAll() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
-  do
-    ./services/${SERVICE}/oc.sh deploy
-  done
-}
-
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
-   createAll|deleteAll|recreateAll|\
-   deployAll)
+   createAll|deleteAll|recreateAll)
       ${1}
       ;;
    *)
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createService|deleteService|recreateService|\
-     createAll|deleteAll||\
-     deployAll]"
+     createAll|deleteAll|recreateAll]"
      exit 1
       ;;
 esac

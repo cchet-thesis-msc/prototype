@@ -60,4 +60,15 @@ spec:
             - name: "JAVA_MAX_MEM_RATIO"
               value: "100"
             - name: "JAVA_OPTIONS"
-              value: "-Djava.net.preferIPv4Stack=true -Dswarm.project.stage=openshift"
+              value: "-Djava.net.preferIPv4Stack=true \
+                      -Dswarm.project.stage=openshift"
+            - name: "JAEGER_HOST"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-app}
+                  key: jaeger.host
+            - name: "JAEGER_PORT"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-app}
+                  key: jaeger.port

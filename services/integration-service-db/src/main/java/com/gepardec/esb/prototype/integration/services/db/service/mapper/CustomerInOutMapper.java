@@ -6,7 +6,6 @@ import org.apache.deltaspike.data.api.mapping.SimpleQueryInOutMapperBase;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.sql.Date;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +32,7 @@ public class CustomerInOutMapper extends SimpleQueryInOutMapperBase<Customer, Cu
             final Map<String, String> nameParts = extractNameParts(customer.getFullName());
             final CustomerDto dto = new CustomerDto();
             dto.setId(customer.getId());
+            dto.setVersion(customer.getVersion());
             dto.setEmail(customer.getEmail());
             dto.setFirstName(nameParts.get(FIRST_NAME));
             dto.setLastName(nameParts.get(LAST_NAME));
@@ -47,9 +47,9 @@ public class CustomerInOutMapper extends SimpleQueryInOutMapperBase<Customer, Cu
     @Override
     protected Customer toEntity(Customer customer,
                                 CustomerDto customerDto) {
-        if(customerDto != null) {
+        if (customerDto != null) {
             customer = (customer != null) ? customer : new Customer();
-            customer.setId(customerDto.getId());
+            customer.setId((customer.getId() != null) ? customer.getId() : customerDto.getId());
             customer.setEmail(customerDto.getEmail());
             customer.setFullName(customerDto.getFirstName() + DELIMITER + customerDto.getLastName());
             customer.setVersion(customerDto.getVersion());

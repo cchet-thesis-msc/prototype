@@ -39,7 +39,7 @@ parameters:
     value: zipkin
 
 objects:
-- apiVersion: extensions/v1beta1
+- apiVersion: "v1"
   kind: DeploymentConfig
   metadata:
     name: ${JAEGER_SERVICE_NAME}
@@ -136,7 +136,7 @@ objects:
       targetPort: 9411
     selector:
       jaeger-infra: jaeger-pod
-    type: ClusterIP
+    #type: ClusterIP
 
 - apiVersion: v1
   kind: Service
@@ -163,7 +163,7 @@ objects:
       port: 5778
       protocol: TCP
       targetPort: 5778
-    type: ClusterIP
+    #type: ClusterIP
     selector:
       jaeger-infra: jaeger-pod
 

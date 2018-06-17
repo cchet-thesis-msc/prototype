@@ -32,19 +32,24 @@ function scale() {
   oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
+function deploy() {
+  cd ../../../services/${SERVICE_NAME}
+  mvn fabric8:deploy -Dpfabric8
+}
+
 case ${1} in
    scale)
-      if [ $# -ne 1 ]; then
+      if [ $# -eq 2 ]; then
         scale ${2}
       fi
       ;;
    createSecrets|deleteSecrets|recreateSecrets|\
-   scale)
+   deploy)
       ${1}
       ;;
    *)
      echo "${0} [createSecrets|deleteSecrets|recreateSecrets\n\
-     scale]"
+     scale|deploy]"
      exit 1
       ;;
 esac

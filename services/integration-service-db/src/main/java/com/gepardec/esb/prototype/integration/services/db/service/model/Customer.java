@@ -32,8 +32,8 @@ public class Customer extends AbstractEntity<Long> {
 
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name = "seq_customer_id", initialValue = 0, allocationSize = 1)
-    @GeneratedValue(generator = "seq_customer_id", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "customer_id_generator", sequenceName = "seq_customer_id", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(generator = "customer_id_generator", strategy = GenerationType.SEQUENCE)
     @Min(0)
     private Long id;
 
