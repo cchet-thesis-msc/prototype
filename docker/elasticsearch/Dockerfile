@@ -19,7 +19,8 @@ RUN yum update -y \
       -g 0 \
       -d /usr/share/elasticsearch \
       elasticsearch \
-    && yum clean all
+    && yum clean all \
+    && rm -rf /var/cache/yum
 
 WORKDIR /usr/share/elasticsearch
 USER elasticsearch

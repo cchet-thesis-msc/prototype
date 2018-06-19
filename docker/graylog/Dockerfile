@@ -41,7 +41,8 @@ RUN set -ex \
     && tar -xzf "/tmp/graylog-${GRAYLOG_VERSION}.tgz" --strip-components=1 -C /usr/share/graylog \
     && rm -f "/tmp/graylog-${GRAYLOG_VERSION}.tgz" \
     && apt-get update && apt-get -y install libcap2-bin \
-    && setcap 'cap_net_bind_service=+ep' $JAVA_HOME/bin/java
+    && setcap 'cap_net_bind_service=+ep' $JAVA_HOME/bin/java \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/share/graylog
 

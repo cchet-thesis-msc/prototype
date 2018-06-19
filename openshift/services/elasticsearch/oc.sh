@@ -6,14 +6,17 @@ cd $(dirname ${0})
 GIT_URL='git@github.com:cchet-thesis-msc/prototype.git'
 GIT_REF='master'
 
+VERSION='5.6.2'
+
 function createService() {
-  oc new-app -f ../../templates/graylog/elasticsearch.yml  \
+  oc new-app -f ./elasticsearch.yml  \
     -p "APP=${1}" \
     -p "SERVICE_NAME=${1}" \
     -p "GIT_URL=${GIT_URL}" \
     -p "GIT_REF=${GIT_REF}" \
     -p "CONTEXT_DIR=docker/elasticsearch" \
-    -p "SECRET_GIT=${SECRET_GIT}"
+    -p "SECRET_GIT=${2}" \
+    -p "VERSION=${VERSION}"
 } # createBc
 
 function deleteService() {
@@ -42,10 +45,10 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -eq 5 ]; then
-       ${1} ${2} ${3} ${4} ${5}
+     if [ $# -eq 3 ]; then
+       ${1} ${2} ${3}
      else
-       echo "Service name must be given !!!!"
+       echo "Service_name | secret_git must be given !!!!"
        exit 1
      fi
       ;;

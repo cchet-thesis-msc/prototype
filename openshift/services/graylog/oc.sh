@@ -37,7 +37,7 @@ function recreateSecrets() {
 }
 
 function createService() {
-  ../elasticsearch/oc.sh createService ${SERVICE_NAME_MONGO}
+  ../elasticsearch/oc.sh createService ${SERVICE_NAME_ELASTIC} ${SECRET_SERVIVE_GIT}
   ../mongodb/oc.sh createService ${SERVICE_NAME_MONGO} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}
 
   oc new-app -f ./graylog.yml  \

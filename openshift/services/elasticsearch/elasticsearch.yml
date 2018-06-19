@@ -1,10 +1,10 @@
 kind: "Template"
 apiVersion: "v1"
 metadata:
-  name: "Graylog"
+  name: "ElasticSearch"
   annotations:
-    openshift.io/display-name: "Graylog Server"
-    description: "Graylog Server"
+    openshift.io/display-name: "ElasticSearch"
+    description: "ElasticSearch for Graylog"
 
 parameters:
   - name: "APP"
@@ -17,14 +17,9 @@ parameters:
     description: "The name of the related service"
     required: true
 
-  - name: "SERVICE_ELASTIC_NAME"
-    displayName: "Elsatic service name"
-    description: "The name of the related elastic service"
-    required: true
-
-  - name: "SERVICE_MONGO_NAME"
-    displayName: "Mongo service name"
-    description: "The name of the related mongo service"
+  - name: "VERSION"
+    displayName: "Version"
+    description: "The elasticsearch version"
     required: true
 
   - name: "GIT_URL"
@@ -42,21 +37,6 @@ parameters:
     description: "The context directory of the git repository for building the service"
     required: true
 
-  - name: "VERSION_GRAYLOG"
-    displayName: "Graylog version"
-    description: "The graylog version"
-    required: true
-
-  - name: "VERSION_GOSU"
-    displayName: "Gosu version"
-    description: "The version of Gosu"
-    required: true
-
-  - name: "SECRET"
-    displayName: "Secret name"
-    description: "The name of the secret holding the configuration"
-    required: true
-
   - name: "SECRET_GIT"
     displayName: "Secret name for git"
     description: "The http basic auth secret for accessing git "
@@ -66,25 +46,15 @@ objects:
   - kind: "Service"
     apiVersion: "v1"
     metadata:
-      annotations:
-        service.alpha.openshift.io/dependencies: "[{\"name\": \"${SERVICE_ELASTIC_NAME}\", \"kind\": \"Service\"}, {\"name\": \"${SERVICE_MONGO_NAME}\", \"kind\": \"Service\"}]"
       name: "${SERVICE_NAME}"
       labels:
         app: "${APP}"
     spec:
       ports:
-        - name: "${SERVICE_NAME}-web"
+        - name: "${SERVICE_NAME}-rest"
           protocol: "TCP"
-          port: 9000
-          targetPort: 9000
-        - name: "${SERVICE_NAME}-udp"
-          protocol: "UDP"
-          port: 10514
-          targetPort: 10514
-        - name: "${SERVICE_NAME}-tcp"
-          protocol: "TCP"
-          port: 10515
-          targetPort: 10515
+          port: 9200
+          targetPort: 9200
       selector:
         name:  "${SERVICE_NAME}"
       type: "ClusterIP"
@@ -110,10 +80,6 @@ objects:
         type: "Docker"
         dockerStrategy:
           env:
-            - name: "GRAYLOG_VERSION"
-              value: "${VERSION_GRAYLOG}"
-            - name: "GOSU_VERSION"
-              value: "${VERSION_GOSU}"
             - name: "BUILD_LOGLEVEL"
               value: "5"
             - name: "VERSION"
@@ -163,27 +129,13 @@ objects:
           labels:
             name: "${SERVICE_NAME}"
         spec:
-          volumes:
-            - name: config-volume
-              secret:
-                secretName: "${SECRET}"
           containers:
             - name: "${SERVICE_NAME}"
               image: " "
               imagePullPolicy: Always
               ports:
-                - containerPort: 9000
+                - containerPort: 9200
                   protocol: TCP
-                - containerPort: 10514
-                  protocol: UDP
-              terminationMessagePath: "/dev/termination.log"
-              capabilities:
-                securityContext:
-                  capabilities:
-                    privileged: false
-              volumeMounts:
-                    - name: config-volume
-                      mountPath: /usr/share/graylog/data/config
               readinessProbe:
                 successThreshold: 1
                 failureThreshold: 5
@@ -191,9 +143,13 @@ objects:
                 initialDelaySeconds: 60
                 periodSeconds: 10
                 httpGet:
-                  path: /
-                  port: 9000
+                  path: /_cat/health?v
+                  port: 9200
                   scheme: HTTP
+                  httpHeaders:
+                     - name: Authorization
+                       # elastic:changeme
+                       value: "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="
               livenessProbe:
                 successThreshold: 1
                 failureThreshold: 2
@@ -201,40 +157,15 @@ objects:
                 initialDelaySeconds: 60
                 periodSeconds: 10
                 httpGet:
-                  path: /
-                  port: 9000
+                  path: /_cat/health?v
+                  port: 9200
                   scheme: HTTP
-
-  - apiVersion: v1
-    kind: Route
-    metadata:
-      name: "${SERVICE_NAME}-web"
-      labels:
-        app: "${APP}"
-    spec:
-      to:
-        kind: Service
-        name: "${SERVICE_NAME}"
-        weight: 100
-      port:
-        targetPort: "${SERVICE_NAME}-web"
-      wildcardPolicy: None
-      tls:
-        termination: edge
-
-  - apiVersion: v1
-    kind: Route
-    metadata:
-      name: "${SERVICE_NAME}-tcp"
-      labels:
-        app: "${APP}"
-    spec:
-      to:
-        kind: Service
-        name: "${SERVICE_NAME}"
-        weight: 100
-      port:
-        targetPort: "${SERVICE_NAME}-tcp"
-      wildcardPolicy: None
-      tls:
-        termination: edge
+                  httpHeaders:
+                    - name: Authorization
+                      # elastic:changeme
+                      value: "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="
+              terminationMessagePath: "/dev/termination.log"
+              capabilities:
+                securityContext:
+                  capabilities:
+                    privileged: false
