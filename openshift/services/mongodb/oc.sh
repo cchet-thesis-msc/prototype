@@ -2,29 +2,21 @@
 
 # Execute in script dir
 cd $(dirname ${0})
-# secret-service-app
-SERVICE_NAME=""
-VERSION="latest"
-MEM_LIM='128Mi'
-VOL_LIM='256Mi'
 
 function createService() {
-  oc new-app -f ./postgres-full.json \
-    -p "MEMORY_LIMIT=${MEM_LIM}" \
+  oc new-app mongodb-persistent  \
     -p "DATABASE_SERVICE_NAME=${1}" \
-    -p "POSTGRESQL_USER=${3}" \
-    -p "POSTGRESQL_PASSWORD=${4}" \
-    -p "POSTGRESQL_DATABASE=${2}" \
-    -p "VOLUME_CAPACITY=${VOL_LIM}" \
-    -p "POSTGRESQL_VERSION=${VERSION}"
+    -p "MONGODB_USER=${3}" \
+    -p "MONGODB_PASSWORD=${4}" \
+    -p "MONGODB_DATABASE=${2}" \
+    -p "MONGODB_ADMIN_PASSWORD=${4}"
 } # createBc
 
 function deleteService() {
-    oc delete all -l app=${1}
-    oc delete pvc/${1}
-    oc delete secret/${1}
-    oc delete svc/${1}
-    oc delete dc/${1}
+  oc delete svc/${1}
+  oc delete dc/${1}
+  oc delete secret/${1}
+  oc delete pvc/${1}
 }
 
 function recreateService() {

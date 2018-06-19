@@ -2,29 +2,25 @@
 
 # Execute in script dir
 cd $(dirname ${0})
-# secret-service-app
-SERVICE_NAME=""
-VERSION="latest"
-MEM_LIM='128Mi'
-VOL_LIM='256Mi'
+
+GIT_URL='git@github.com:cchet-thesis-msc/prototype.git'
+GIT_REF='master'
 
 function createService() {
-  oc new-app -f ./postgres-full.json \
-    -p "MEMORY_LIMIT=${MEM_LIM}" \
-    -p "DATABASE_SERVICE_NAME=${1}" \
-    -p "POSTGRESQL_USER=${3}" \
-    -p "POSTGRESQL_PASSWORD=${4}" \
-    -p "POSTGRESQL_DATABASE=${2}" \
-    -p "VOLUME_CAPACITY=${VOL_LIM}" \
-    -p "POSTGRESQL_VERSION=${VERSION}"
+  oc new-app -f ../../templates/graylog/elasticsearch.yml  \
+    -p "APP=${1}" \
+    -p "SERVICE_NAME=${1}" \
+    -p "GIT_URL=${GIT_URL}" \
+    -p "GIT_REF=${GIT_REF}" \
+    -p "CONTEXT_DIR=docker/elasticsearch" \
+    -p "SECRET_GIT=${SECRET_GIT}"
 } # createBc
 
 function deleteService() {
     oc delete all -l app=${1}
-    oc delete pvc/${1}
-    oc delete secret/${1}
-    oc delete svc/${1}
-    oc delete dc/${1}
+    oc delete configmap ${1}
+    oc delete secret -l app=${1}
+    oc delete pvc -l app=${1}
 }
 
 function recreateService() {
@@ -49,7 +45,7 @@ case ${1} in
      if [ $# -eq 5 ]; then
        ${1} ${2} ${3} ${4} ${5}
      else
-       echo "Service name / db_name / db_user / db_password must be given !!!!"
+       echo "Service name must be given !!!!"
        exit 1
      fi
       ;;

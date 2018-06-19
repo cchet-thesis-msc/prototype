@@ -1,0 +1,217 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "Graylog"
+  annotations:
+    openshift.io/display-name: "Graylog Server"
+    description: "Graylog Server"
+
+parameters:
+  - name: "APP"
+    displayName: "App name"
+    description: "The name of the app label"
+    required: true
+
+  - name: "SERVICE_NAME"
+    displayName: "Service name"
+    description: "The name of the related service"
+    required: true
+
+  - name: "SERVICE_ELASTIC_NAME"
+    displayName: "Elsatic service name"
+    description: "The name of the related elastic service"
+    required: true
+
+  - name: "SERVICE_MONGO_NAME"
+    displayName: "Mongo service name"
+    description: "The name of the related mongo service"
+    required: true
+
+  - name: "GIT_URL"
+    displayName: "Git url"
+    description: "The http git repository url for building the service"
+    required: true
+
+  - name: "GIT_REF"
+    displayName: "Git ref"
+    description: "The git repository ref for building the service"
+    required: true
+
+  - name: "CONTEXT_DIR"
+    displayName: "Context Dir"
+    description: "The context directory of the git repository for building the service"
+    required: true
+
+  - name: "VERSION_GRAYLOG"
+    displayName: "Graylog version"
+    description: "The graylog version"
+    required: true
+
+  - name: "VERSION_GOSU"
+    displayName: "Gosu version"
+    description: "The version of Gosu"
+    required: true
+
+  - name: "SECRET"
+    displayName: "Secret name"
+    description: "The name of the secret holding the configuration"
+    required: true
+
+  - name: "SECRET_GIT"
+    displayName: "Secret name for git"
+    description: "The http basic auth secret for accessing git "
+    required: true
+
+objects:
+  - kind: "Service"
+    apiVersion: "v1"
+    metadata:
+      annotations:
+        service.alpha.openshift.io/dependencies: "[{\"name\": \"${SERVICE_ELASTIC_NAME}\", \"kind\": \"Service\"}, {\"name\": \"${SERVICE_MONGO_NAME}\", \"kind\": \"Service\"}]"
+      name: "${SERVICE_NAME}"
+      labels:
+        app: "${APP}"
+    spec:
+      ports:
+        - name: "${SERVICE_NAME}-web"
+          protocol: "TCP"
+          port: 9000
+          targetPort: 9000
+        - name: "${SERVICE_NAME}-udp"
+          protocol: "UDP"
+          port: 10514
+          targetPort: 10514
+      selector:
+        name:  "${SERVICE_NAME}"
+      type: "ClusterIP"
+      sessionAffinity: "None"
+
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "${SERVICE_NAME}"
+      labels:
+        name: "${SERVICE_NAME}"
+        app: "${APP}"
+    spec:
+      source:
+        type: "Git"
+        git:
+          uri: "${GIT_URL}"
+          ref: "${GIT_REF}"
+        sourceSecret:
+          name: "${SECRET_GIT}"
+        contextDir: "${CONTEXT_DIR}"
+      strategy:
+        type: "Docker"
+        dockerStrategy:
+          env:
+            - name: "GRAYLOG_VERSION"
+              value: "${VERSION_GRAYLOG}"
+            - name: "GOSU_VERSION"
+              value: "${VERSION_GOSU}"
+            - name: "BUILD_LOGLEVEL"
+              value: "5"
+            - name: "VERSION"
+              value: "${VERSION}"
+      output:
+        to:
+          kind: "ImageStreamTag"
+          name: "${SERVICE_NAME}:latest"
+          labels:
+            app: "${APP}"
+      triggers:
+        - type: "ConfigChange"
+
+  - kind: "ImageStream"
+    apiVersion: "v1"
+    metadata:
+      name: "${SERVICE_NAME}"
+      labels:
+        app: "${APP}"
+
+  - kind: "DeploymentConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "${SERVICE_NAME}"
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      labels:
+        app: "${APP}"
+    spec:
+      strategy:
+        type: "Recreate"
+      replicas: "1"
+      selector:
+        name: "${SERVICE_NAME}"
+      triggers:
+        - type: "ConfigChange"
+        - type: "ImageChange"
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - "${SERVICE_NAME}"
+            from:
+              kind: "ImageStreamTag"
+              name: "${SERVICE_NAME}:latest"
+      template:
+        metadata:
+          labels:
+            name: "${SERVICE_NAME}"
+        spec:
+          containers:
+            - name: "${SERVICE_NAME}"
+              image: " "
+              imagePullPolicy: Always
+              ports:
+                - containerPort: 9000
+                  protocol: TCP
+                - containerPort: 10514
+                  protocol: UDP
+              terminationMessagePath: "/dev/termination.log"
+              capabilities:
+                securityContext:
+                  capabilities:
+                    privileged: false
+              volumeMounts:
+                    - name: config-volume
+                      mountPath: /usr/share/graylog/data/config
+              readinessProbe:
+                successThreshold: 1
+                failureThreshold: 5
+                timeoutSeconds: 10
+                initialDelaySeconds: 60
+                periodSeconds: 10
+                httpGet:
+                  path: /
+                  port: 9000
+                  scheme: HTTP
+              livenessProbe:
+                successThreshold: 1
+                failureThreshold: 2
+                timeoutSeconds: 10
+                initialDelaySeconds: 60
+                periodSeconds: 10
+                httpGet:
+                  path: /
+                  port: 9000
+                  scheme: HTTP
+          volumes:
+            - name: config-volume
+              configMap:
+                name: "${SECRET}"
+
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${SERVICE_NAME}"
+      labels:
+        app: "${APP}"
+    spec:
+      to:
+        kind: Service
+        name: "${SERVICE_NAME}"
+        weight: 100
+      port:
+        targetPort: "${SERVICE_NAME}-web"
+      wildcardPolicy: None

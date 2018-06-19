@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-SERVICES=(swagger-ui jaeger keycloak)
+SERVICES=(swagger-ui jaeger keycloak graylog)
 
 function createServices() {
   for SERVICE in "${SERVICES[@]}"

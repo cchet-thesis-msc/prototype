@@ -75,6 +75,7 @@ function recreateAll() {
 
 function scale() {
   oc scale --replicas=${1} dc/${SERVICE_NAME}
+  ./postgres/oc.sh scale ${1} ${SERVICE_NAME_DB}
 }
 
 case ${1} in
