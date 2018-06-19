@@ -63,38 +63,37 @@ project:
 swarm:
   logging: INFO
 ---
-# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-#JAEGER_SERVICE_NAME: ${project.build.finalName}
-#JAEGER_AGENT_HOST: jaeger-agent
-#JAEGER_AGENT_PORT: 6831
-#JAEGER_REPORTER_LOG_SPANS: true
-#JAEGER_REPORTER_FLUSH_INTERVAL: 100
-#JAEGER_SAMPLER_TYPE: const
-#JAEGER_SAMPLER_PARAM: 1
+JAEGER_SERVICE_NAME: "${project.build.finalName}"
+JAEGER_AGENT_HOST: "${env.JAEGER_HOST}"
+JAEGER_AGENT_PORT: "${env.JAEGER_PORT}"
+JAEGER_REPORTER_LOG_SPANS: "true"
+JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+JAEGER_SAMPLER_TYPE: "const"
+JAEGER_SAMPLER_PARAM: "1"
 
 project:
   stage: openshift
 swarm:
   logging:
     file-handlers:
-#    custom-handlers:
-#      SYSLOGGER:
-#        named-formatter: DEFAULT_LOG_PATTERN
-#        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
-#        module: org.jboss.logmanager
-#        properties:
-#          serverHostname: graylog
-#          hostname: ${project.build.finalName}
-#          port: 10514
-#          protocol: UDP
+    custom-handlers:
+      SYSLOGGER:
+        named-formatter: DEFAULT_LOG_PATTERN
+        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+        module: org.jboss.logmanager
+        properties:
+          serverHostname: graylog
+          hostname: ${project.build.finalName}
+          port: 10514
+          protocol: UDP
     root-logger:
       level: WARN
       handlers:
         - CONSOLE
-        #- SYSLOGGER
+        - SYSLOGGER
     loggers:
       at.liwest:
         level: INFO
         handlers:
           - CONSOLE
-          #- SYSLOGGER
+          - SYSLOGGER

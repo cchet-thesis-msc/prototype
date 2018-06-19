@@ -23,15 +23,6 @@ DB_PASSWORD: "postgres"
 DB_SCHEMA: "DEMO"
 DB_DATABASE: "postgres"
 
-# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-#JAEGER_SERVICE_NAME: "${project.build.finalName}"
-#JAEGER_AGENT_HOST: https://jaeger-tracing-agent-57-fis-prototype-infra.cloud.itandtel.at
-#JAEGER_AGENT_PORT: 6831
-#JAEGER_REPORTER_LOG_SPANS: "true"
-#JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
-#JAEGER_SAMPLER_TYPE: "const"
-#JAEGER_SAMPLER_PARAM: "1"
-
 project:
   stage: dev
 swarm:
@@ -113,29 +104,46 @@ JAEGER_SAMPLER_PARAM: "1"
 project:
   stage: openshift
 swarm:
+  keycloak:
+    json:
+      path: ${oc.secret-service-integration-keycloak.dir}/keycloak.json
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/customer/*
+            roles: [consumer]
+          - url-pattern: /rest-api/order/*
+            roles: [consumer]
+          - url-pattern: /rest-api/admin/*
+            roles: [admin]
+          - url-pattern: /rest-api/metrics
+            roles: [admin]
   logging:
     file-handlers:
-#    custom-handlers:
-#      SYSLOGGER:
-#        named-formatter: DEFAULT_LOG_PATTERN
-#        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
-#        module: org.jboss.logmanager
-#        properties:
-#          serverHostname: graylog
-#          hostname: ${project.build.finalName}
-#          port: 10514
-#          protocol: UDP
+    custom-handlers:
+      SYSLOGGER:
+        named-formatter: DEFAULT_LOG_PATTERN
+        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+        module: org.jboss.logmanager
+        properties:
+          serverHostname: graylog
+          hostname: ${project.build.finalName}
+          port: 10514
+          protocol: UDP
     root-logger:
       level: WARN
       handlers:
         - CONSOLE
-        #- SYSLOGGER
+        - SYSLOGGER
     loggers:
       com.gepardec:
         level: INFO
         handlers:
           - CONSOLE
-          #- SYSLOGGER
+          - SYSLOGGER
   microprofile:
     config:
       config-sources:

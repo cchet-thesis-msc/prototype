@@ -46,7 +46,7 @@
         <schrinkwrap.shrinkwrap-resolver-bom.version>2.2.6</schrinkwrap.shrinkwrap-resolver-bom.version>
 
         <!-- Plugin versions -->
-        <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
+        <fabric8.maven.plugin.version>3.5.32</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
@@ -60,6 +60,8 @@
         <!-- Openshift constants -->
         <oc.secret-service-app>secret-app-service</oc.secret-service-app>
         <oc.secret-service-app.dir>/config/secret</oc.secret-service-app.dir>
+        <oc.secret-service-app-keycloak>${oc.secret-service-app}-keycloak</oc.secret-service-app-keycloak>
+        <oc.secret-service-app-keycloak.dir>/config/keycloak</oc.secret-service-app-keycloak.dir>
     </properties>
 
     <dependencyManagement>
@@ -239,15 +241,8 @@
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
             <version>${org-jboss.resteasy-client.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -314,18 +309,33 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Provided but touched Dependencies -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${org-jboss.resteasy-client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>${org-jboss.resteasy-client.version}</version>
             <scope>test</scope>
         </dependency>
 

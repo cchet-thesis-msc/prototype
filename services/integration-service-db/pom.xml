@@ -59,7 +59,9 @@
 
         <!-- Openshift properties -->
         <oc.secret-service-integration>secret-integration-service-db</oc.secret-service-integration>
+        <oc.secret-service-integration-keycloak>${oc.secret-service-integration}-keycloak</oc.secret-service-integration-keycloak>
         <oc.secret-service-integration.dir>/config/secret</oc.secret-service-integration.dir>
+        <oc.secret-service-integration-keycloak.dir>/config/keycloak</oc.secret-service-integration-keycloak.dir>
     </properties>
 
     <dependencyManagement>
@@ -245,6 +247,7 @@
             <groupId>org.apache.deltaspike.modules</groupId>
             <artifactId>deltaspike-data-module-impl</artifactId>
         </dependency>
+
         <!-- Dependencies commons -->
         <dependency>
             <groupId>com.google.oauth-client</groupId>
@@ -269,6 +272,12 @@
             <artifactId>resteasy-client</artifactId>
             <version>${org-jboss.resteasy-client.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>${org-jboss.resteasy-client.version}</version>
         </dependency>
 
         <dependency>
@@ -322,13 +331,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2-database.h2.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>${org-jboss.resteasy-client.version}</version>
             <scope>test</scope>
         </dependency>
 

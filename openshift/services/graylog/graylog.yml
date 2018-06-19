@@ -176,6 +176,8 @@ objects:
                   protocol: TCP
                 - containerPort: 10514
                   protocol: UDP
+                - containerPort: 10515
+                  protocol: TCP
               terminationMessagePath: "/dev/termination.log"
               capabilities:
                 securityContext:
@@ -186,10 +188,10 @@ objects:
                       mountPath: /usr/share/graylog/data/config
               readinessProbe:
                 successThreshold: 1
-                failureThreshold: 5
-                timeoutSeconds: 10
-                initialDelaySeconds: 60
-                periodSeconds: 10
+                failureThreshold: 10
+                timeoutSeconds: 2
+                initialDelaySeconds: 30
+                periodSeconds: 5
                 httpGet:
                   path: /
                   port: 9000
@@ -199,7 +201,7 @@ objects:
                 failureThreshold: 2
                 timeoutSeconds: 10
                 initialDelaySeconds: 60
-                periodSeconds: 10
+                periodSeconds: 5
                 httpGet:
                   path: /
                   port: 9000
@@ -236,5 +238,5 @@ objects:
       port:
         targetPort: "${SERVICE_NAME}-tcp"
       wildcardPolicy: None
-      tls:
-        termination: edge
+      #tls:
+      #  termination: edge

@@ -6,6 +6,7 @@ cd $(dirname ${0})
 SERVICE_NAME="integration-service-db"
 SERVICE_NAME_DB="${SERVICE_NAME}-db"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
+SECRET_SERVIVE_KEYCLOAK="${SECRET_SERVIVE}-keycloak"
 DB_NAME='postgres'
 DB_USER='postgres'
 DB_PASSWORD='postgres'
@@ -21,10 +22,14 @@ function createSecrets() {
 
   # Need to do so, no --from-env-file option available in version 3.5
   eval "oc create secret generic ${SECRET_SERVIVE} ${ARGS}"
+
+  oc create secret generic ${SECRET_SERVIVE_KEYCLOAK} \
+    --from-file=./keycloak.json
 }
 
 function deleteSecrets() {
   oc delete secret/${SECRET_SERVIVE}
+  oc delete secret/${SECRET_SERVIVE_KEYCLOAK}
 }
 
 function recreateSecrets() {

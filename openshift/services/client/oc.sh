@@ -3,9 +3,8 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-SERVICE_NAME="app-service"
-SECRET_SERVIVE="secret-${SERVICE_NAME}"
-SECRET_SERVIVE_KEYCLOAK="${SECRET_SERVIVE}-keycloak"
+SERVICE_NAME="client"
+SECRET_SERVIVE_NAME="secret-${SERVICE_NAME}"
 
 function createSecrets() {
   ARGS=""
@@ -17,15 +16,11 @@ function createSecrets() {
   done
 
   # Need to do so, no --from-env-file option available in version 3.5
-  eval "oc create secret generic ${SECRET_SERVIVE} ${ARGS}"
-
-  oc create secret generic ${SECRET_SERVIVE_KEYCLOAK} \
-    --from-file=./keycloak.json
+  eval "oc create secret generic ${SECRET_SERVIVE_NAME} ${ARGS}"
 }
 
 function deleteSecrets() {
-  oc delete secret/${SECRET_SERVIVE}
-  oc delete secret/${SECRET_SERVIVE_KEYCLOAK}
+  oc delete secret/${SECRET_SERVIVE_NAME}
 }
 
 function recreateSecrets() {

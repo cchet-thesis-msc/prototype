@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-SECRET_SERVICES=(app integration-db)
+SECRET_SERVICES=(client app integration-db)
 MANAGE_SERVICES=(integration-db)
 
 function createServices() {
@@ -70,15 +70,15 @@ function deployAll() {
 
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
-   createService|deleteService|recreateService|\
+   createServices|deleteServices|recreateServices|\
    createAll|deleteAll|recreateAll|\
    deployAll)
       ${1}
       ;;
    *)
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
-     createService|deleteService|recreateService|\
-     createAll|deleteAll||\
+     createServices|deleteServices|recreateServices|\
+     createAll|deleteAll|\
      deployAll]"
      exit 1
       ;;

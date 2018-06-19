@@ -12,6 +12,9 @@ spec:
         - name: app-config
           secret:
             secretName: ${oc.secret-service-app}
+        - name: keycloak-config
+          secret:
+            secretName: ${oc.secret-service-app-keycloak}
       containers:
         - name: ${project.artifactId}
           resources:
@@ -49,6 +52,8 @@ spec:
           volumeMounts:
             - name: app-config
               mountPath: ${oc.secret-service-app.dir}
+            - name: keycloak-config
+              mountPath: ${oc.secret-service-app-keycloak.dir}
           env:
               # Necessary, otherwise java console won't work in Openshift
             - name: "AB_JOLOKIA_HTTPS"

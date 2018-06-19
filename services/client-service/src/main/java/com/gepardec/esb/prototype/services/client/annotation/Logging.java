@@ -25,6 +25,7 @@ public @interface Logging {
     enum MDCConfig {
         GROUP_TEST(GROUP, "ESB-TEST"),
         GROUP_TEST_REST_CLIENT(GROUP, "ESB-TEST-REST-CLIENT"),
+        GROUP_TEST_REST_SECURITY(GROUP, "ESB-TEST-REST-SECURITY"),
         DEFAULT(GROUP_TEST.key, GROUP_TEST.value);
 
         public final String key;

@@ -1,7 +1,7 @@
-package com.gepardec.esb.prototype.services.app.configuration;
+package com.gepardec.esb.prototype.services.client.configuration;
 
-import com.gepardec.esb.prototype.services.app.annotation.OAuthToken;
-import com.gepardec.esb.prototype.services.app.annotation.Logging;
+import com.gepardec.esb.prototype.services.client.annotation.Logging;
+import com.gepardec.esb.prototype.services.client.annotation.OAuthToken;
 import com.google.api.client.auth.oauth2.ClientCredentialsTokenRequest;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.TokenResponseException;
@@ -11,6 +11,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.annotation.PostConstruct;
@@ -23,10 +24,11 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
- * @since 06/09/18
+ * @since 06/19/18
  */
 @ApplicationScoped
-public class KeycloakConfiguration {
+public class OAuthConfiguration {
+
 
     @Inject
     @ConfigProperty(name = "keycloak.token-url")
@@ -52,7 +54,7 @@ public class KeycloakConfiguration {
     @OAuthToken
     @Dependent
     @Counted(name = "retrieved-oauth-tokens", monotonic = true)
-    @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_SECURITY, skipResult = true)
+    @Logging(mdcConfig = Logging.MDCConfig.GROUP_TEST_REST_SECURITY, skipResult = true)
     @Retry(delay = 100L, maxRetries = 5, retryOn = {TokenResponseException.class, IOException.class})
     @Timeout(value = 2L, unit = ChronoUnit.SECONDS)
     String obtainOauthToken() throws IOException {

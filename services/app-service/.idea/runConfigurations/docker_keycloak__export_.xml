@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="docker:keycloak" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+  <configuration default="false" name="docker:keycloak (export)" type="docker-deploy" factoryName="docker-image" server-name="Docker">
     <deployment type="docker-image">
       <settings>
         <option name="JSONFilePath" value="" />
-        <option name="command" value="-b 0.0.0.0 -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/backup" />
+        <option name="command" value="-b 0.0.0.0 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/backup" />
         <option name="commandLineOptions" value="" />
         <option name="containerName" value="keycloak" />
         <option name="entrypoint" value="" />
@@ -23,12 +23,12 @@
             </DockerEnvVarImpl>
           </list>
         </option>
-        <option name="imageTag" value="jboss/keycloak" />
+        <option name="imageTag" value="fis/keycloak:latest" />
         <option name="portBindings">
           <list>
             <DockerPortBindingImpl>
               <option name="containerPort" value="8080" />
-              <option name="hostPort" value="9080" />
+              <option name="hostPort" value="8080" />
             </DockerPortBindingImpl>
             <DockerPortBindingImpl>
               <option name="containerPort" value="8443" />

@@ -117,7 +117,8 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                   "description": "The web server's http port."
+                   "description": "The web server's http port.",
+                   "service.alpha.openshift.io/dependencies": "[{\"name\": \"${DATABASE_SERVICE_NAME}\", \"kind\": \"Service\"}, {\"name\": \"secure-${APPLICATION_NAME}\", \"kind\": \"Service\"}, {\"name\": \"${DB_ADDR}\", \"kind\": \"Service\"}]"
                 }
             }
         },

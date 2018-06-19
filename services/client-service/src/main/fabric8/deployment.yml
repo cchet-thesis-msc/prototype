@@ -8,6 +8,10 @@ spec:
   replicas: 1
   template:
     spec:
+      volumes:
+        - name: client-config
+          secret:
+            secretName: ${oc.secret-client}
       containers:
         - name: ${project.artifactId}
           resources:
@@ -42,6 +46,9 @@ spec:
               protocol: TCP
             - containerPort: 9990
               protocol: TCP
+          volumeMounts:
+            - name: client-config
+              mountPath: ${oc.secret-client.dir}
           env:
               # Necessary, otherwise java console won't work in Openshift
             - name: "AB_JOLOKIA_HTTPS"
@@ -54,3 +61,14 @@ spec:
               value: "100"
             - name: "JAVA_OPTIONS"
               value: "-Djava.net.preferIPv4Stack=true -Dswarm.project.stage=openshift"
+            - name: "JAEGER_HOST"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-client}
+                  key: jaeger.host
+            - name: "JAEGER_PORT"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-client}
+                  key: jaeger.port
+

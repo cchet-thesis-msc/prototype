@@ -1,6 +1,7 @@
 package com.gepardec.esb.prototype.services.client.configuration;
 
 import com.gepardec.esb.prototype.services.app.rest.client.api.service.app.ReportRestServiceApi;
+import com.gepardec.esb.prototype.services.client.rest.client.filter.AppendOAuthFilter;
 import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
 import io.opentracing.contrib.jaxrs2.client.ClientTracingFilter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -27,6 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RestClientConfiguration {
 
     @Inject
+    private AppendOAuthFilter appendOAuthFilter;
+
+    @Inject
     @ConfigProperty(name = "service.app.base-url")
     private String baseUrlAppService;
 
@@ -44,6 +48,7 @@ public class RestClientConfiguration {
                                          ProxyBuilder.builder(clazz,
                                                               ResteasyClientBuilder.newClient()
                                                                                    .register(ClientTracingFeature.class)
+                                                                                   .register(appendOAuthFilter)
                                                                                    .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
                                                                                                                   String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
                                                      .defaultConsumes(MediaType.TEXT_PLAIN)

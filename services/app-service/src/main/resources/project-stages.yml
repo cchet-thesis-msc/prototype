@@ -11,15 +11,6 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
-# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-#JAEGER_SERVICE_NAME: ${${project.build.finalName}}
-#JAEGER_AGENT_HOST: localhost
-#JAEGER_AGENT_PORT: 6831
-#JAEGER_REPORTER_LOG_SPANS: true
-#JAEGER_REPORTER_FLUSH_INTERVAL: 100
-#JAEGER_SAMPLER_TYPE: const
-#JAEGER_SAMPLER_PARAM: 1
-
 project:
   stage: dev
 swarm:
@@ -34,7 +25,7 @@ swarm:
             roles: [client]
   logging:
     root-logger:
-      level: INFO
+      level: DEBUG
       handlers:
         - CONSOLE
     loggers:
@@ -81,39 +72,46 @@ JAEGER_SAMPLER_PARAM: "1"
 project:
   stage: openshift
 swarm:
-#  deployment:
-#    ${project.build.finalName}.war:
-#      web:
-#        login-config:
-#          auth-method: KEYCLOAK
-#        security-constraints:
-#          - url-pattern: /rest-api/report/*
-#            roles: [client]
-#          - url-pattern: /rest-api/metrics
-#            roles: [admin]
+  keycloak:
+    json:
+      path: ${oc.secret-service-app-keycloak.dir}/keycloak.json
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/report/*
+            roles: [client]
+          - url-pattern: /rest-api/metrics
+            roles: [admin]
   logging:
-    file-handlers:
-#    custom-handlers:
-#      SYSLOGGER:
-#        named-formatter: DEFAULT_LOG_PATTERN
-#        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
-#        module: org.jboss.logmanager
-#        properties:
-#          serverHostname: graylog
-#          hostname: ${project.build.finalName}
-#          port: 10514
-#          protocol: UDP
+    custom-handlers:
+      SYSLOGGER:
+        named-formatter: DEFAULT_LOG_PATTERN
+        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+        module: org.jboss.logmanager
+        properties:
+          serverHostname: graylog
+          hostname: ${project.build.finalName}
+          port: 10514
+          protocol: UDP
     root-logger:
       level: WARN
       handlers:
         - CONSOLE
-        #- SYSLOGGER
+        - SYSLOGGER
     loggers:
       com.gepardec:
         level: INFO
         handlers:
           - CONSOLE
-          #- SYSLOGGER
+          - SYSLOGGER
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+          - SYSLOGGER
   # microprofile-config sources configuration
   microprofile:
     config:

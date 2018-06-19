@@ -12,6 +12,9 @@ spec:
         - name: db-config
           secret:
             secretName: ${oc.secret-service-integration}
+        - name: keycloak-config
+          secret:
+            secretName: ${oc.secret-service-integration-keycloak}
       containers:
         - name: ${project.artifactId}
           resources:
@@ -49,6 +52,8 @@ spec:
           volumeMounts:
             - name: db-config
               mountPath: ${oc.secret-service-integration.dir}
+            - name: keycloak-config
+              mountPath: ${oc.secret-service-integration-keycloak.dir}
           env:
               # Necessary, otherwise java console won't work in Openshift
             - name: "AB_JOLOKIA_HTTPS"

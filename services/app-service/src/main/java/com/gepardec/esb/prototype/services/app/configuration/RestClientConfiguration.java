@@ -63,10 +63,10 @@ public class RestClientConfiguration {
     }
 
     private Client buildResteasyClient() {
-        return new ResteasyClientBuilder().connectionCheckoutTimeout(5, TimeUnit.SECONDS)
-                                          .establishConnectionTimeout(5, TimeUnit.SECONDS)
-                                          .socketTimeout(5, TimeUnit.SECONDS)
-                                          .connectionTTL(5, TimeUnit.SECONDS)
+        return new ResteasyClientBuilder().connectionCheckoutTimeout(2, TimeUnit.SECONDS)
+                                          .establishConnectionTimeout(2, TimeUnit.SECONDS)
+                                          .socketTimeout(2, TimeUnit.SECONDS)
+                                          .connectionTTL(2, TimeUnit.SECONDS)
                                           .connectionPoolSize(5)
                                           // Appends Tracing feature for jaxrs client
                                           .register(ClientTracingFeature.class)
