@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @ApiModel(value = "ReportModel", description = "The model holding the report response")
 public class ReportModelDto {
 
-    @JsonProperty("name")
     private String name;
 
     private Long orderCount;

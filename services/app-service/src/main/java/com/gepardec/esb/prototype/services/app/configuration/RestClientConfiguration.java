@@ -67,7 +67,7 @@ public class RestClientConfiguration {
                                           .establishConnectionTimeout(2, TimeUnit.SECONDS)
                                           .socketTimeout(2, TimeUnit.SECONDS)
                                           .connectionTTL(2, TimeUnit.SECONDS)
-                                          .connectionPoolSize(5)
+                                          .connectionPoolSize(200)
                                           // Appends Tracing feature for jaxrs client
                                           .register(ClientTracingFeature.class)
                                           .build();

@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-SERVICE_NAME="client"
+SERVICE_NAME="client-service"
 SECRET_SERVIVE_NAME="secret-${SERVICE_NAME}"
 
 function createSecrets() {

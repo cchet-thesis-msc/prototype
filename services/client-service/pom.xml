@@ -59,7 +59,7 @@
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
 
         <!-- Openshift constants -->
-        <oc.secret-client>secret-client</oc.secret-client>
+        <oc.secret-client>secret-client-service</oc.secret-client>
         <oc.secret-client.dir>/config/client</oc.secret-client.dir>
     </properties>
 
