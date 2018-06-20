@@ -19,7 +19,7 @@
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
               <option name="name" value="POSTGRES_DB" />
-              <option name="value" value="postgres" />
+              <option name="value" value="public" />
             </DockerEnvVarImpl>
           </list>
         </option>

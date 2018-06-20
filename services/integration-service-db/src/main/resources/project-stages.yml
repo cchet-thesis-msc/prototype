@@ -20,7 +20,7 @@ DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
 DB_DRIVER: org.postgresql.Driver
 DB_USER: "postgres"
 DB_PASSWORD: "postgres"
-DB_SCHEMA: "DEMO"
+DB_SCHEMA: "public"
 DB_DATABASE: "postgres"
 
 project:
@@ -28,7 +28,7 @@ project:
 swarm:
   logging:
     root-logger:
-      level: DEBUG
+      level: INFO
       handlers:
         - CONSOLE
     loggers:
@@ -118,9 +118,7 @@ swarm:
           - url-pattern: /rest-api/order/*
             roles: [consumer]
           - url-pattern: /rest-api/admin/*
-            roles: [admin]
-          - url-pattern: /rest-api/metrics
-            roles: [admin]
+            roles: [consumer]
   logging:
     file-handlers:
     custom-handlers:
@@ -141,6 +139,11 @@ swarm:
     loggers:
       com.gepardec:
         level: INFO
+        handlers:
+          - CONSOLE
+          - SYSLOGGER
+      org.keycloak:
+        level: TRACE
         handlers:
           - CONSOLE
           - SYSLOGGER

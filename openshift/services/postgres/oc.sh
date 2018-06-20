@@ -15,6 +15,7 @@ function createService() {
     -p "POSTGRESQL_USER=${3}" \
     -p "POSTGRESQL_PASSWORD=${4}" \
     -p "POSTGRESQL_DATABASE=${2}" \
+    -p "INIT_SECRET=${5}" \
     -p "VOLUME_CAPACITY=${VOL_LIM}" \
     -p "POSTGRESQL_VERSION=${VERSION}"
 } # createBc
@@ -46,10 +47,10 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -eq 5 ]; then
-       ${1} ${2} ${3} ${4} ${5}
+     if [ $# -eq 6 ]; then
+       ${1} ${2} ${3} ${4} ${5} ${6}
      else
-       echo "Service name / db_name / db_user / db_password must be given !!!!"
+       echo "Service name / db_name / db_user / db_password / init_secret must be given !!!!"
        exit 1
      fi
       ;;

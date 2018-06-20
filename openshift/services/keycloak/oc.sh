@@ -3,9 +3,10 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-SERVICE_NAME="keycloak"
-SERVICE_NAME_DB="${SERVICE_NAME}-db"
-SECRET_SERVICE_RESTORE="secret-restore-${SERVICE_NAME}"
+SERVICE="keycloak"
+SERVICE_DB="${SERVICE}-db"
+SECRET_SERVICE_RESTORE="secret-restore-${SERVICE}"
+SECRET_SERVICE_DB="secrets-sql-${SERVICE}"
 VERSION="4.0.0.Final"
 KEYCLOAK_USER='keycloak'
 KEYCLOAK_PASSWORD='keycloak'
@@ -20,9 +21,13 @@ MEM_MAX='1'
 function createSecrets() {
   oc create secret generic ${SECRET_SERVICE_RESTORE} \
     --from-file="./secrets"
+
+  oc create secret generic ${SECRET_SERVICE_DB} \
+    --from-file=./init.sql
 }
 
 function deleteSecrets() {
+  oc delete secret/${SECRET_SERVICE_DB}
   oc delete secret/${SECRET_SERVICE_RESTORE}
 }
 
@@ -32,13 +37,13 @@ function recreateSecrets() {
 }
 
 function createService() {
-  ../postgres/oc.sh createService ${SERVICE_NAME_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}
+  ../postgres/oc.sh createService ${SERVICE_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD} ${SECRET_SERVICE_DB}
 
   oc new-app -f ./keycloak-full.json \
-    -p "APPLICATION_NAME=${SERVICE_NAME}" \
+    -p "APPLICATION_NAME=${SERVICE}" \
     -p "KEYCLOAK_USER=${KEYCLOAK_USER}" \
     -p "KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}" \
-    -p "DB_ADDR=${SERVICE_NAME_DB}" \
+    -p "DB_ADDR=${SERVICE_DB}" \
     -p "DB_PORT=5432" \
     -p "DB_VENDOR=POSTGRES" \
     -p "DB_DATABASE=${DB_NAME}" \
@@ -48,9 +53,9 @@ function createService() {
 } # createBc
 
 function deleteService() {
-    oc delete all -l application=${SERVICE_NAME}
+    oc delete all -l application=${SERVICE}
 
-    ../postgres/oc.sh deleteService ${SERVICE_NAME_DB}
+    ../postgres/oc.sh deleteService ${SERVICE_DB}
 }
 
 function recreateService() {
@@ -74,8 +79,8 @@ function recreateAll() {
 }
 
 function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
-  ./postgres/oc.sh scale ${1} ${SERVICE_NAME_DB}
+  oc scale --replicas=${1} dc/${SERVICE}
+  ../postgres/oc.sh scale ${1} ${SERVICE_DB}
 }
 
 case ${1} in

@@ -15,7 +15,7 @@
             <property name="hibernate.flushMode" value="FLUSH_AUTO" />
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
 <!--        <property name="javax.persistence.schema-generation.database.action"
                       value="drop-and-create"/>
             <property name="javax.persistence.schema-generation.create-source"

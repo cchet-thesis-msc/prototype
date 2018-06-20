@@ -46,8 +46,8 @@ function recreateSecrets() {
 }
 
 function createAll() {
-    createSecrets
-    createServices
+  createSecrets
+  createServices
 }
 
 function deleteAll() {
@@ -60,16 +60,31 @@ function recreateAll() {
   createAll
 }
 
+function scaleAll() {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    ./services/${SERVICE}/oc.sh scale ${1}
+  done
+}
+
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
    createAll|deleteAll|recreateAll)
       ${1}
       ;;
+   scaleAll)
+      if [ $# -eq 2 ]; then
+        scaleAll ${2}
+      else
+        echo "Scale count must be given"
+      fi
+      ;;
    *)
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createService|deleteService|recreateService|\
-     createAll|deleteAll|recreateAll]"
+     createAll|deleteAll|recreateAll|\
+     scaleAll]"
      exit 1
       ;;
 esac

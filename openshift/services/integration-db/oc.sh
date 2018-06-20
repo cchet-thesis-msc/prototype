@@ -3,10 +3,11 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-SERVICE_NAME="integration-service-db"
-SERVICE_NAME_DB="${SERVICE_NAME}-db"
-SECRET_SERVIVE="secret-${SERVICE_NAME}"
+SERVICE="integration-service-db"
+SERVICE_DB="${SERVICE}-db"
+SECRET_SERVIVE="secret-${SERVICE}"
 SECRET_SERVIVE_KEYCLOAK="${SECRET_SERVIVE}-keycloak"
+SECRET_SERVICE_DB="${SECRET_SERVIVE}-db"
 DB_NAME='postgres'
 DB_USER='postgres'
 DB_PASSWORD='postgres'
@@ -25,11 +26,15 @@ function createSecrets() {
 
   oc create secret generic ${SECRET_SERVIVE_KEYCLOAK} \
     --from-file=./keycloak.json
+
+  oc create secret generic ${SECRET_SERVICE_DB} \
+    --from-file=./init.sql
 }
 
 function deleteSecrets() {
-  oc delete secret/${SECRET_SERVIVE}
+  oc delete secret/${SECRET_SERVICE_DB}
   oc delete secret/${SECRET_SERVIVE_KEYCLOAK}
+  oc delete secret/${SECRET_SERVIVE}
 }
 
 function recreateSecrets() {
@@ -38,11 +43,11 @@ function recreateSecrets() {
 }
 
 function createService() {
-  ../postgres/oc.sh createService ${SERVICE_NAME_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD}
+  ../postgres/oc.sh createService ${SERVICE_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD} ${SECRET_SERVICE_DB}
 }
 
 function deleteService() {
-  ../postgres/oc.sh deleteService ${SERVICE_NAME_DB}
+  ../postgres/oc.sh deleteService ${SERVICE_DB}
 }
 
 function recreateService() {
@@ -51,11 +56,12 @@ function recreateService() {
 }
 
 function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
+  ../postgres/oc.sh scale ${1} ${SERVICE_DB}
+  oc scale --replicas=${1} dc/${SERVICE}
 }
 
 function deploy() {
-  cd ../../../services/${SERVICE_NAME}
+  cd ../../../services/${SERVICE}
   mvn fabric8:deploy -Dpfabric8
 }
 

@@ -97,7 +97,23 @@
                     "name": "${DATABASE_SERVICE_NAME}"
                 },
                 "strategy": {
-                    "type": "Recreate"
+                    "type": "Recreate",
+                    "recreateParams": {
+                      "post": {
+                         "failurePolicy": "Ignore",
+                         "execNewPod": {
+                           "containerName": "postgresql",
+                           "command": [
+                             "/bin/bash",
+                             "-c",
+                             "PGPASSWORD=${POSTGRESQL_PASSWORD} psql -h ${DATABASE_SERVICE_NAME} -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -a -f /sql/init.sql"
+                           ],
+                           "volumes": [
+                             "${DATABASE_SERVICE_NAME}-sql"
+                           ]
+                         }
+                       }
+                    }
                 },
                 "template": {
                     "metadata": {
@@ -194,6 +210,10 @@
                                     {
                                         "mountPath": "/var/lib/pgsql/data",
                                         "name": "${DATABASE_SERVICE_NAME}-data"
+                                    },
+                                    {
+                                        "mountPath": "/sql",
+                                        "name": "${DATABASE_SERVICE_NAME}-sql"
                                     }
                                 ]
                             }
@@ -205,6 +225,12 @@
                                 "name": "${DATABASE_SERVICE_NAME}-data",
                                 "persistentVolumeClaim": {
                                     "claimName": "${DATABASE_SERVICE_NAME}"
+                                }
+                            },
+                            {
+                                "name": "${DATABASE_SERVICE_NAME}-sql",
+                                "secret": {
+                                    "secretName": "${INIT_SECRET}"
                                 }
                             }
                         ]
@@ -291,6 +317,12 @@
             "name": "POSTGRESQL_VERSION",
             "required": true,
             "value": "9.6"
+        },
+        {
+            "description": "The anme of the secret holding the sql script",
+            "displayName": "Init secret name",
+            "name": "INIT_SECRET",
+            "required": true
         }
     ]
 }

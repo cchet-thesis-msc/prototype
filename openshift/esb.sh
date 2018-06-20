@@ -68,6 +68,13 @@ function deployAll() {
   done
 }
 
+function scaleAll() {
+    for SERVICE in "${SECRET_SERVICES[@]}"
+    do
+      ./services/${SERVICE}/oc.sh scale ${1}
+    done
+}
+
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
    createServices|deleteServices|recreateServices|\
@@ -75,11 +82,18 @@ case ${1} in
    deployAll)
       ${1}
       ;;
+   scaleAll)
+      if [ $# -eq 2 ]; then
+        scaleAll ${2}
+      else
+        echo "Scale count must be given"
+      fi
+      ;;
    *)
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createServices|deleteServices|recreateServices|\
      createAll|deleteAll|\
-     deployAll]"
+     deployAll|scaleAll]"
      exit 1
       ;;
 esac
