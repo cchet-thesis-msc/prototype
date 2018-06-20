@@ -11,13 +11,6 @@ swarm:
     console-handlers:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
-  microprofile:
-    config:
-      config-sources:
-        APP:
-          properties:
-          #http://app-service:8080/rest-api -> for openshift
-            service.app.base-url: http://app-service-myproject.10.0.75.2.nip.io/rest-api
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 #JAEGER_SERVICE_NAME: ${${project.build.finalName}}
@@ -53,15 +46,24 @@ swarm:
       config-sources:
         app.secrets:
           properties:
-            service.db.base-url: http://localhost:8080/rest-api
-            keycloak.token-url: http://localhost:9080/auth/realms/master/protocol/openid-connect/token
-            keycloak.client.id: service-app
-            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+            service.app.base-url: http://app-service-57-fis-prototype-services.cloud.itandtel.at/rest-api
+            keycloak.token-url: http://keycloak-57-fis-prototype-services.cloud.itandtel.at/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: service-app-client
+            keycloak.client.secret: 831c0cae-4f2d-47ad-8aa0-a25e99fcf1e0
 ---
 project:
   stage: test
 swarm:
   logging: INFO
+  microprofile:
+    config:
+      config-sources:
+        app.secrets:
+          properties:
+            service.app.base-url: http://app-service-57-fis-prototype-services.cloud.itandtel.at/rest-api
+            keycloak.token-url: http://keycloak-57-fis-prototype-services.cloud.itandtel.at/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: service-app-client
+            keycloak.client.secret: 831c0cae-4f2d-47ad-8aa0-a25e99fcf1e0
 ---
 JAEGER_SERVICE_NAME: "${project.build.finalName}"
 JAEGER_AGENT_HOST: "${env.JAEGER_HOST}"
@@ -97,3 +99,8 @@ swarm:
         handlers:
           - CONSOLE
           - SYSLOGGER
+  microprofile:
+    config:
+      config-sources:
+        db.secrets:
+          dir: ${oc.secret-client.dir}

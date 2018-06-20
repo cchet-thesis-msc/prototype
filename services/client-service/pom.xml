@@ -47,7 +47,7 @@
         <schrinkwrap.shrinkwrap-resolver-bom.version>2.2.6</schrinkwrap.shrinkwrap-resolver-bom.version>
 
         <!-- Plugin versions -->
-        <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
+        <fabric8.maven.plugin.version>3.5.32</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>

@@ -15,6 +15,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -29,6 +30,8 @@ public class TestRestServiceimpl implements TestRestService {
 
     private org.quartz.Scheduler quartzScheduler;
 
+    private static final Random rand = new Random(System.currentTimeMillis());
+
     @PostConstruct
     public void postConstruct() throws Exception {
         quartzScheduler = (org.quartz.Scheduler) scheduler.unwrap(org.quartz.Scheduler.class);
@@ -39,6 +42,11 @@ public class TestRestServiceimpl implements TestRestService {
     public String start(final Integer executorCount,
                         final String group) throws SchedulerException {
         for (int i = 0; i < executorCount; i++) {
+            try {
+                Thread.sleep(rand.nextInt(100) + 1);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("sleep got interrupted", e);
+            }
             quartzScheduler.scheduleJob(JobBuilder.newJob(TestRunnerJob.class)
                                                   .withIdentity(String.format("test-runner-%d", (i + 1)), group)
                                                   .requestRecovery(true)

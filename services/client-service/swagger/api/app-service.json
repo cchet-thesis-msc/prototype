@@ -8,28 +8,6 @@
     }
   ],
   "paths": {
-    "/report/test/retry": {
-      "get": {
-        "tags": [
-          "ReportRestService"
-        ],
-        "summary": "Generates the report for the given customer",
-        "description": "",
-        "operationId": "testRetry_1",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/ReportModel"
-            }
-          }
-        }
-      }
-    },
     "/report/generate": {
       "get": {
         "tags": [
@@ -66,6 +44,14 @@
     "ReportModel": {
       "type": "object",
       "properties": {
+        "orderCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
         "name": {
           "type": "string"
         }
