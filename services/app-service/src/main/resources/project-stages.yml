@@ -83,8 +83,6 @@ swarm:
         security-constraints:
           - url-pattern: /rest-api/report/*
             roles: [client]
-          - url-pattern: /rest-api/metrics
-            roles: [admin]
   logging:
     custom-handlers:
       SYSLOGGER:
