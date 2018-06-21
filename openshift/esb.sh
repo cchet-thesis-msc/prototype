@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-SECRET_SERVICES=(client app integration-db)
+SECRET_SERVICES=(integration-db app client)
 MANAGE_SERVICES=(integration-db)
 
 function createServices() {
