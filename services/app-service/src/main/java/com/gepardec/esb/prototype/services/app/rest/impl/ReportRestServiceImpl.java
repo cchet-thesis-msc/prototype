@@ -35,7 +35,7 @@ public class ReportRestServiceImpl implements ReportRestService {
 
     @Override
     @Counted(name = "report-downloads", monotonic = true)
-    @Timed(name = "duration-report-downloads", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-report-downloads", unit = MetricUnits.SECONDS)
     public ReportModelDto generate(Long id) {
         final DbCustomer customer = customerRestApi.get1(id);
         final List<DbOrder> orders = orderRestApi.list2(id);

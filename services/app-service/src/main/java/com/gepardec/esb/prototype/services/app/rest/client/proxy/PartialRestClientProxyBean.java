@@ -41,7 +41,7 @@ public class PartialRestClientProxyBean implements InvocationHandler {
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
     @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
     @Counted(name = "rest-client-method-calls", monotonic = true)
-    @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.MILLISECONDS)
+    @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.SECONDS)
     public Object invoke(Object proxy,
                          Method method,
                          Object[] args) throws Throwable {

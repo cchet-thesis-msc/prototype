@@ -43,7 +43,7 @@ public class MetricRestServiceImpl implements MetricRestService {
         if (Counter.class.isAssignableFrom(metric.getClass())) {
             return String.valueOf(((Counter) metric).getCount());
         } else if (Timer.class.isAssignableFrom(metric.getClass())) {
-            return ((Timer) metric).getSnapshot().getMean() + " millis";
+            return ((Timer) metric).getSnapshot().getMean() + " seconds";
         } else {
             return "unsupported";
         }
