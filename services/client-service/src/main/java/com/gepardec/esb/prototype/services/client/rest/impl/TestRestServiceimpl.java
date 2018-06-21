@@ -43,7 +43,7 @@ public class TestRestServiceimpl implements TestRestService {
                         final String group) throws SchedulerException {
         for (int i = 0; i < executorCount; i++) {
             try {
-                Thread.sleep(rand.nextInt(100) + 1);
+                Thread.sleep(rand.nextInt(1000) + 1);
             } catch (InterruptedException e) {
                 throw new IllegalStateException("sleep got interrupted", e);
             }
@@ -52,7 +52,7 @@ public class TestRestServiceimpl implements TestRestService {
                                                   .requestRecovery(true)
                                                   .build(),
                                         TriggerBuilder.<TestRunnerJob>newTrigger()
-                                                .withSchedule(CronScheduleBuilder.cronSchedule("* */1 * * * ?"))
+                                                .withSchedule(CronScheduleBuilder.cronSchedule("* */5 * * * ?"))
                                                 .startNow()
                                                 .build());
         }

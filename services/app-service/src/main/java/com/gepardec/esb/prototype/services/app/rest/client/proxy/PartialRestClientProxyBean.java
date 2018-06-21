@@ -11,6 +11,8 @@ import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -26,7 +28,7 @@ import java.util.Objects;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18
  */
-@ApplicationScoped
+@RequestScoped
 @PartialRetryRestProxy
 public class PartialRestClientProxyBean implements InvocationHandler {
 
@@ -40,8 +42,8 @@ public class PartialRestClientProxyBean implements InvocationHandler {
     @Override
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
     @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
-    @Counted(name = "rest-client-method-calls", monotonic = true)
-    @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.SECONDS)
+    @Counted(name = "rest-client-method-calls", monotonic = true, reusable = true)
+    @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.SECONDS, reusable = true)
     public Object invoke(Object proxy,
                          Method method,
                          Object[] args) throws Throwable {

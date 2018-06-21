@@ -10,6 +10,7 @@ import io.opentracing.tag.Tags;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -28,6 +29,8 @@ public class TestRunnerJob implements Job {
     private ReportRestServiceApi api;
     @Inject
     private Instance<Scope> scope;
+    @Inject
+    private Logger log;
 
     @Override
     @Logging
@@ -35,6 +38,7 @@ public class TestRunnerJob implements Job {
         try {
             api.generate1(1L);
         } catch (Throwable e) {
+            log.error("error during test rest call", e);
             final Span span = scope.get().span();
             final String tracingId = span.context().toString().split(":")[0];
             Tags.ERROR.set(span, true);
