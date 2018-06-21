@@ -28,7 +28,7 @@ import java.util.Objects;
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18
  */
-@RequestScoped
+@ApplicationScoped
 @PartialRetryRestProxy
 public class PartialRestClientProxyBean implements InvocationHandler {
 
