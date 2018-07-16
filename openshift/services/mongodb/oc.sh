@@ -9,7 +9,8 @@ function createService() {
     -p "MONGODB_USER=${3}" \
     -p "MONGODB_PASSWORD=${4}" \
     -p "MONGODB_DATABASE=${2}" \
-    -p "MONGODB_ADMIN_PASSWORD=${4}"
+    -p "MONGODB_ADMIN_PASSWORD=${4}" \
+    -p "MONGODB_VERSION=3.2"
 } # createBc
 
 function deleteService() {
