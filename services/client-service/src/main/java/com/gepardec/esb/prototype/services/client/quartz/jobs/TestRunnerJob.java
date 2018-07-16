@@ -5,6 +5,8 @@ import com.gepardec.esb.prototype.services.client.annotation.Logging;
 import io.jaegertracing.metrics.Tag;
 import io.opentracing.Scope;
 import io.opentracing.Span;
+import io.opentracing.SpanContext;
+import io.opentracing.contrib.cdi.Traced;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
 import org.quartz.Job;
@@ -33,7 +35,7 @@ public class TestRunnerJob implements Job {
     private Logger log;
 
     @Override
-    @Logging
+    @Traced
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             api.generate1(1L);
