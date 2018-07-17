@@ -20,7 +20,7 @@ VERSION_GOSU='1.10'
 
 function createSecrets() {
   oc create secret generic ${SECRET_SERVIVE} \
-      --from-file=./config/
+      --from-file=./config/${STAGE}
 
   oc create secret generic ${SECRET_SERVIVE_GIT} \
     --from-file=ssh-privatekey="${HOME}/.ssh/id_rsa"
@@ -70,9 +70,9 @@ function recreateService() {
 }
 
 function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
   ../mongodb/oc.sh scale ${1} ${SERVICE_NAME_MONGO}
   ../elasticsearch/oc.sh scale ${1} ${SERVICE_NAME_ELASTIC}
+  oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
 case ${1} in

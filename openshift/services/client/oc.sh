@@ -7,16 +7,8 @@ SERVICE_NAME="client-service"
 SECRET_SERVIVE_NAME="secret-${SERVICE_NAME}"
 
 function createSecrets() {
-  ARGS=""
-  for LINE in $(cat ./config.properties)
-  do
-    IFS='='        # space is set as delimiter
-    read -ra PARTS <<< "${LINE}"
-    ARGS="${ARGS} --from-literal=${PARTS[0]}=${PARTS[1]}"
-  done
-
-  # Need to do so, no --from-env-file option available in version 3.5
-  eval "oc create secret generic ${SECRET_SERVIVE_NAME} ${ARGS}"
+  oc create secret generic ${SECRET_SERVIVE_NAME} \
+    --from-env-file=./config/${STAGE}/config.properties
 }
 
 function deleteSecrets() {

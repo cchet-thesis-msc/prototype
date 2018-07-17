@@ -6,6 +6,9 @@ cd $(dirname ${0})
 SECRET_SERVICES=(integration-db app client)
 MANAGE_SERVICES=(integration-db)
 
+# set current stage
+export STAGE=local
+
 function createServices() {
   for SERVICE in "${MANAGE_SERVICES[@]}"
   do

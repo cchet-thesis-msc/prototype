@@ -9,6 +9,7 @@ import io.opentracing.SpanContext;
 import io.opentracing.contrib.cdi.Traced;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
+import io.opentracing.util.GlobalTracer;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -37,11 +38,16 @@ public class TestRunnerJob implements Job {
     @Override
     @Traced
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        log.info("Running test job");
+        final Scope scope =
+                GlobalTracer.get().buildSpan("test/execute")
+                            .asChildOf((Span)null)
+                            .startActive(true);
         try {
             api.generate1(1L);
         } catch (Throwable e) {
             log.error("error during test rest call", e);
-            final Span span = scope.get().span();
+            final Span span = scope.span();
             final String tracingId = span.context().toString().split(":")[0];
             Tags.ERROR.set(span, true);
             span.log(new HashMap<String, Object>() {{
@@ -54,6 +60,8 @@ public class TestRunnerJob implements Job {
                 put("trace.id", tracingId);
                 put(Fields.STACK, sw.toString());
             }});
+        } finally {
+            scope.close();
         }
     }
 }

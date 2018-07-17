@@ -41,7 +41,7 @@ public class ReportRestServiceImpl implements ReportRestService {
         final List<DbOrder> orders = orderRestApi.list2(id);
 
         return new ReportModelDto(customer.getFirstName() + ", " + customer.getLastName(),
-                                  Long.valueOf(orders.size()),
+                                  (long)orders.size(),
                                   orders.stream().flatMap((order) -> order.getItems().stream()).mapToDouble((item) -> item.getPrice().doubleValue()).sum());
     }
 }

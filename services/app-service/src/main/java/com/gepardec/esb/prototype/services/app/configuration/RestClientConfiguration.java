@@ -30,9 +30,6 @@ import java.util.concurrent.TimeUnit;
 public class RestClientConfiguration {
 
     @Inject
-    private AppendOAuthFilter appendOAuthFilter;
-
-    @Inject
     @ConfigProperty(name = "service.db.base-url")
     private String baseUrlIntegrationDb;
 
@@ -49,12 +46,8 @@ public class RestClientConfiguration {
     public <T> T getOrCreateProxy(Class<T> clazz) {
         T proxy = (T) cache.getOrDefault(clazz,
                                          ProxyBuilder.builder(clazz,
-                                                              buildResteasyClient()
-                                                                                   // register OAuth filter
-                                                                                   .register(appendOAuthFilter)
-                                                                                   .register(ClientTracingFeature.class)
-                                                                                   .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
-                                                                                                          String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
+                                                              buildResteasyClient().target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
+                                                                                                                  String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
                                                      .defaultConsumes(MediaType.APPLICATION_JSON)
                                                      .build());
         cache.putIfAbsent(clazz, proxy);
@@ -67,9 +60,12 @@ public class RestClientConfiguration {
                                           .establishConnectionTimeout(2, TimeUnit.SECONDS)
                                           .socketTimeout(2, TimeUnit.SECONDS)
                                           .connectionTTL(2, TimeUnit.SECONDS)
-                                          .connectionPoolSize(200)
+                                          .maxPooledPerRoute(50)
+                                          .connectionPoolSize(500)
                                           // Appends Tracing feature for jaxrs client
                                           .register(ClientTracingFeature.class)
+                                          // Appends OAuth token to Authentication header
+                                          .register(AppendOAuthFilter.class)
                                           .build();
     }
 }

@@ -23,7 +23,7 @@ public @interface Logging {
      * Don't forget to add the mdc context in the log formatter of your logging framework.
      */
     enum MDCConfig {
-        EMPTY("", ""),
+        DEFAULT("", ""),
         GROUP_REST_API(GROUP, "REST-API"),
         GROUP_REST_CLIENT(GROUP, "REST-CLIENT"),
         GROUP_REST_SECURITY(GROUP, "REST-SECURITY"),
@@ -41,10 +41,10 @@ public @interface Logging {
     }
 
     /**
-     * @return The intended MDCConfig instance, if {@link MDCConfig#EMPTY} no mdc logic will be applied.
+     * @return The intended MDCConfig instance, if {@link MDCConfig#DEFAULT} no mdc logic will be applied.
      */
     @Nonbinding
-    MDCConfig mdcConfig() default MDCConfig.EMPTY;
+    MDCConfig mdcConfig() default MDCConfig.DEFAULT;
 
     @Nonbinding
     boolean skipResult() default false;

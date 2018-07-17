@@ -21,6 +21,8 @@ public interface TestRestService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
     String start(@NotNull @Min(0) @Max(10) @QueryParam("count") Integer executorCount,
+                 @Min(1) @Max(10) @QueryParam("intervalSeconds") Integer intervalSeconds,
+                 @Min(1) @Max(1000) @QueryParam("waitIntervalMillis") Integer waitIntervalMillis,
                  @NotNull @Size(min = 1) @QueryParam("group") String group) throws SchedulerException;
 
     @Path("/stop")

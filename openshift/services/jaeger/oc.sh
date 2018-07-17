@@ -8,20 +8,6 @@ SERVICE_NAME_ZIPKIN="${SERVICE_NAME}-zipkin"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
 VERSION="1.5.0"
 
-function createSecrets() {
-  oc create secret generic ${SECRET_SERVIVE} \
-    --from-file="./secrets"
-}
-
-function deleteSecrets() {
-  oc delete secret/${SECRET_SERVIVE}
-}
-
-function recreateSecrets() {
-  deleteSecrets
-  createSecrets
-}
-
 function createService() {
   oc new-app -f ./jaeger-full.yml \
   -p "APP=${SERVICE_NAME}" \

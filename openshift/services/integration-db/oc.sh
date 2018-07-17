@@ -13,19 +13,11 @@ DB_USER='postgres'
 DB_PASSWORD='postgres'
 
 function createSecrets() {
-  ARGS=""
-  for LINE in $(cat ./config.properties)
-  do
-    IFS='='        # space is set as delimiter
-    read -ra PARTS <<< "${LINE}"
-    ARGS="${ARGS} --from-literal=${PARTS[0]}=${PARTS[1]}"
-  done
-
-  # Need to do so, no --from-env-file option available in version 3.5
-  eval "oc create secret generic ${SECRET_SERVIVE} ${ARGS}"
+  oc create secret generic ${SECRET_SERVIVE} \
+    --from-env-file=./config/${STAGE}/config.properties
 
   oc create secret generic ${SECRET_SERVIVE_KEYCLOAK} \
-    --from-file=./keycloak.json
+    --from-file=./config/${STAGE}/keycloak.json
 
   oc create secret generic ${SECRET_SERVICE_DB} \
     --from-file=./init.sql

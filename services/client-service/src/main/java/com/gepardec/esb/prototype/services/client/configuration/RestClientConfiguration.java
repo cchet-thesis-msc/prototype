@@ -3,15 +3,9 @@ package com.gepardec.esb.prototype.services.client.configuration;
 import com.gepardec.esb.prototype.services.app.rest.client.api.service.app.ReportRestServiceApi;
 import com.gepardec.esb.prototype.services.client.rest.client.filter.AppendOAuthFilter;
 import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
-import io.opentracing.contrib.jaxrs2.client.ClientTracingFilter;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -35,9 +29,6 @@ import java.util.concurrent.TimeUnit;
 public class RestClientConfiguration {
 
     @Inject
-    private AppendOAuthFilter appendOAuthFilter;
-
-    @Inject
     @ConfigProperty(name = "service.app.base-url")
     private String baseUrlAppService;
 
@@ -54,8 +45,6 @@ public class RestClientConfiguration {
         T proxy = (T) cache.getOrDefault(clazz,
                                          ProxyBuilder.builder(clazz,
                                                               buildResteasyClient()
-                                                                      .register(ClientTracingFeature.class)
-                                                                      .register(appendOAuthFilter)
                                                                       .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
                                                                                                      String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
                                                      .defaultConsumes(MediaType.TEXT_PLAIN)
@@ -66,13 +55,16 @@ public class RestClientConfiguration {
     }
 
     private Client buildResteasyClient() {
-        return new ResteasyClientBuilder().connectionCheckoutTimeout(2, TimeUnit.SECONDS)
-                                          .establishConnectionTimeout(2, TimeUnit.SECONDS)
-                                          .socketTimeout(2, TimeUnit.SECONDS)
-                                          .connectionTTL(2, TimeUnit.SECONDS)
-                                          .connectionPoolSize(200)
+        return new ResteasyClientBuilder().connectionCheckoutTimeout(5, TimeUnit.SECONDS)
+                                          .establishConnectionTimeout(5, TimeUnit.SECONDS)
+                                          .socketTimeout(5, TimeUnit.SECONDS)
+                                          .connectionTTL(5, TimeUnit.SECONDS)
+                                          .maxPooledPerRoute(50)
+                                          .connectionPoolSize(500)
                                           // Appends Tracing feature for jaxrs client
                                           .register(ClientTracingFeature.class)
+                                          // Appends OAuth token to Authentication header
+                                          .register(AppendOAuthFilter.class)
                                           .build();
     }
 }

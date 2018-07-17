@@ -44,6 +44,9 @@
     "ReportModel": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string"
+        },
         "orderCount": {
           "type": "integer",
           "format": "int64"
@@ -51,9 +54,6 @@
         "price": {
           "type": "number",
           "format": "double"
-        },
-        "name": {
-          "type": "string"
         }
       },
       "description": "The model holding the report response"

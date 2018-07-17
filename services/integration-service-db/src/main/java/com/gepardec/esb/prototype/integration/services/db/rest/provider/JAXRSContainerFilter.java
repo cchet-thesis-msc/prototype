@@ -59,7 +59,7 @@ public class JAXRSContainerFilter {
                 final String tracingId = spanContextInstance.get().toString().split(":")[0];
                 // Uber SpanContext implementation does format the id like this 'aaa:ffff:0:1', so here we are implementation dependent,
                 // because the io.opentrace spec does not expose any id
-                scopeInstance.get().span().setTag(MDC_TX_ID, true);
+                scopeInstance.get().span().setTag(MDC_TX_ID, tracingId);
                 log.info("Setting MDC transaction id");
                 MDC.put(MDC_TX_ID, tracingId);
             } catch (Throwable e) {

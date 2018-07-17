@@ -46,8 +46,8 @@ swarm:
       config-sources:
         app.secrets:
           properties:
-            service.app.base-url: http://app-service-57-fis-prototype-services.cloud.itandtel.at/rest-api
-            keycloak.token-url: http://keycloak-57-fis-prototype-services.cloud.itandtel.at/auth/realms/master/protocol/openid-connect/token
+            service.app.base-url: http://app-service-myproject.10.0.75.2.nip.io/rest-api
+            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
             keycloak.client.id: service-app-client
             keycloak.client.secret: 831c0cae-4f2d-47ad-8aa0-a25e99fcf1e0
 ---
@@ -60,8 +60,8 @@ swarm:
       config-sources:
         app.secrets:
           properties:
-            service.app.base-url: http://app-service-57-fis-prototype-services.cloud.itandtel.at/rest-api
-            keycloak.token-url: http://keycloak-57-fis-prototype-services.cloud.itandtel.at/auth/realms/master/protocol/openid-connect/token
+            service.app.base-url: http://app-service-myproject.10.0.75.2.nip.io/rest-api
+            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
             keycloak.client.id: service-app-client
             keycloak.client.secret: 831c0cae-4f2d-47ad-8aa0-a25e99fcf1e0
 ---
@@ -94,7 +94,7 @@ swarm:
         - CONSOLE
         - SYSLOGGER
     loggers:
-      at.liwest:
+      com.gepardec:
         level: INFO
         handlers:
           - CONSOLE

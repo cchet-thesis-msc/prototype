@@ -35,7 +35,7 @@ public class LoggingInterceptor {
         final Logging.MDCConfig mdcConfig = Objects.requireNonNull(ann.mdcConfig(), "MDCConfig enum not present. Should not be null");
 
         // Prepare MDC context
-        if (!Logging.MDCConfig.EMPTY.equals(mdcConfig)) {
+        if (!Logging.MDCConfig.DEFAULT.equals(mdcConfig)) {
             MDC.put(mdcConfig.key, mdcConfig.value);
         }
 
@@ -51,16 +51,23 @@ public class LoggingInterceptor {
         final Logger log = LoggerFactory.getLogger(ic.getTarget().getClass());
         log.info("Entering method: {} ...", methodStr);
 
+        boolean error = false;
         try {
             return (result = ic.proceed());
+        } catch (Throwable t) {
+            error = true;
+            log.info("Left method: {} -> exception: {} | message: {}", methodStr, t.getClass(), t.getMessage());
+            return null;
         } finally {
-            if (!Logging.MDCConfig.EMPTY.equals(mdcConfig)) {
+            if (!Logging.MDCConfig.DEFAULT.equals(mdcConfig)) {
                 MDC.remove(mdcConfig.key);
             }
-            final String finalResult = (voidReturnType) ? "void"
-                    : (!ann.skipResult() && result != null) ? result.toString()
-                    : (ann.skipResult() && result != null) ? "skipped" : "null";
-            log.info("Left method: {} -> {}", methodStr, finalResult);
+            if (!error) {
+                final String finalResult = (voidReturnType) ? "void"
+                        : (!ann.skipResult() && result != null) ? result.toString()
+                        : (ann.skipResult() && result != null) ? "skipped" : "null";
+                log.info("Left method: {} -> {}", methodStr, finalResult);
+            }
         }
     }
 }

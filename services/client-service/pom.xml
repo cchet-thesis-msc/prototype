@@ -35,6 +35,7 @@
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
         <google.google-oauth-client>1.23.0</google.google-oauth-client>
         <lombok.lombok.version>1.18.0</lombok.lombok.version>
+        <apache.httpcomponents.http-client.version>4.5.2</apache.httpcomponents.http-client.version>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -256,6 +257,13 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${fasterxml.jackson.version}</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.httpcomponents</groupId>-->
+            <!--<artifactId>httpclient</artifactId>-->
+            <!--<version>${apache.httpcomponents.http-client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jboss.slf4j</groupId>

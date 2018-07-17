@@ -28,7 +28,7 @@ spec:
               scheme: HTTP
             successThreshold: 2
             failureThreshold: 20
-            initialDelaySeconds: 60
+            initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 5
           livenessProbe:
@@ -38,7 +38,7 @@ spec:
               scheme: HTTP
             successThreshold: 1
             failureThreshold: 3
-            initialDelaySeconds: 60
+            initialDelaySeconds: 20
             periodSeconds: 30
             timeoutSeconds: 5
           ports:

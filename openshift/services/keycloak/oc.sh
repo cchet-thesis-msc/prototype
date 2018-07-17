@@ -20,7 +20,7 @@ MEM_MAX='1'
 
 function createSecrets() {
   oc create secret generic ${SECRET_SERVICE_RESTORE} \
-    --from-file="./secrets"
+    --from-file=./config/${STAGE}
 
   oc create secret generic ${SECRET_SERVICE_DB} \
     --from-file=./init.sql
@@ -79,8 +79,8 @@ function recreateAll() {
 }
 
 function scale() {
-  oc scale --replicas=${1} dc/${SERVICE}
   ../postgres/oc.sh scale ${1} ${SERVICE_DB}
+  oc scale --replicas=${1} dc/${SERVICE}
 }
 
 case ${1} in
