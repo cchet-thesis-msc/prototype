@@ -5,7 +5,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
- * This class configures the jax-rs endpoint.
+ * This class configures the JAX-RS endpoint.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18

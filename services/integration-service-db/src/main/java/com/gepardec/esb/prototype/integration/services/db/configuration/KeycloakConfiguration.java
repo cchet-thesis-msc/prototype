@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 /**
+ * This class produces all Keycloak related resources.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/18
  */

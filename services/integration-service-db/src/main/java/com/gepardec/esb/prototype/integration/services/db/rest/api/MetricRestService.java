@@ -7,6 +7,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.SortedMap;
 
 /**
+ * This interface specifies the REST-Endpoint for retrieving metrics.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/18
  */

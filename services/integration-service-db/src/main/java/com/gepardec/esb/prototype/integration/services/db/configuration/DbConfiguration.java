@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
+ * This class manages the EntityManager for CDI.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/15/18
  */
