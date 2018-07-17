@@ -76,6 +76,8 @@ public class TestRestServiceImpl implements TestRestService {
     public String stop(final String group) throws SchedulerException {
         quartzScheduler.clear();
         quartzScheduler.standby();
+        TestRunnerJob.COUNTER.set(0);
+
         return "Send stop message to test executor";
     }
 

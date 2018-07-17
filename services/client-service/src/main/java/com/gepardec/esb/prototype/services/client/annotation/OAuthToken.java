@@ -4,6 +4,8 @@ import javax.inject.Qualifier;
 import java.lang.annotation.*;
 
 /**
+ * Qualifier marking a CDI Bean as a OAuth token.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/18
  */

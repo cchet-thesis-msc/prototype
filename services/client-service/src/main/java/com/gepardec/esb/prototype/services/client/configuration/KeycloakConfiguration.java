@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * This class produces all Keycloak related resources.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/19/18
  */
 @ApplicationScoped
-public class OAuthConfiguration {
+public class KeycloakConfiguration {
 
 
     @Inject

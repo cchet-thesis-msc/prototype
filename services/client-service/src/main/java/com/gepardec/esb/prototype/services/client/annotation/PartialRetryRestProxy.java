@@ -5,6 +5,9 @@ import org.apache.deltaspike.partialbean.api.PartialBeanBinding;
 import java.lang.annotation.*;
 
 /**
+ * Qualifier marking a class implementing {@link java.lang.reflect.InvocationHandler} as the method handler
+ * for a interface or abstract class annotated with this qualifier.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18
  */

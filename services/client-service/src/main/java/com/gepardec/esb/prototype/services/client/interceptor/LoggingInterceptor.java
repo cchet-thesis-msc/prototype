@@ -53,11 +53,11 @@ public class LoggingInterceptor {
 
         boolean error = false;
         try {
-            return (result = ic.proceed());
+            result = ic.proceed();
         } catch (Throwable t) {
             error = true;
             log.info("Left method: {} -> exception: {} | message: {}", methodStr, t.getClass(), t.getMessage());
-            return null;
+            throw t;
         } finally {
             if (!Logging.MDCConfig.DEFAULT.equals(mdcConfig)) {
                 MDC.remove(mdcConfig.key);
@@ -69,5 +69,7 @@ public class LoggingInterceptor {
                 log.info("Left method: {} -> {}", methodStr, finalResult);
             }
         }
+
+        return result;
     }
 }

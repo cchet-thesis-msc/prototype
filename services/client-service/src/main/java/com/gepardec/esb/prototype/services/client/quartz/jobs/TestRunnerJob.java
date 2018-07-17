@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -35,9 +36,12 @@ public class TestRunnerJob implements Job {
     @Inject
     private Logger log;
 
+    public static final AtomicInteger COUNTER = new AtomicInteger(0);
+
     @Override
     @Traced
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        COUNTER.incrementAndGet();
         log.info("Running test job");
         final Scope scope =
                 GlobalTracer.get().buildSpan("test/execute")

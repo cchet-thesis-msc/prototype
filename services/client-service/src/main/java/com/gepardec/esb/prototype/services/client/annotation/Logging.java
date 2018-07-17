@@ -5,7 +5,8 @@ import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.*;
 
 /**
- * This annotation declares a type or a method to be logged in a generic manner, with the mdc context defined.
+ * This annotation declares a type or a method to be logged in a generic manner,
+ * with the MDC context defined.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18
@@ -20,7 +21,7 @@ public @interface Logging {
 
     /**
      * Predefined mdc contexts appended to the predefined once for tracing for instance.
-     * Don't forget to add the mdc context in the log formatter of your logging framework.
+     * Don't forget to add the MDC context in the log formatter of your logging framework.
      */
     enum MDCConfig {
         GROUP_TEST(GROUP, "ESB-TEST"),
@@ -40,11 +41,14 @@ public @interface Logging {
     }
 
     /**
-     * @return The intended MDCConfig instance, if {@link MDCConfig#GROUP_TEST} no mdc logic will be applied.
+     * @return The intended MDCConfig instance, if {@link MDCConfig#GROUP_TEST} no MDC logic will be applied.
      */
     @Nonbinding
-    MDCConfig mdcConfig() default MDCConfig.GROUP_TEST;
+    MDCConfig mdcConfig() default MDCConfig.DEFAULT;
 
+    /**
+     * @return true if the method result shall be excluded from the logs.
+     */
     @Nonbinding
     boolean skipResult() default false;
 }

@@ -4,6 +4,7 @@ import com.gepardec.esb.prototype.services.client.annotation.Logging;
 import com.gepardec.esb.prototype.services.client.annotation.PartialRetryRestProxy;
 import com.gepardec.esb.prototype.services.client.configuration.RestClientConfiguration;
 import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
@@ -19,6 +20,7 @@ import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**
@@ -43,6 +45,7 @@ public class PartialRestClientProxyBean implements InvocationHandler {
     @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
     @Counted(name = "rest-client-method-calls", monotonic = true, reusable = true)
     @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.MILLISECONDS, reusable = true)
+    @Timeout(value = 2L, unit = ChronoUnit.SECONDS)
     public Object invoke(Object proxy,
                          Method method,
                          Object[] args) throws Throwable {
