@@ -13,6 +13,9 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 
 /**
+ * This class retrieves an OAuth token and appends it on the
+ * Authentication header.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/18
  */

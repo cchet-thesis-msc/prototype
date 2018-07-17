@@ -3,7 +3,7 @@ package com.gepardec.esb.prototype.services.app.service.api;
 import com.gepardec.esb.prototype.services.app.service.model.ReportModel;
 
 /**
- * This interface specifies the service operations of this microservice.
+ * This interface specifies the service operations for reporting.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/08/18

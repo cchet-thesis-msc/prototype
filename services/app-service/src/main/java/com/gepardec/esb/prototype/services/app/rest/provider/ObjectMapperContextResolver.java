@@ -13,14 +13,15 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
 /**
+ * This class configures and provides the ObjectMapper, because the original used
+ * one cannot be configured, and must therefore be replaced.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/15/18
  */
 @Provider
 public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
 
-    @Inject
-    private Logger log;
     private final ObjectMapper MAPPER;
 
     public ObjectMapperContextResolver() {
@@ -35,7 +36,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
     @Override
     @Logging
     public ObjectMapper getContext(Class<?> type) {
-        log.info("Resolved custom configured ObjectMapper instance");
         return MAPPER;
     }
 }

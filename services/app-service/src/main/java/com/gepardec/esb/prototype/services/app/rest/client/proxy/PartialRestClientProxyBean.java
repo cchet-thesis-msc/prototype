@@ -1,9 +1,11 @@
 package com.gepardec.esb.prototype.services.app.rest.client.proxy;
 
+import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import com.gepardec.esb.prototype.services.app.annotation.PartialRetryRestProxy;
 import com.gepardec.esb.prototype.services.app.configuration.RestClientConfiguration;
-import com.gepardec.esb.prototype.services.app.annotation.Logging;
+import com.gepardec.esb.prototype.services.app.rest.exception.RestClientExcepton;
 import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
@@ -11,14 +13,11 @@ import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**
@@ -41,9 +40,10 @@ public class PartialRestClientProxyBean implements InvocationHandler {
 
     @Override
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
-    @Retry(delay = 100L, maxRetries = 5, retryOn = {WebApplicationException.class, ProcessingException.class})
+    @Retry(delay = 100L, maxRetries = 3, retryOn = {RestClientExcepton.class})
     @Counted(name = "rest-client-method-calls", monotonic = true, reusable = true)
     @Timed(name = "duration-rest-client-method-calls", unit = MetricUnits.SECONDS, reusable = true)
+    @Timeout(value = 2L, unit = ChronoUnit.SECONDS)
     public Object invoke(Object proxy,
                          Method method,
                          Object[] args) throws Throwable {
@@ -53,7 +53,10 @@ public class PartialRestClientProxyBean implements InvocationHandler {
             return method.invoke(restClientConfiguration.getOrCreateProxy(clazz), args);
         } catch (InvocationTargetException e) {
             counter.inc();
-            throw e.getTargetException();
+            throw new RestClientExcepton(e.getTargetException());
+        } catch (Throwable e) {
+            counter.inc();
+            throw new RestClientExcepton(e);
         }
     }
 }

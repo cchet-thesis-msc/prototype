@@ -18,7 +18,9 @@ import lombok.Value;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ReportModel {
 
-    @JsonProperty("name")
-    @ApiModelProperty(value = "The report name", readOnly = true)
     private String name;
+
+    private Long orderCount;
+
+    private Double price;
 }

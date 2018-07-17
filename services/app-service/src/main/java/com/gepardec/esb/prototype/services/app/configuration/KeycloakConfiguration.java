@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * This class produces all Keycloak related resources.
+ *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/09/18
  */
@@ -53,8 +55,8 @@ public class KeycloakConfiguration {
     @Dependent
     @Counted(name = "retrieved-oauth-tokens", monotonic = true)
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_SECURITY, skipResult = true)
-    @Retry(delay = 100L, maxRetries = 5, retryOn = {TokenResponseException.class, IOException.class})
-    @Timeout(value = 5L, unit = ChronoUnit.SECONDS)
+    @Retry(delay = 100L, maxRetries = 3, retryOn = {TokenResponseException.class, IOException.class})
+    @Timeout(value = 2L, unit = ChronoUnit.SECONDS)
     String obtainOauthToken() throws IOException {
         return tokenRequest.execute().getAccessToken();
     }

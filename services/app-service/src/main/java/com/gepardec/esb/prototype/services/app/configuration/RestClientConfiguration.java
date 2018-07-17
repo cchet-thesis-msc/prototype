@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class represents the rest client configuration, which injects config parameter and creates/caches the clients
- * for the {@link com.gepardec.esb.prototype.services.app.rest.client.proxy.PartialRestClientProxyBean} which specifies
+ * This class manages the rest client proxies used by class
+ * {@link com.gepardec.esb.prototype.services.app.rest.client.proxy.PartialRestClientProxyBean}, which specifies
  * the retry behavior of a rest client.
  *
  * @author Thomas Herzog <herzog.thomas81@gmail.com>

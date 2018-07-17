@@ -14,37 +14,27 @@ swarm:
 project:
   stage: dev
 swarm:
-  # Secure the deployment
-  deployment:
-    ${project.build.finalName}.war:
-      web:
-        login-config:
-          auth-method: KEYCLOAK
-        security-constraints:
-          - url-pattern: /rest-api/report/generate
-            roles: [client]
   logging:
     root-logger:
-      level: DEBUG
+      level: INFO
       handlers:
         - CONSOLE
     loggers:
       org.keycloak:
-        level: TRACE
+        level: INFO
         handlers:
           - CONSOLE
       com.google:
-        level: TRACE
+        level: INFO
         handlers:
           - CONSOLE
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
         app.secrets:
           properties:
-            service.db.base-url: http://integration-service-db-57-fis-prototype-services.cloud.itandtel.at/rest-api
-            keycloak.token-url: http://keycloak-57-fis-prototype-services.cloud.itandtel.at/auth/realms/master/protocol/openid-connect/token
+            service.db.base-url: http://integration-service-myproject.10.0.75.2.nip.io/rest-api
+            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
             keycloak.client.id: service-app
             keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
 ---
@@ -52,13 +42,15 @@ project:
   stage: test
 swarm:
   logging: INFO
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
         APP:
           properties:
-            service.db.base-url: http://localhost:8080/rest-api
+            service.db.base-url: http://integration-service-myproject.10.0.75.2.nip.io/rest-api
+            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
+            keycloak.client.id: service-app
+            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 JAEGER_SERVICE_NAME: "${project.build.finalName}"
@@ -110,7 +102,6 @@ swarm:
         handlers:
           - CONSOLE
           - SYSLOGGER
-  # microprofile-config sources configuration
   microprofile:
     config:
       config-sources:
