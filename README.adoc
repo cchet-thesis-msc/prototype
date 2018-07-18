@@ -1,0 +1,65 @@
+# Prototype ESB in Openshift with Fuse Integration Services 2.0
+
+This repository holds the prototype for the master thesis __Implementation of an Enterprise Service Bus with OpenShift__
+which is public available on link:++https://github.com/cchet-thesis-msc/thesis++[Github]. The prototype uses the RedHat tooling __Fuse Integration Services 2.0__ which consists of
+a Maven Plugin (Fabric8) and Openshift Builder-Images, which allow to manage a integration service
+via a Maven Build. This readme provides introductions to setup and run the prototype on a
+Windows 10 Host. +
+
+## Windows 10 Setup
+This section will describe the setup of the Windows 10 environment. The following applications and features need
+to be enabled, installed and configured. +
+
+. Follow the instructions available link:++https://docs.microsoft.com/en-us/windows/wsl/install-win10++[here] to
+  install and enable WSL. During the development, the Ubuntu Linux-Image has been used. +
+. Follow the instruction available link:++https://docs.docker.com/docker-for-windows/install/#install-docker-for-windows-desktop-app++[here] to
+  install and configure __Docker For Windows__. The installer will ask you to enable **HyperV** Windows-Feature, which will
+  prevent VMWare or VirtualBox from working.
+. Download link:++https://www.python.org/downloads/windows/++[Python 3.x] for Windows and install it.
+.. If not already added during installation process, add Python binaries to Windows $PATH.
+.. Install the following Python packages of link:++https://github.com/getwarped/powershift++[Powershift],
+   which are used to manage the local Openshift Cluster. Install these packages via ``pip install <PACKAGE_NAME>``.
+... __powershift__, is the base package.
+... __powershift-cli__, is the base CLI implementation.
+... __powershift-cluster__, provides CLI for managing __oc cluster__ created clusters.
+... __powershift-image__, provides CLI for managing S2I Images and Builds.
+
+## Docker For Windows Setup
+This section will describe the setup of Docker for Windows.
+
+. Go to __General__ and enable **Expose daemon via tcp://...**, so that WSL can access the Docker Daemon.
+. Go to __Advanced__ and setup the available CPU and Memory. (Developed with CPU: 7, RAM: 6GB, DISK: 100GB)
+. Go to __Daemon__ and add the private registry **172.30.0.0/16**.
+
+The Docker Daemon cano now be accessed via the exposed URL, which will be done via the WSL. The private registry
+is used by Openshift for storing Docker Images.
+
+## WSL setup
+This section will describe the setup of the WSL environment.
+
+. Execute ``sudo apt install docker.io`` to install Docker on Ubunto 18.04 WSL-Image.
+. Add ``export DOCKER_HOST=tcp://127.0.0.1:2375`` to ``~/.bashrc`` to point to Windows Docker-Daemon. Don't use **localhost**
+  because this points to WSL localhost.
+
+Docker commands executed in the WSL, will actual be executed on the Windows Docker-Host, which is
+located in a HyperV VM.
+
+## Repository Structure
+This section will describe the structure of the prototype repository, which holds all needed resources. +
+
+* **.idea** is the IntelliJ directory holding IntelliJ Run-Configurations.
+* **/docker** is the directory which holds all Docker relevant resources.
+* **/docker/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
+* **/openshift** is the directory which contains all Openshift relevant resource, which are managed outside of
+  the integration service code bases.
+* **/openshift/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
+* **/services** is the directory holding the service code bases
+* **/services/<SERVICE_NAME>** is the directory holding the service related code base.
+
+The service code bases are completely separated from each other and would normally reside in their own repositories, but
+for demonstration purpose all resources where kept in one repository. See the following links for the documentation
+of the different parts of the prototype. +
+
+* link:openshift/README.adoc[Openshift Project Management] holds the documentation of the implemented resources, which manage
+  a Openshift Project.
+* link:services/README.adoc[Integration Service Implementation] holds the documentation of the implemented integration services.
