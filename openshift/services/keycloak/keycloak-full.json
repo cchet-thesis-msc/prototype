@@ -20,6 +20,13 @@
             "required": true
         },
         {
+            "displayName": "Service Name",
+            "description": "The name for service.",
+            "name": "SERVICE_NAME",
+            "value": "keycloak",
+            "required": true
+        },
+        {
             "displayName": "Keycloak Administrator Username",
             "description": "Keycloak Server administrator username",
             "name": "KEYCLOAK_USER",
@@ -108,17 +115,16 @@
                     }
                 ],
                 "selector": {
-                    "deploymentConfig": "${APPLICATION_NAME}"
+                    "deploymentConfig": "${SERVICE_NAME}"
                 }
             },
             "metadata": {
-                "name": "${APPLICATION_NAME}",
+                "name": "${SERVICE_NAME}",
                 "labels": {
-                    "application": "${APPLICATION_NAME}"
+                    "app": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                   "description": "The web server's http port.",
-                   "service.alpha.openshift.io/dependencies": "[{\"name\": \"${DATABASE_SERVICE_NAME}\", \"kind\": \"Service\"}, {\"name\": \"secure-${APPLICATION_NAME}\", \"kind\": \"Service\"}, {\"name\": \"${DB_ADDR}\", \"kind\": \"Service\"}]"
+                   "description": "The web server's http port."
                 }
             }
         },
@@ -133,13 +139,13 @@
                     }
                 ],
                 "selector": {
-                    "deploymentConfig": "${APPLICATION_NAME}"
+                    "deploymentConfig": "${SERVICE_NAME}"
                 }
             },
             "metadata": {
-                "name": "secure-${APPLICATION_NAME}",
+                "name": "secure-${SERVICE_NAME}",
                 "labels": {
-                    "application": "${APPLICATION_NAME}"
+                    "app": "${APPLICATION_NAME}"
                 },
                 "annotations": {
                     "description": "The web server's https port."
@@ -149,11 +155,11 @@
         {
             "kind": "Route",
             "apiVersion": "v1",
-            "id": "${APPLICATION_NAME}-http",
+            "id": "${SERVICE_NAME}-http",
             "metadata": {
-                "name": "${APPLICATION_NAME}",
+                "name": "${SERVICE_NAME}",
                 "labels": {
-                    "application": "${APPLICATION_NAME}"
+                    "app": "${APPLICATION_NAME}"
                 },
                 "annotations": {
                     "description": "Route for application's http service."
@@ -162,18 +168,18 @@
             "spec": {
                 "host": "${HOSTNAME_HTTP}",
                 "to": {
-                    "name": "${APPLICATION_NAME}"
+                    "name": "${SERVICE_NAME}"
                 }
             }
         },
         {
             "kind": "Route",
             "apiVersion": "v1",
-            "id": "${APPLICATION_NAME}-https",
+            "id": "${SERVICE_NAME}-https",
             "metadata": {
-                "name": "secure-${APPLICATION_NAME}",
+                "name": "secure-${SERVICE_NAME}",
                 "labels": {
-                    "application": "${APPLICATION_NAME}"
+                    "app": "${APPLICATION_NAME}"
                 },
                 "annotations": {
                     "description": "Route for application's https service."
@@ -182,7 +188,7 @@
             "spec": {
                 "host": "${HOSTNAME_HTTPS}",
                 "to": {
-                    "name": "secure-${APPLICATION_NAME}"
+                    "name": "secure-${SERVICE_NAME}"
                 },
                 "tls": {
                     "termination": "passthrough"
@@ -193,9 +199,9 @@
             "kind": "DeploymentConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "${APPLICATION_NAME}",
+                "name": "${SERVICE_NAME}",
                 "labels": {
-                    "application": "${APPLICATION_NAME}"
+                    "app": "${APPLICATION_NAME}"
                 }
             },
             "spec": {
@@ -209,20 +215,20 @@
                 ],
                 "replicas": 1,
                 "selector": {
-                    "deploymentConfig": "${APPLICATION_NAME}"
+                    "deploymentConfig": "${SERVICE_NAME}"
                 },
                 "template": {
                     "metadata": {
-                        "name": "${APPLICATION_NAME}",
+                        "name": "${SERVICE_NAME}",
                         "labels": {
-                            "deploymentConfig": "${APPLICATION_NAME}",
-                            "application": "${APPLICATION_NAME}"
+                            "deploymentConfig": "${SERVICE_NAME}",
+                            "app": "${APPLICATION_NAME}"
                         }
                     },
                     "spec": {
                         "volumes": [
                             {
-                                "name": "${APPLICATION_NAME}-restore",
+                                "name": "${SERVICE_NAME}-restore",
                                 "secret": {
                                   "secretName": "${SECRET_NAME_RESTORE}"
                                 }
@@ -230,13 +236,13 @@
                         ],
                         "containers": [
                             {
-                                "name": "${APPLICATION_NAME}",
+                                "name": "${SERVICE_NAME}",
                                 "image": "jboss/keycloak-openshift",
                                 "command": ["start-keycloak.sh", "-b", "0.0.0.0", "-Dkeycloak.migration.action=import", "-Dkeycloak.migration.provider=dir", "-Dkeycloak.migration.dir=/restore"],
                                 "volumeMounts": [
                                     {
                                         "mountPath": "/restore",
-                                        "name": "${APPLICATION_NAME}-restore"
+                                        "name": "${SERVICE_NAME}-restore"
                                     }
                                 ],
                                 "ports": [

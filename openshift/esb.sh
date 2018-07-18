@@ -3,42 +3,38 @@
 # Execute in script dir
 cd $(dirname ${0})
 
-SECRET_SERVICES=(integration-db app client)
-MANAGE_SERVICES=(integration-db)
-
-# set current stage
-export STAGE=local
+SERVICES=(integration-service app-service client-service)
 
 function createServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh createService
   done
 }
 
 function deleteServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh deleteService
   done
 }
 
 function recreateServices() {
-  for SERVICE in "${MANAGE_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh recreateService
   done
 }
 
 function createSecrets() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh createSecrets
   done
 }
 
 function deleteSecrets() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh deleteSecrets
   done
@@ -65,24 +61,32 @@ function recreateAll() {
 }
 
 function deployAll() {
-  for SERVICE in "${SECRET_SERVICES[@]}"
+  for SERVICE in "${SERVICES[@]}"
   do
     ./services/${SERVICE}/oc.sh deploy
   done
 }
 
-function scaleAll() {
-    for SERVICE in "${SECRET_SERVICES[@]}"
-    do
-      ./services/${SERVICE}/oc.sh scale ${1}
-    done
+function buildAndDeployAll() {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    ./services/${SERVICE}/oc.sh buildAndDeploy
+  done
 }
+
+function scaleAll() {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    ./services/${SERVICE}/oc.sh scale ${1}
+  done
+}
+
 
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
    createServices|deleteServices|recreateServices|\
    createAll|deleteAll|recreateAll|\
-   deployAll)
+   deployAll|buildAndDeployAll)
       ${1}
       ;;
    scaleAll)
@@ -96,7 +100,7 @@ case ${1} in
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createServices|deleteServices|recreateServices|\
      createAll|deleteAll|\
-     deployAll|scaleAll]"
+     deployAll|buildAndDeployAll|scaleAll]"
      exit 1
       ;;
 esac

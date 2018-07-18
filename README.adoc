@@ -28,11 +28,14 @@ to be enabled, installed and configured. +
 This section will describe the setup of Docker for Windows.
 
 . Go to __General__ and enable **Expose daemon via tcp://...**, so that WSL can access the Docker Daemon.
-. Go to __Advanced__ and setup the available CPU and Memory. (Developed with CPU: 7, RAM: 6GB, DISK: 100GB)
+. Go to __Advanced__ and setup the available CPU and Memory. **(CPU: 7, RAM 7GB, DISK 112GB)**
 . Go to __Daemon__ and add the private registry **172.30.0.0/16**.
+. Go to __Daemon__ enable **Advanced Features** and add JSON-Property **"selinux-enabled": false**
 
-The Docker Daemon cano now be accessed via the exposed URL, which will be done via the WSL. The private registry
-is used by Openshift for storing Docker Images.
+**There was a problem with OC 3.9, where the router pod didn't start because there was not enough memory !!!!** +
+
+The Docker Daemon can now be accessed via the exposed URL, which will be done via the WSL. The private registry
+is used by Openshift for storing Docker Images and selinux is disabled, because there is no way to get into the backing VM of Docker For Windows.
 
 ## WSL setup
 This section will describe the setup of the WSL environment.

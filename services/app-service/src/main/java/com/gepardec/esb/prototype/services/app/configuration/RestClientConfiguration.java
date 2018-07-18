@@ -4,6 +4,7 @@ import com.gepardec.esb.prototype.services.app.rest.client.api.integration.datab
 import com.gepardec.esb.prototype.services.app.rest.client.api.integration.database.OrderRestApi;
 import com.gepardec.esb.prototype.services.app.rest.client.filter.AppendOAuthFilter;
 import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
+import io.opentracing.contrib.jaxrs2.client.ClientTracingFilter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;

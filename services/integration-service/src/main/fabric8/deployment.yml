@@ -9,9 +9,12 @@ spec:
   template:
     spec:
       volumes:
-        - name: client-config
+        - name: db-config
           secret:
-            secretName: ${oc.secret-client}
+            secretName: ${oc.secret-service-integration}
+        - name: keycloak-config
+          secret:
+            secretName: ${oc.secret-service-integration-keycloak}
       containers:
         - name: ${project.artifactId}
           resources:
@@ -47,8 +50,10 @@ spec:
             - containerPort: 9990
               protocol: TCP
           volumeMounts:
-            - name: client-config
-              mountPath: ${oc.secret-client.dir}
+            - name: db-config
+              mountPath: ${oc.secret-service-integration.dir}
+            - name: keycloak-config
+              mountPath: ${oc.secret-service-integration-keycloak.dir}
           env:
               # Necessary, otherwise java console won't work in Openshift
             - name: "AB_JOLOKIA_HTTPS"
@@ -60,14 +65,45 @@ spec:
             - name: "JAVA_MAX_MEM_RATIO"
               value: "100"
             - name: "JAVA_OPTIONS"
-              value: "-Djava.net.preferIPv4Stack=true -Dswarm.project.stage=openshift"
+              value: "-Djava.net.preferIPv4Stack=true \
+                      -Dswarm.project.stage=openshift"
+            - name: "DB_ADDR"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.addr
+            - name: "DB_PORT"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.port
+            - name: "DB_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.user
+            - name: "DB_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.password
+            - name: "DB_SCHEMA"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.schema
+            - name: "DB_DATABASE"
+              valueFrom:
+                secretKeyRef:
+                  name: ${oc.secret-service-integration}
+                  key: db.database
             - name: "JAEGER_HOST"
               valueFrom:
                 secretKeyRef:
-                  name: ${oc.secret-client}
+                  name: ${oc.secret-service-integration}
                   key: jaeger.host
             - name: "JAEGER_PORT"
               valueFrom:
                 secretKeyRef:
-                  name: ${oc.secret-client}
+                  name: ${oc.secret-service-integration}
                   key: jaeger.port

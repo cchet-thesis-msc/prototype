@@ -45,8 +45,8 @@ public class TestRunnerJob implements Job {
         log.info("Running test job");
         final Scope scope =
                 GlobalTracer.get().buildSpan("test/execute")
-                            .asChildOf((Span)null)
                             .startActive(true);
+        //scope.span().setTag("trace.id", scope.span().context().toString().split(":")[0]);
         try {
             api.generate1(1L);
         } catch (Throwable e) {

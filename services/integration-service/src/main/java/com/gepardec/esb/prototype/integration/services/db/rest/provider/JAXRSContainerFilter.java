@@ -1,6 +1,6 @@
-package com.gepardec.esb.prototype.services.client.rest.provider;
+package com.gepardec.esb.prototype.integration.services.db.rest.provider;
 
-import com.gepardec.esb.prototype.services.client.annotation.Logging;
+import com.gepardec.esb.prototype.integration.services.db.annotation.Logging;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;

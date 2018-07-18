@@ -16,6 +16,9 @@
             "openshift.io/support-url": "https://access.redhat.com",
             "tags": "database,postgresql"
         },
+        "labels": {
+          "app": "${APP_NAME}"
+        },
         "name": "postgresql-persistent"
     },
     "objects": [
@@ -27,6 +30,9 @@
                     "template.openshift.io/expose-database_name": "{.data['database-name']}",
                     "template.openshift.io/expose-password": "{.data['database-password']}",
                     "template.openshift.io/expose-username": "{.data['database-user']}"
+                },
+                "labels": {
+                  "app": "${APP_NAME}"
                 },
                 "name": "${DATABASE_SERVICE_NAME}"
             },
@@ -42,6 +48,9 @@
             "metadata": {
                 "annotations": {
                     "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"
+                },
+                "labels": {
+                  "app": "${APP_NAME}"
                 },
                 "name": "${DATABASE_SERVICE_NAME}"
             },
@@ -69,7 +78,10 @@
             "apiVersion": "v1",
             "kind": "PersistentVolumeClaim",
             "metadata": {
-                "name": "${DATABASE_SERVICE_NAME}"
+                "name": "${DATABASE_SERVICE_NAME}",
+                "labels": {
+                  "app": "${APP_NAME}"
+                }
             },
             "spec": {
                 "accessModes": [
@@ -88,6 +100,9 @@
             "metadata": {
                 "annotations": {
                     "template.alpha.openshift.io/wait-for-ready": "true"
+                },
+                "labels": {
+                  "app": "${APP_NAME}"
                 },
                 "name": "${DATABASE_SERVICE_NAME}"
             },
@@ -118,6 +133,7 @@
                 "template": {
                     "metadata": {
                         "labels": {
+                            "app": "${APP_NAME}",
                             "name": "${DATABASE_SERVICE_NAME}"
                         }
                     },
@@ -322,6 +338,12 @@
             "description": "The anme of the secret holding the sql script",
             "displayName": "Init secret name",
             "name": "INIT_SECRET",
+            "required": true
+        },
+        {
+            "description": "The name of the related application",
+            "displayName": "App name",
+            "name": "APP_NAME",
             "required": true
         }
     ]

@@ -5,12 +5,17 @@ cd $(dirname ${0})
 
 function createService() {
   oc new-app mongodb-persistent  \
-    -p "DATABASE_SERVICE_NAME=${1}" \
-    -p "MONGODB_USER=${3}" \
-    -p "MONGODB_PASSWORD=${4}" \
-    -p "MONGODB_DATABASE=${2}" \
-    -p "MONGODB_ADMIN_PASSWORD=${4}" \
+    -p "DATABASE_SERVICE_NAME=${2}" \
+    -p "MONGODB_USER=${4}" \
+    -p "MONGODB_PASSWORD=${5}" \
+    -p "MONGODB_DATABASE=${3}" \
+    -p "MONGODB_ADMIN_PASSWORD=${5}" \
     -p "MONGODB_VERSION=3.2"
+
+  oc label --overwrite dc/${2} app=${1}
+  oc label --overwrite pvc/${2} app=${1}
+  oc label --overwrite svc/${2} app=${1}
+  oc label --overwrite secret/${2} app=${1}
 } # createBc
 
 function deleteService() {
@@ -39,10 +44,10 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -eq 5 ]; then
-       ${1} ${2} ${3} ${4} ${5}
+     if [ $# -eq 6 ]; then
+       ${1} ${2} ${3} ${4} ${5} ${6}
      else
-       echo "Service name / db_name / db_user / db_password must be given !!!!"
+       echo "app_name / service name / db_name / db_user / db_password must be given !!!!"
        exit 1
      fi
       ;;

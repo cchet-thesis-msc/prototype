@@ -4,12 +4,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.gepardec.esb.prototype.services</groupId>
-    <artifactId>app-service</artifactId>
+    <groupId>com.gepardec.esb.prototype.integration.services</groupId>
+    <artifactId>integration-service</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>app-service</name>
+    <name>integration-service</name>
 
     <properties>
         <!-- Build Properties -->
@@ -28,9 +28,10 @@
         <io-opentracing-contrib.opentracing-cdi.version>0.1.0</io-opentracing-contrib.opentracing-cdi.version>
         <io-opentracing.opentracing-jaxrs2.version>0.1.4</io-opentracing.opentracing-jaxrs2.version>
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
+        <h2-database.h2.version>1.4.197</h2-database.h2.version>
+        <org.postgresql.postgresql.version>42.2.2</org.postgresql.postgresql.version>
 
         <!-- Other Dependency versions -->
-        <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
         <google.google-oauth-client>1.23.0</google.google-oauth-client>
         <lombok.lombok.version>1.18.0</lombok.lombok.version>
@@ -46,7 +47,7 @@
         <schrinkwrap.shrinkwrap-resolver-bom.version>2.2.6</schrinkwrap.shrinkwrap-resolver-bom.version>
 
         <!-- Plugin versions -->
-        <fabric8.maven.plugin.version>3.5.32</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
+        <fabric8.maven.plugin.version>3.5.32</fabric8.maven.plugin.version> <!-- For Openshift 3.5 -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
@@ -55,13 +56,12 @@
         <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
-        <swagger-maven-plugin.version>2.3.1</swagger-maven-plugin.version>
 
-        <!-- Openshift constants -->
-        <oc.secret-service-app>secret-app-service</oc.secret-service-app>
-        <oc.secret-service-app.dir>/config/secret</oc.secret-service-app.dir>
-        <oc.secret-service-app-keycloak>${oc.secret-service-app}-keycloak</oc.secret-service-app-keycloak>
-        <oc.secret-service-app-keycloak.dir>/config/keycloak</oc.secret-service-app-keycloak.dir>
+        <!-- Openshift properties -->
+        <oc.secret-service-integration>secret-integration-service</oc.secret-service-integration>
+        <oc.secret-service-integration-keycloak>${oc.secret-service-integration}-keycloak</oc.secret-service-integration-keycloak>
+        <oc.secret-service-integration.dir>/config/secret</oc.secret-service-integration.dir>
+        <oc.secret-service-integration-keycloak.dir>/config/keycloak</oc.secret-service-integration-keycloak.dir>
     </properties>
 
     <dependencyManagement>
@@ -189,6 +189,24 @@
             <artifactId>keycloak</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>ee</artifactId>
+            <version>2018.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jpa</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${org.postgresql.postgresql.version}</version>
+        </dependency>
+
         <!-- Dependencies Deltaspike -->
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
@@ -220,6 +238,16 @@
             <artifactId>deltaspike-proxy-module-impl-asm</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-data-module-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-data-module-impl</artifactId>
+        </dependency>
+
         <!-- Dependencies commons -->
         <dependency>
             <groupId>com.google.oauth-client</groupId>
@@ -241,6 +269,13 @@
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${org-jboss.resteasy-client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson2-provider</artifactId>
             <version>${org-jboss.resteasy-client.version}</version>
         </dependency>
@@ -249,12 +284,6 @@
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logging</artifactId>
             <version>${slf4j.jbopss-logging.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId>
-            <version>${net.sf.dozer-dozer.version}</version>
         </dependency>
 
         <dependency>
@@ -278,28 +307,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.opentracing.contrib</groupId>
-            <artifactId>opentracing-jaxrs2</artifactId>
-            <version>${io-opentracing.opentracing-jaxrs2.version}</version>
-            <!-- Already provided by wildfly swarm opentracing fraction -->
-            <exclusions>
-                <exclusion>
-                    <groupId>io.opentracing</groupId>
-                    <artifactId>opentracing-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.opentracing</groupId>
-                    <artifactId>opentracing-noop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.opentracing</groupId>
-                    <artifactId>opentracing-traceresolver</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.opentracing</groupId>
-                    <artifactId>opentracing-web-servlet-filter</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -309,33 +319,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Provided but touched Dependencies -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${org-jboss.resteasy-client.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${fasterxml.jackson.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${fasterxml.jackson.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-database.h2.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -452,77 +447,15 @@
             </plugin>
 
             <plugin>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>${swagger-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <!-- Configuration for generating the swagger client for the integration ddatabase service -->
-                        <id>generate-swagger-integration-database</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/swagger/api/integration-service.json</inputSpec>
-                            <output>${project.build.directory}/generated-sources/swagger/integration-database</output>
-                            <language>jaxrs-cxf</language>
-                            <apiPackage>${project.groupId}.app.rest.client.api.integration.database</apiPackage>
-                            <modelPackage>${project.groupId}.app.rest.client.model.integration.database</modelPackage>
-                            <addCompileSourceRoot>false</addCompileSourceRoot>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <generateModelDocumentation>false</generateModelDocumentation>
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <modelNamePrefix>Db</modelNamePrefix>
-                            <templateDirectory>${project.basedir}/swagger/templates</templateDirectory>
-                            <configOptions>
-                                <sourceFolder>/src</sourceFolder>
-                                <dateLibrary>java8</dateLibrary>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven-clean-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <!-- We delete all other source, because only our template-based JAX-RS interface and models are needed -->
-                        <id>clean-swagger-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <directory>${project.build.directory}/generated-sources/swagger/integration-database/src/main/java</directory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>${build-helper-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <!-- Add swagger integration-database client sources -->
-                                <source>${project.build.directory}/generated-sources/swagger/integration-database/src</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
@@ -586,7 +519,7 @@
                                 </config>
                             </generator>
                             <apiVersion>1</apiVersion>
-                            <createExternalUrls>true</createExternalUrls>
+                            <createExternalUrls>false</createExternalUrls>
                             <podName>${project.artifactId}</podName>
                             <mode>openshift</mode>
                             <buildStrategy>s2i</buildStrategy>

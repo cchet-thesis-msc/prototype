@@ -1,0 +1,146 @@
+swarm:
+  deployment: ${project.build.finalName}.war
+  http:
+    port: 8080
+  contex:
+    path: "/"
+  ee:
+    jboss-descriptor-property-replacement: true
+  logging:
+    pattern-formatters:
+      DEFAULT_LOG_PATTERN:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p (%t) [%C{2}] trace.id=%X{trace.id} | trace.group=%X{trace.group} - %m%n"
+    console-handlers:
+      CONSOLE:
+        named-formatter: DEFAULT_LOG_PATTERN
+---
+DB_ADDR: localhost
+DB_PORT: 5432
+DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+DB_DRIVER: org.postgresql.Driver
+DB_USER: "postgres"
+DB_PASSWORD: "postgres"
+DB_SCHEMA: "public"
+DB_DATABASE: "postgres"
+
+project:
+  stage: dev
+swarm:
+  logging:
+    root-logger:
+      level: INFO
+      handlers:
+        - CONSOLE
+    loggers:
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+  datasources:
+    data-sources:
+      DS:
+        driver-name: postgresql
+        connection-url: jdbc:postgresql://${DB_ADDR}:${DB_PORT}/${DB_DATABASE}
+        jndi-name: java:/DS
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}
+---
+DB_DIALECT: org.hibernate.dialect.H2Dialect
+DB_DRIVER: org.h2.Driver
+DB_USER: "user"
+DB_PASSWORD: "password"
+DB_SCHEMA: "DEMO"
+DB_DATABASE: "DEMO"
+
+project:
+  stage: test
+swarm:
+  logging: INFO
+  datasources:
+    data-sources:
+      DS:
+        driver-name: h2
+        connection-url: jdbc:h2:mem:DEMO;INIT=CREATE SCHEMA IF NOT EXISTS DEMO
+        jndi-name: java:/DS
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}
+---
+# Need to collect env vars as JAVA Opts with these variables
+# data-source#connection-url can resolve Java Opts but not env vars !!
+DB_DIALECT: "org.hibernate.dialect.PostgreSQLDialect"
+DB_DRIVER: "org.postgresql.Driver"
+DB_ADDR: "${env.DB_ADDR}"
+DB_PORT: "${env.DB_PORT}"
+DB_DATABASE: "${env.DB_DATABASE}"
+DB_SCHEMA: "${env.DB_SCHEMA}"
+DB_USER: "${env.DB_USER}"
+DB_PASSWORD: "${env.DB_PASSWORD}"
+
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+JAEGER_SERVICE_NAME: "${project.build.finalName}"
+JAEGER_AGENT_HOST: "${env.JAEGER_HOST}"
+JAEGER_AGENT_PORT: "${env.JAEGER_PORT}"
+JAEGER_REPORTER_LOG_SPANS: "true"
+JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+JAEGER_SAMPLER_TYPE: "const"
+JAEGER_SAMPLER_PARAM: "1"
+
+project:
+  stage: openshift
+swarm:
+  keycloak:
+    json:
+      path: ${oc.secret-service-integration-keycloak.dir}/keycloak.json
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/customer/*
+            roles: [consumer]
+          - url-pattern: /rest-api/order/*
+            roles: [consumer]
+          - url-pattern: /rest-api/admin/*
+            roles: [consumer]
+  logging:
+    file-handlers:
+    custom-handlers:
+      SYSLOGGER:
+        named-formatter: DEFAULT_LOG_PATTERN
+        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
+        module: org.jboss.logmanager
+        properties:
+          serverHostname: graylog
+          hostname: ${project.build.finalName}
+          port: 10514
+          protocol: UDP
+    root-logger:
+      level: WARN
+      handlers:
+        - CONSOLE
+        - SYSLOGGER
+    loggers:
+      com.gepardec:
+        level: INFO
+        handlers:
+          - CONSOLE
+          - SYSLOGGER
+      org.keycloak:
+        level: TRACE
+        handlers:
+          - CONSOLE
+          - SYSLOGGER
+  microprofile:
+    config:
+      config-sources:
+        db.secrets:
+          dir: ${oc.secret-service-integration.dir}
+  datasources:
+    data-sources:
+      DS:
+        driver-name: postgresql
+        connection-url: jdbc:postgresql://${DB_ADDR}:${DB_PORT}/${DB_DATABASE}
+        jndi-name: java:/DS
+        user-name: ${DB_USER}
+        password: ${DB_PASSWORD}

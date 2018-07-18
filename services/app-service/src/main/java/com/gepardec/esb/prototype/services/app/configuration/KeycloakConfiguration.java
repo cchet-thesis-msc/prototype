@@ -56,7 +56,7 @@ public class KeycloakConfiguration {
     @Counted(name = "retrieved-oauth-tokens", monotonic = true)
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_SECURITY, skipResult = true)
     @Retry(delay = 100L, maxRetries = 3, retryOn = {TokenResponseException.class, IOException.class})
-    @Timeout(value = 2L, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 5L, unit = ChronoUnit.SECONDS)
     String obtainOauthToken() throws IOException {
         return tokenRequest.execute().getAccessToken();
     }

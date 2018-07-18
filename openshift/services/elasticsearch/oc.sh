@@ -11,11 +11,11 @@ VERSION='5.6.2'
 function createService() {
   oc new-app -f ./elasticsearch.yml  \
     -p "APP=${1}" \
-    -p "SERVICE_NAME=${1}" \
+    -p "SERVICE_NAME=${2}" \
     -p "GIT_URL=${GIT_URL}" \
     -p "GIT_REF=${GIT_REF}" \
     -p "CONTEXT_DIR=docker/elasticsearch" \
-    -p "SECRET_GIT=${2}" \
+    -p "SECRET_GIT=${3}" \
     -p "VERSION=${VERSION}"
 } # createBc
 
@@ -45,10 +45,10 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -eq 3 ]; then
-       ${1} ${2} ${3}
+     if [ $# -eq 4 ]; then
+       ${1} ${2} ${3} ${4}
      else
-       echo "Service_name | secret_git must be given !!!!"
+       echo "app_name | Service_name | secret_git must be given !!!!"
        exit 1
      fi
       ;;
@@ -56,7 +56,7 @@ case ${1} in
      if [ $# -eq 2 ]; then
        ${1} ${2}
      else
-       echo "Service name must be given !!!!"
+       echo "App name must be given !!!!"
        exit 1
      fi
       ;;

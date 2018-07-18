@@ -2,6 +2,7 @@ package com.gepardec.esb.prototype.services.app.rest.provider;
 
 import com.gepardec.esb.prototype.services.app.annotation.Logging;
 import io.opentracing.Scope;
+import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -45,23 +46,23 @@ public class JAXRSContainerFilter {
     public static class MDCContainerRequestFilter implements ContainerRequestFilter {
         @Inject
         private Logger log;
-        // if directly injected, then we get the first instance and no new one anymore,
-        // because the filter gets instantiated only once and the bean is create with @Dependent scope.
+
         @Inject
-        private Instance<SpanContext> spanContextInstance;
-        @Inject
-        private Instance<Scope> scopeInstance;
+        private Instance<Scope> scope;
 
         @Override
         public void filter(ContainerRequestContext requestContext) throws IOException {
             try {
+                Span span = scope.get().span();
+                log.info("Extracting MDC transaction id from span: {}", span.context().toString());
                 // Get current span context
-                final String tracingId = spanContextInstance.get().toString().split(":")[0];
+                final String tracingId = span.context().toString().split(":")[0];
                 // Uber SpanContext implementation does format the id like this 'aaa:ffff:0:1', so here we are implementation dependent,
                 // because the io.opentrace spec does not expose any id
-                scopeInstance.get().span().setTag(MDC_TX_ID, tracingId);
-                log.info("Setting MDC transaction id");
+                log.info("Setting MDC transaction id: {}", tracingId);
                 MDC.put(MDC_TX_ID, tracingId);
+                span.setTag("trace.id", tracingId);
+                scope.get().span().setTag(MDC_TX_ID, tracingId);
             } catch (Throwable e) {
                 e.printStackTrace();
             }

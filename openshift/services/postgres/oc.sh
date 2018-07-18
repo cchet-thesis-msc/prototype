@@ -10,12 +10,13 @@ VOL_LIM='256Mi'
 
 function createService() {
   oc new-app -f ./postgres-full.json \
+    -p "APP_NAME=${1}" \
     -p "MEMORY_LIMIT=${MEM_LIM}" \
-    -p "DATABASE_SERVICE_NAME=${1}" \
-    -p "POSTGRESQL_USER=${3}" \
-    -p "POSTGRESQL_PASSWORD=${4}" \
-    -p "POSTGRESQL_DATABASE=${2}" \
-    -p "INIT_SECRET=${5}" \
+    -p "DATABASE_SERVICE_NAME=${2}" \
+    -p "POSTGRESQL_USER=${4}" \
+    -p "POSTGRESQL_PASSWORD=${5}" \
+    -p "POSTGRESQL_DATABASE=${3}" \
+    -p "INIT_SECRET=${6}" \
     -p "VOLUME_CAPACITY=${VOL_LIM}" \
     -p "POSTGRESQL_VERSION=${VERSION}"
 } # createBc
@@ -47,10 +48,10 @@ case ${1} in
       fi
       ;;
    createService|recreateService)
-     if [ $# -eq 6 ]; then
-       ${1} ${2} ${3} ${4} ${5} ${6}
+     if [ $# -eq 7 ]; then
+       ${1} ${2} ${3} ${4} ${5} ${6} ${7}
      else
-       echo "Service name / db_name / db_user / db_password / init_secret must be given !!!!"
+       echo "app_name / service name / db_name / db_user / db_password / init_secret must be given !!!!"
        exit 1
      fi
       ;;
@@ -58,7 +59,7 @@ case ${1} in
      if [ $# -eq 2 ]; then
        ${1} ${2}
      else
-       echo "Service name must be given !!!!"
+       echo "App name must be given !!!!"
        exit 1
      fi
       ;;
