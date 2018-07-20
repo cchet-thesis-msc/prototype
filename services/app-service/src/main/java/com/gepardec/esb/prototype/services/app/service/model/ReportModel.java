@@ -13,7 +13,6 @@ import lombok.Value;
  * @since 06/08/18
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ReportModel {
@@ -23,4 +22,28 @@ public class ReportModel {
     private Long orderCount;
 
     private Double price;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(Long orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 }

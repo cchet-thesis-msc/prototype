@@ -26,14 +26,15 @@
         <slf4j.jbopss-logging.version>1.1.0.Final</slf4j.jbopss-logging.version>
         <io-opentracing.opentracing-api.version>0.31.0</io-opentracing.opentracing-api.version>
         <io-opentracing-contrib.opentracing-cdi.version>0.1.0</io-opentracing-contrib.opentracing-cdi.version>
-        <io-opentracing.opentracing-jaxrs2.version>0.1.4</io-opentracing.opentracing-jaxrs2.version>
+        <io-opentracing.opentracing-jaxrs2.version>0.1.6</io-opentracing.opentracing-jaxrs2.version>
+        <jaeger.version>0.30.2</jaeger.version>
         <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
 
         <!-- Other Dependency versions -->
         <net.sf.dozer-dozer.version>5.5.1</net.sf.dozer-dozer.version>
         <deltaspike.deltaspike-distribution.version>1.8.2</deltaspike.deltaspike-distribution.version>
         <google.google-oauth-client>1.23.0</google.google-oauth-client>
-        <lombok.lombok.version>1.18.0</lombok.lombok.version>
+        <lombok.lombok.version>1.16.22</lombok.lombok.version>
 
         <!-- Dependencies Internal -->
         <liwest-esb.exception.version>1.0-SNAPSHOT</liwest-esb.exception.version>
@@ -238,11 +239,23 @@
             <artifactId>google-http-client-jackson</artifactId>
             <version>${google.google-oauth-client}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${org-jboss.resteasy-client.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson2-provider</artifactId>
             <version>${org-jboss.resteasy-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -306,28 +319,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Provided but touched Dependencies -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${org-jboss.resteasy-client.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${fasterxml.jackson.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${fasterxml.jackson.version}</version>
             <scope>provided</scope>
         </dependency>
 

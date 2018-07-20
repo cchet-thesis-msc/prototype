@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
@@ -36,13 +35,15 @@ public class ReportServiceImpl implements ReportService {
         final DbCustomer customer = customerRestApi.get1(id);
         final List<DbOrder> orders = orderRestApi.list2(id);
 
-        return new ReportModel(String.format("%s, %s", customer.getLastName(), customer.getFirstName()),
-                               (long) orders.size(),
-                               orders.stream()
-                                     .flatMap((order) -> order.getItems()
-                                                              .stream())
-                                     .mapToDouble((item) -> item.getPrice()
-                                                                .doubleValue())
-                                     .sum());
+        final ReportModel model = new ReportModel(String.format("%s, %s", customer.getLastName(), customer.getFirstName()),
+                                                  (long) orders.size(),
+                                                  orders.stream()
+                                                        .flatMap((order) -> order.getItems()
+                                                                                 .stream())
+                                                        .mapToDouble((item) -> item.getPrice()
+                                                                                   .doubleValue())
+                                                        .sum());
+
+        return model;
     }
 }

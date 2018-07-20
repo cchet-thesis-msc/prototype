@@ -16,6 +16,7 @@ import org.eclipse.microprofile.metrics.annotation.Counted;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -31,13 +32,13 @@ import java.time.temporal.ChronoUnit;
 public class KeycloakConfiguration {
 
     @Inject
-    @ConfigProperty(name = "keycloak.token-url")
+    @ConfigProperty(name = "keycloak.token-url", defaultValue = "")
     private String keycloakTokenUrl;
     @Inject
-    @ConfigProperty(name = "keycloak.client.id")
+    @ConfigProperty(name = "keycloak.client.id", defaultValue = "")
     private String keycloakClientId;
     @Inject
-    @ConfigProperty(name = "keycloak.client.secret")
+    @ConfigProperty(name = "keycloak.client.secret", defaultValue = "")
     private String keycloakClientSecret;
 
     private ClientCredentialsTokenRequest tokenRequest;
@@ -52,7 +53,7 @@ public class KeycloakConfiguration {
 
     @Produces
     @OAuthToken
-    @Dependent
+    @RequestScoped
     @Counted(name = "retrieved-oauth-tokens", monotonic = true)
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_SECURITY, skipResult = true)
     @Retry(delay = 100L, maxRetries = 3, retryOn = {TokenResponseException.class, IOException.class})

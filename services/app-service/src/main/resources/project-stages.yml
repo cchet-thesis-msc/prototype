@@ -11,9 +11,23 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+JAEGER_SERVICE_NAME: "${project.build.finalName}"
+JAEGER_AGENT_HOST: "localhost"
+JAEGER_AGENT_PORT: "6831"
+JAEGER_REPORTER_LOG_SPANS: "true"
+JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+JAEGER_SAMPLER_TYPE: "const"
+JAEGER_SAMPLER_PARAM: "1"
+
 project:
   stage: dev
 swarm:
+  http:
+    port: 8081
+  management:
+    http:
+      port: 9991
   logging:
     root-logger:
       level: INFO
@@ -33,10 +47,7 @@ swarm:
       config-sources:
         app.secrets:
           properties:
-            service.db.base-url: http://integration-service-myproject.10.0.75.2.nip.io/rest-api
-            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
-            keycloak.client.id: service-app
-            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+            service.db.base-url: http://localhost:8082/rest-api
 ---
 project:
   stage: test
@@ -47,10 +58,7 @@ swarm:
       config-sources:
         APP:
           properties:
-            service.db.base-url: http://integration-service-myproject.10.0.75.2.nip.io/rest-api
-            keycloak.token-url: http://keycloak-myproject.10.0.75.2.nip.io/auth/realms/master/protocol/openid-connect/token
-            keycloak.client.id: service-app
-            keycloak.client.secret: db1e9a9c-8e46-406d-8ece-800d1b4577ef
+            service.db.base-url: http://localhost:8082
 ---
 # Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
 JAEGER_SERVICE_NAME: "${project.build.finalName}"
