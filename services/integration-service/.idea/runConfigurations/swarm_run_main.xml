@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="swarm:run-main" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.wildfly.swarm.Swarm" />
-    <module name="integration-service-db" />
+    <module name="integration-service" />
     <option name="VM_PARAMETERS" value="-Dswarm.project.stage=dev" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <method>

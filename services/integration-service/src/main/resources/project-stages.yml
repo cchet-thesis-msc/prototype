@@ -14,18 +14,32 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
-DB_ADDR: localhost
-DB_PORT: 5432
-DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-DB_DRIVER: org.postgresql.Driver
+DB_ADDR: "localhost"
+DB_PORT: "5432"
+DB_DIALECT: "org.hibernate.dialect.PostgreSQLDialect"
+DB_DRIVER: "org.postgresql.Driver"
 DB_USER: "postgres"
 DB_PASSWORD: "postgres"
 DB_SCHEMA: "public"
 DB_DATABASE: "postgres"
 
+# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
+JAEGER_SERVICE_NAME: "${project.build.finalName}"
+JAEGER_AGENT_HOST: "localhost"
+JAEGER_AGENT_PORT: "6831"
+JAEGER_REPORTER_LOG_SPANS: "true"
+JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
+JAEGER_SAMPLER_TYPE: "const"
+JAEGER_SAMPLER_PARAM: "1"
+
 project:
   stage: dev
 swarm:
+  http:
+    port: 8082
+  management:
+    http:
+      port: 9992
   logging:
     root-logger:
       level: INFO
@@ -49,8 +63,8 @@ DB_DIALECT: org.hibernate.dialect.H2Dialect
 DB_DRIVER: org.h2.Driver
 DB_USER: "user"
 DB_PASSWORD: "password"
-DB_SCHEMA: "DEMO"
-DB_DATABASE: "DEMO"
+DB_SCHEMA: "public"
+DB_DATABASE: "postgres"
 
 project:
   stage: test
