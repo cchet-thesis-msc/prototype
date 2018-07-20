@@ -1,12 +1,9 @@
 package com.gepardec.esb.prototype.services.app.rest.client.filter;
 
-import com.gepardec.esb.prototype.services.app.annotation.OAuthToken;
+import com.gepardec.esb.prototype.services.app.configuration.KeycloakConfiguration;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
@@ -23,7 +20,7 @@ public class AppendOAuthFilter implements ClientRequestFilter {
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
-        final String token = BeanProvider.getDependent(String.class, new AnnotationLiteral<OAuthToken>() {}).get();
-        requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        final KeycloakConfiguration.KeycloakAuth keycloakAuth = BeanProvider.getContextualReference(KeycloakConfiguration.KeycloakAuth.class);
+        requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + keycloakAuth.getToken());
     }
 }

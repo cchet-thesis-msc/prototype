@@ -8,6 +8,12 @@ cd $CUR_DIR
 SERVICE_NAME="client-service"
 SECRET_SERVIVE_NAME="secret-${SERVICE_NAME}"
 
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
+
 function createSecrets() {
   oc create secret generic ${SECRET_SERVIVE_NAME} \
     --from-env-file=./config/${STAGE}/config.properties
@@ -22,20 +28,34 @@ function recreateSecrets() {
   createSecrets
 }
 
+function createService() {
+  buildAndDeploy
+}
+
+function deleteService() {
+  undeploy
+}
+
+function recreateService() {
+  deleteService
+  createService
+}
+
 function scale() {
   oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
 function deploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn fabric8:deploy -Pfabric8
-  cd $CUR_DIR
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:deploy -Pfabric8
+}
+
+function undeploy() {
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:undeploy -Pfabric8
 }
 
 function buildAndDeploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn clean install fabric8:deploy -Pfabric8
-  cd $CUR_DIR
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml clean install
+  deploy
 }
 
 case ${1} in
@@ -45,12 +65,14 @@ case ${1} in
       fi
       ;;
    createSecrets|deleteSecrets|recreateSecrets|\
-   deploy|buildAndDeploy)
+   createService|deleteService|recreateService|\
+   deployy|undeploy|buildAndDeploy)
       ${1}
       ;;
    *)
      echo "${0} [createSecrets|deleteSecrets|recreateSecrets\n\
-     scale|deploy|buildAndDeploy]"
+     createService|deleteService|recreateService|\n\
+     scale|deployy|undeploy|undeploy|buildAndDeploy]"
      exit 1
       ;;
 esac

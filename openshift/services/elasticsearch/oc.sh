@@ -8,6 +8,12 @@ GIT_REF='master'
 
 VERSION='5.6.2'
 
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
+
 function createService() {
   oc new-app -f ./elasticsearch.yml  \
     -p "APP=${1}" \

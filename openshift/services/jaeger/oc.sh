@@ -3,11 +3,17 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-APP_NAME='monitoring'
+APP_NAME='tracing'
 SERVICE_NAME="jaeger-tracing"
 SERVICE_NAME_ZIPKIN="${SERVICE_NAME}-zipkin"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
 VERSION="1.5.0"
+
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
 
 function createService() {
   oc new-app -f ./jaeger-full.yml \
@@ -18,7 +24,10 @@ function createService() {
 } # createBc
 
 function deleteService() {
-    oc delete all -l app=${SERVICE_NAME}
+  oc delete all -l app=${APP_NAME}
+  oc delete configmap ${APP_NAME}
+  oc delete secret -l app=${APP_NAME}
+  oc delete pvc -l app=${APP_NAME}
 }
 
 function recreateService() {

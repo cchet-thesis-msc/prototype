@@ -5,6 +5,12 @@ cd $(dirname ${0})
 
 SERVICES=(swagger-ui jaeger keycloak graylog)
 
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
+
 function createServices() {
   for SERVICE in "${SERVICES[@]}"
   do

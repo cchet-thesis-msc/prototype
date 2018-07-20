@@ -221,8 +221,8 @@ objects:
       port:
         targetPort: "${SERVICE_NAME}-web"
       wildcardPolicy: None
-      tls:
-        termination: edge
+      #tls:
+      #  termination: edge
 
   - apiVersion: v1
     kind: Route

@@ -3,7 +3,7 @@
 # Execute in script dir
 cd $(dirname ${0})
 # secret-service-app
-APP_NAME='monitoring'
+APP_NAME='logging'
 SERVICE_NAME="graylog"
 SERVICE_NAME_MONGO="${SERVICE_NAME}-mongo"
 SERVICE_NAME_ELASTIC="${SERVICE_NAME}-elastic"
@@ -18,6 +18,12 @@ DB_PASSWORD='graylog'
 
 VERSION_GRAYLOG='2.4.4'
 VERSION_GOSU='1.10'
+
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
 
 function createSecrets() {
   oc create secret generic ${SECRET_SERVIVE} \
@@ -69,9 +75,9 @@ function recreateService() {
 }
 
 function scale() {
+  oc scale --replicas=${1} dc/${SERVICE_NAME}
   ../mongodb/oc.sh scale ${1} ${SERVICE_NAME_MONGO}
   ../elasticsearch/oc.sh scale ${1} ${SERVICE_NAME_ELASTIC}
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
 case ${1} in

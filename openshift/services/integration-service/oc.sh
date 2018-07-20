@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Execute in script dir
-cd $(dirname ${0})
+CUR_DIR=$(dirname ${0})
+cd $CUR_DIR
+
 # secret-SERVICE_NAME-app
 SERVICE_NAME="integration-service"
 SERVICE_DB="${SERVICE_NAME}-db"
@@ -11,6 +13,12 @@ SECRET_SERVICE_DB="secret-${SERVICE_DB}"
 DB_NAME='postgres'
 DB_USER='postgres'
 DB_PASSWORD='postgres'
+
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
 
 function createSecrets() {
   oc create secret generic ${SECRET_SERVIVE} \
@@ -36,9 +44,11 @@ function recreateSecrets() {
 
 function createService() {
   ../postgres/oc.sh createService ${SERVICE_NAME} ${SERVICE_DB} ${DB_NAME} ${DB_USER} ${DB_PASSWORD} ${SECRET_SERVICE_DB}
+  buildAndDeploy
 }
 
 function deleteService() {
+  undeploy
   ../postgres/oc.sh deleteService ${SERVICE_DB}
 }
 
@@ -53,13 +63,16 @@ function scale() {
 }
 
 function deploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn fabric8:deploy -Pfabric8
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:deploy -Pfabric8
+}
+
+function undeploy() {
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:undeploy -Pfabric8
 }
 
 function buildAndDeploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn clean install fabric8:deploy -Pfabric8
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml clean install
+  deploy
 }
 
 case ${1} in
@@ -70,13 +83,13 @@ case ${1} in
       ;;
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
-   deploy|buildAndDeploy)
+   deploy|undeploy|buildAndDeploy)
       ${1}
       ;;
    *)
      echo "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createService|deleteService|recreateService|\
-     scale|deploy|buildAndDeploy]"
+     scale|deploy|undeploy|buildAndDeploy]"
      exit 1
       ;;
 esac

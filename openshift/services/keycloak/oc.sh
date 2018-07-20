@@ -19,6 +19,12 @@ MEM_LIM='1'
 CPU_MAX='1000m'
 MEM_MAX='1'
 
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
+
 function createSecrets() {
   oc create secret generic ${SECRET_SERVICE_RESTORE} \
     --from-file=./config/${STAGE}/master-realm.json \
@@ -82,8 +88,8 @@ function recreateAll() {
 }
 
 function scale() {
-  ../postgres/oc.sh scale ${1} ${SERVICE_DB}
   oc scale --replicas=${1} dc/${SERVICE_NAME}
+  ../postgres/oc.sh scale ${1} ${SERVICE_DB}
 }
 
 case ${1} in

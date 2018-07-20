@@ -5,6 +5,12 @@ cd $(dirname ${0})
 
 SERVICES=(integration-service app-service client-service)
 
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
+
 function createServices() {
   for SERVICE in "${SERVICES[@]}"
   do
@@ -74,6 +80,13 @@ function buildAndDeployAll() {
   done
 }
 
+function undeployAll() {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    ./services/${SERVICE}/oc.sh undeploy
+  done
+}
+
 function scaleAll() {
   for SERVICE in "${SERVICES[@]}"
   do
@@ -86,7 +99,7 @@ case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
    createServices|deleteServices|recreateServices|\
    createAll|deleteAll|recreateAll|\
-   deployAll|buildAndDeployAll)
+   undeployAll|deployAll|buildAndDeployAll)
       ${1}
       ;;
    scaleAll)
@@ -100,7 +113,7 @@ case ${1} in
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createServices|deleteServices|recreateServices|\
      createAll|deleteAll|\
-     deployAll|buildAndDeployAll|scaleAll]"
+     undeployAll|deployAll|buildAndDeployAll|scaleAll]"
      exit 1
       ;;
 esac

@@ -1,11 +1,19 @@
 #!/bin/bash
 
 # Execute in script dir
-cd $(dirname ${0})
+CUR_DIR=$(dirname ${0})
+cd $CUR_DIR
+
 # secret-service-app
 SERVICE_NAME="app-service"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
 SECRET_SERVIVE_KEYCLOAK="${SECRET_SERVIVE}-keycloak"
+
+if [ ! "$STAGE" ];
+then
+  echo "No \$STAGE env variable set"
+  exit 1
+fi
 
 function createSecrets() {
   oc create secret generic ${SECRET_SERVIVE} \
@@ -25,18 +33,34 @@ function recreateSecrets() {
   createSecrets
 }
 
+function createService() {
+  buildAndDeploy
+}
+
+function deleteService() {
+  undeploy
+}
+
+function recreateService() {
+  deleteService
+  createService
+}
+
 function scale() {
   oc scale --replicas=${1} dc/${SERVICE_NAME}
 }
 
 function deploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn fabric8:deploy -Pfabric8
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:deploy -Pfabric8
+}
+
+function undeploy() {
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml fabric8:undeploy -Pfabric8
 }
 
 function buildAndDeploy() {
-  cd ../../../services/${SERVICE_NAME}
-  mvn clean install fabric8:deploy -Pfabric8
+  mvn -f ../../../services/${SERVICE_NAME}/pom.xml clean install
+  deploy
 }
 
 case ${1} in
@@ -46,12 +70,14 @@ case ${1} in
       fi
       ;;
    createSecrets|deleteSecrets|recreateSecrets|\
-   deploy|buildAndDeploy)
+   createService|deleteService|recreateService|\
+   deploy|undeploy|buildAndDeploy)
       ${1}
       ;;
    *)
      echo "${0} [createSecrets|deleteSecrets|recreateSecrets\n\
-     scale|deploy|buildAndDeploy]"
+     createService|deleteService|recreateService|\
+     scale|deploy|undeploy|buildAndDeploy]"
      exit 1
       ;;
 esac

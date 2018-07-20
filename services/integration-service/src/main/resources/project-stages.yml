@@ -99,24 +99,12 @@ JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
 JAEGER_SAMPLER_TYPE: "const"
 JAEGER_SAMPLER_PARAM: "1"
 
+GRAYLOG_HOST: "${env.GRAYLOG_HOST}"
+GRAYLOG_PORT: "${env.GRAYLOG_PORT}"
+GRAYLOG_PROT: "${env.GRAYLOG_PROT}"
 project:
   stage: openshift
 swarm:
-  keycloak:
-    json:
-      path: ${oc.secret-service-integration-keycloak.dir}/keycloak.json
-  deployment:
-    ${project.build.finalName}.war:
-      web:
-        login-config:
-          auth-method: KEYCLOAK
-        security-constraints:
-          - url-pattern: /rest-api/customer/*
-            roles: [consumer]
-          - url-pattern: /rest-api/order/*
-            roles: [consumer]
-          - url-pattern: /rest-api/admin/*
-            roles: [consumer]
   logging:
     file-handlers:
     custom-handlers:
@@ -125,10 +113,10 @@ swarm:
         attribute-class: org.jboss.logmanager.handlers.SyslogHandler
         module: org.jboss.logmanager
         properties:
-          serverHostname: graylog
+          serverHostname: ${GRAYLOG_HOST}
           hostname: ${project.build.finalName}
-          port: 10514
-          protocol: UDP
+          port: ${GRAYLOG_PORT}
+          protocol: ${GRAYLOG_PROT}
     root-logger:
       level: WARN
       handlers:
@@ -145,6 +133,21 @@ swarm:
         handlers:
           - CONSOLE
           - SYSLOGGER
+  keycloak:
+    json:
+      path: ${oc.secret-service-integration-keycloak.dir}/keycloak.json
+  deployment:
+    ${project.build.finalName}.war:
+      web:
+        login-config:
+          auth-method: KEYCLOAK
+        security-constraints:
+          - url-pattern: /rest-api/customer/*
+            roles: [consumer]
+          - url-pattern: /rest-api/order/*
+            roles: [consumer]
+          - url-pattern: /rest-api/admin/*
+            roles: [consumer]
   microprofile:
     config:
       config-sources:
