@@ -9,7 +9,7 @@ import io.opentracing.tag.Tags;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 
-import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -26,10 +26,10 @@ public class JXRSEcxeptionMapper {
 
     @Provider
     @Logging
-    public static class ServerExceptionMapper implements ExceptionMapper<ServerErrorException> {
+    public static class ServerExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
         @Override
-        public Response toResponse(ServerErrorException exception) {
+        public Response toResponse(WebApplicationException exception) {
             markSpanError(exception);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                            .header("Content-Type", MediaType.TEXT_PLAIN)

@@ -11,12 +11,10 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.matchers.GroupMatcher;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.LinkedList;
 import java.util.Random;
 
 /**

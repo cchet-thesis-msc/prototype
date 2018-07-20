@@ -3,7 +3,6 @@ package com.gepardec.esb.prototype.services.client.configuration;
 import com.gepardec.esb.prototype.services.app.rest.client.api.service.app.ReportRestServiceApi;
 import com.gepardec.esb.prototype.services.client.rest.client.filter.AppendOAuthFilter;
 import io.opentracing.contrib.jaxrs2.client.ClientTracingFeature;
-import io.opentracing.contrib.jaxrs2.client.ClientTracingFilter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.resteasy.client.jaxrs.ProxyBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -43,29 +42,32 @@ public class RestClientConfiguration {
     }
 
     public <T> T getOrCreateProxy(Class<T> clazz) {
-        T proxy = (T) cache.getOrDefault(clazz,
-                                         ProxyBuilder.builder(clazz,
-                                                              buildResteasyClient()
-                                                                      .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
-                                                                                                     String.format("Rest-Client of type '%s' has no registered baseUrl", clazz))))
-                                                     .defaultConsumes(MediaType.TEXT_PLAIN)
-                                                     .build());
+        T proxy = (T) cache.computeIfAbsent(ReportRestServiceApi.class, (_clazz) -> ProxyBuilder.builder(clazz,
+                                                                                                         buildResteasyClient()
+                                                                                                                 .target(Objects.requireNonNull(typeToBaseUrlCache.get(clazz),
+                                                                                                                                                String.format(
+                                                                                                                                                        "Rest-Client of type '%s' has no registered baseUrl",
+                                                                                                                                                        clazz))))
+                                                                                                .defaultConsumes(MediaType.TEXT_PLAIN)
+                                                                                                .build());
         cache.putIfAbsent(clazz, proxy);
 
         return proxy;
     }
 
     private Client buildResteasyClient() {
-        return new ResteasyClientBuilder().connectionCheckoutTimeout(5, TimeUnit.SECONDS)
-                                          .establishConnectionTimeout(5, TimeUnit.SECONDS)
-                                          .socketTimeout(5, TimeUnit.SECONDS)
-                                          .connectionTTL(5, TimeUnit.SECONDS)
-                                          .maxPooledPerRoute(50)
-                                          .connectionPoolSize(500)
-                                          // Appends Tracing feature for jaxrs client
-                                          .register(ClientTracingFeature.class)
-                                          // Appends OAuth token to Authentication header
-                                          .register(AppendOAuthFilter.class)
-                                          .build();
+        final ResteasyClientBuilder rcb = new ResteasyClientBuilder().connectionCheckoutTimeout(2, TimeUnit.SECONDS)
+                                                                     .establishConnectionTimeout(2, TimeUnit.SECONDS)
+                                                                     .socketTimeout(2, TimeUnit.SECONDS)
+                                                                     .connectionTTL(2, TimeUnit.SECONDS)
+                                                                     .maxPooledPerRoute(50)
+                                                                     .connectionPoolSize(500)
+                                                                     // Appends Tracing feature for jaxrs client
+                                                                     .register(ClientTracingFeature.class);
+        // Appends OAuth token to Authentication header
+        if ("openshift".equalsIgnoreCase(System.getProperty("swarm.project.stage"))) {
+            rcb.register(AppendOAuthFilter.class);
+        }
+        return rcb.build();
     }
 }

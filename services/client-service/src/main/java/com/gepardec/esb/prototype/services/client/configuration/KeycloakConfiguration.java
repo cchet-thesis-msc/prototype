@@ -33,13 +33,13 @@ public class KeycloakConfiguration {
 
 
     @Inject
-    @ConfigProperty(name = "keycloak.token-url")
+    @ConfigProperty(name = "keycloak.token-url", defaultValue = "")
     private String keycloakTokenUrl;
     @Inject
-    @ConfigProperty(name = "keycloak.client.id")
+    @ConfigProperty(name = "keycloak.client.id", defaultValue = "")
     private String keycloakClientId;
     @Inject
-    @ConfigProperty(name = "keycloak.client.secret")
+    @ConfigProperty(name = "keycloak.client.secret", defaultValue = "")
     private String keycloakClientSecret;
 
     private ClientCredentialsTokenRequest tokenRequest;
