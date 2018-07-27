@@ -3,6 +3,16 @@
 This document describes the implemented Openshift Resources for managing the Openshift Project, which
 hosts the monitoring service, security services and integration services.
 
-## Monitoring Services
-This section describes the monitoring services, which are used to aggregate logs and collect tracing data
-from the integration services.
+## Infrastructure Services
+
+### Setup secrets and configurations
+
+### Setup Services
+
+## Integration Services
+
+### Setup secrets and configurations
+
+### Setup Services
+
+## Configuration and Secret Management

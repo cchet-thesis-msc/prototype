@@ -41,9 +41,6 @@ This section will describe the setup of Docker for Windows.
   "selinux-enabled": false
 }
 
-**There was a problem with OC 3.9, where the router pod didn't start.** +
-**Maybe caused by insufficient resources or an corrupted VM, which we cannot access that easy** +
-
 The Docker Daemon can now be accessed via the exposed URL, which will be done via the WSL. The private registry
 is used by Openshift for storing Docker Images and selinux is disabled, because there is no way to get into the backing VM of Docker For Windows.
 
@@ -51,11 +48,82 @@ is used by Openshift for storing Docker Images and selinux is disabled, because 
 This section will describe the setup of the WSL environment.
 
 . Execute ``sudo apt install docker.io`` to install Docker on Ubunto 18.04 WSL-Image.
-. Add ``export DOCKER_HOST=tcp://127.0.0.1:2375`` to ``~/.bashrc`` to point to Windows Docker-Daemon. Don't use **localhost**
+. Open a Powershell, execute ``bash`` and setup the Linux user
+. Add ``export DOCKER_HOST=tcp://127.0.0.1:2375`` to ``~/.bashrc`` of your Linux user to point to Windows Docker-Daemon. Don't use **localhost**
   because this points to WSL localhost.
 
 Docker commands executed in the WSL, will actual be executed on the Windows Docker-Host, which is
 located in a HyperV VM.
+
+
+## Setup local Openshift Cluster
+This section describes how to setup a local Openshift Cluster with **powershift** on a Windows 10 Host.
+
+Open a Powershell Window and execute ``powershift cluster up <PROFILE_NAME>`` to start local Openshift Cluster.
+This command will start a busybox container before starting the Openshift Cluster,
+whereby busybox will provide the filesystem, where the configurations of the profile are stored. +
+
+The following shows the output of  ``powershift cluster up prototype``, when the profile doesn't exist yet.
+[source,bash]
+----
+C:\>powershift cluster up prototype
+    Creating
+    Unable to find image 'busybox:latest' locally
+    latest: Pulling from library/busybox
+    75a0e65efd51: Pull complete
+    Digest: sha256:d21b79794850b4b15d8d332b451d95351d14c951542942a816eea69c9e04b240
+    Status: Downloaded newer image for busybox:latest
+    error: server took too long to respond with version information.
+    oc cluster up
+      --host-data-dir "/var/lib/powershift/profiles/prototype/data"
+      --host-config-dir "/var/lib/powershift/profiles/prototype/config"
+      --host-pv-dir "/var/lib/powershift/profiles/prototype/volumes"
+      --use-existing-config
+      --forward-ports=false
+    Pulling image openshift/origin:v3.9.0
+    Pulled 1/4 layers, 50% complete
+    Pulled 4/4 layers, 100% complete
+    Extracting
+    Image pull complete
+    Using Docker shared volumes for OpenShift volumes
+    Using 10.0.75.2 as the server IP
+    Starting OpenShift using openshift/origin:v3.9.0 ...
+    OpenShift server started.
+
+    The server is accessible via web console at:
+        https://10.0.75.2:8443
+
+    You are logged in as:
+        User:     developer
+        Password: <any value>
+
+    To login as administrator:
+        oc login -u system:admin
+
+    cluster role "sudoer" added: "system:authenticated"
+    Restarting
+    Stopping
+    Starting
+    oc cluster up
+      --host-data-dir "/var/lib/powershift/profiles/prototype/data"
+      --host-config-dir "/var/lib/powershift/profiles/prototype/config"
+      --host-pv-dir "/var/lib/powershift/profiles/prototype/volumes"
+      --use-existing-config
+      --forward-ports=false
+    Using Docker shared volumes for OpenShift volumes
+    Using 10.0.75.2 as the server IP
+    Starting OpenShift using openshift/origin:v3.9.0 ...
+    OpenShift server started.
+
+    The server is accessible via web console at:
+        https://10.0.75.2:8443
+
+    Cluster "powershift-prototype" set.
+    User "developer@powershift-prototype" set.
+    Context "powershift-prototype" modified.
+    Switched to context "powershift-prototype".
+    Started
+----
 
 ## Repository Structure
 This section will describe the structure of the prototype repository, which holds all needed resources. +
@@ -66,6 +134,8 @@ This section will describe the structure of the prototype repository, which hold
 * **/openshift** is the directory which contains all Openshift relevant resource, which are managed outside of
   the integration service code bases.
 * **/openshift/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
+* **/openshift/<SERVICE_NAME>/config/** is the directory holding all service relevant configurations over all stages.
+* **/openshift/<SERVICE_NAME>/config/<STAGE>** is the directory holding all service relevant configuration for a specific stage.
 * **/services** is the directory holding the service code bases
 * **/services/<SERVICE_NAME>** is the directory holding the service related code base.
 
@@ -73,6 +143,6 @@ The service code bases are completely separated from each other and would normal
 for demonstration purpose all resources where kept in one repository. See the following links for the documentation
 of the different parts of the prototype. +
 
-* link:openshift/README.adoc[Openshift Project Management] holds the documentation of the implemented resources, which manage
+* link:openshift/README.adoc[Openshift] holds the documentation of the implemented resources, which manage
   a Openshift Project.
-* link:services/README.adoc[Integration Service Implementation] holds the documentation of the implemented integration services.
+* link:services/README.adoc[Integration Services] holds the documentation of the implemented integration services.

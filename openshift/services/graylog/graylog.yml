@@ -223,20 +223,3 @@ objects:
       wildcardPolicy: None
       #tls:
       #  termination: edge
-
-  - apiVersion: v1
-    kind: Route
-    metadata:
-      name: "${SERVICE_NAME}-tcp"
-      labels:
-        app: "${APP}"
-    spec:
-      to:
-        kind: Service
-        name: "${SERVICE_NAME}"
-        weight: 100
-      port:
-        targetPort: "${SERVICE_NAME}-tcp"
-      wildcardPolicy: None
-      #tls:
-      #  termination: edge
