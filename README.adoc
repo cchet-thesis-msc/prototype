@@ -126,7 +126,7 @@ C:\>powershift cluster up prototype
 ----
 
 ## Repository Structure
-This section will describe the structure of the prototype repository, which holds all needed resources. +
+This section describes the structure of the prototype repository, which holds all needed resources. +
 
 * **.idea** is the IntelliJ directory holding IntelliJ Run-Configurations.
 * **/docker** is the directory which holds all Docker relevant resources.
@@ -143,6 +143,26 @@ The service code bases are completely separated from each other and would normal
 for demonstration purpose all resources where kept in one repository. See the following links for the documentation
 of the different parts of the prototype. +
 
-* link:openshift/README.adoc[Openshift] holds the documentation of the implemented resources, which manage
+## Run prototype
+This section describes how to run the prototype on a running Openshift Cluster. +
+
+* Open a Powershell and execute ``bash`` to get to the WSL
+* Login to the Openshift Cluster via ``oc login``
+* Switch to the project, the prototype should be deployed on
+* Execute ``STAGE=local openshift/esb-infra.sh createAll`` to create all infrastructure services such as Graylog
+* Wait until all infrastructure services are up
+* Execute ``STAGE=local openshift/esb.sh createAll`` to create all integration services
+* Wait until all integration services are up
+
+See link:services/README.adoc[here] for documentation how to prepare and access the deployed integration services. +
+See link:openshift/README.adoc[here] for documentation how to prepare the deployed infrastructure services. +
+
+## Further documentation
+
+* link:services/README.adoc[services/README.adoc] holds the documentation of the implemented integration services.
+* link:openshift/README.adoc[openshift/README.adoc] holds the documentation of the implemented resources, which manage
   a Openshift Project.
-* link:services/README.adoc[Integration Services] holds the documentation of the implemented integration services.
+* link:https://maven.fabric8.io/[fabric8-maven-plugin] holds the documentation of the fabric8 maven plugin
+* link:http://wildfly-swarm.io/[Thorntail.io] is the home page of Thorntail  __(formerly known as Wildfly-Swarm)__
+* link:https://access.redhat.com/documentation/en-us/red_hat_jboss_fuse/6.3/html/fuse_integration_services_2.0_for_openshift/index[Fuse Integration Services 2.0] is the Red Hat guide for
+  Fuse Integration Services 2.0
