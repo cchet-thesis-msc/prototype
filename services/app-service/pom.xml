@@ -22,7 +22,7 @@
 
         <!-- Dependency versions -->
         <!-- Wildfly-Swarm Dependency versions 'wildfly-swarm:build-parent' -->
-        <org.wildfly.wildfly-swarm.version>2018.5.0</org.wildfly.wildfly-swarm.version>
+        <thorntail-io.version>2.1.0.Final</thorntail-io.version>
         <slf4j.jbopss-logging.version>1.1.0.Final</slf4j.jbopss-logging.version>
         <io-opentracing.opentracing-api.version>0.31.0</io-opentracing.opentracing-api.version>
         <io-opentracing-contrib.opentracing-cdi.version>0.1.0</io-opentracing-contrib.opentracing-cdi.version>
@@ -47,7 +47,7 @@
         <schrinkwrap.shrinkwrap-resolver-bom.version>2.2.6</schrinkwrap.shrinkwrap-resolver-bom.version>
 
         <!-- Plugin versions -->
-        <fabric8.maven.plugin.version>3.5.32</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
+        <fabric8.maven.plugin.version>3.5.40</fabric8.maven.plugin.version> <!-- For OC-3.5=3.5.32, OC-3.6=3.5.38 -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
@@ -69,17 +69,11 @@
         <dependencies>
             <!-- Swarm -->
             <dependency>
-                <groupId>org.wildfly.swarm</groupId>
+                <groupId>io.thorntail</groupId>
                 <artifactId>bom-all</artifactId>
-                <version>${org.wildfly.wildfly-swarm.version}</version>
+                <version>${thorntail-io.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
-                    <exclusion>
-                        <groupId>org.wildfly.swarm</groupId>
-                        <artifactId>config-api-runtime</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -110,83 +104,64 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <dependency> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>config-api-runtime</artifactId>
-            <version>${org.wildfly.config-api.version}</version>
-        </dependency>
-
         <!-- Dependencies wildfly-swarm fractions -->
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaxrs</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>swagger</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>opentracing</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaeger</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>logging</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>microprofile-config</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-microprofile-config-implementation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>microprofile-health</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>microprofile-metrics</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>microprofile-fault-tolerance</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>bean-validation</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaxrs-validator</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>keycloak</artifactId>
         </dependency>
 
@@ -338,7 +313,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>arquillian</artifactId>
             <scope>test</scope>
         </dependency>
@@ -527,9 +502,9 @@
 
             <!-- Swarm -->
             <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId>
-                <version>${org.wildfly.wildfly-swarm.version}</version>
+                <groupId>io.thorntail</groupId>
+                <artifactId>thorntail-maven-plugin</artifactId>
+                <version>${thorntail-io.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -572,8 +547,8 @@
                             </enricher>
                             <generator>
                                 <config>
-                                    <wildfly-swarm>
-                                    </wildfly-swarm>
+                                    <thorntail-v2>
+                                    </thorntail-v2>
                                 </config>
                             </generator>
                             <apiVersion>1</apiVersion>

@@ -12,7 +12,7 @@
             <list>
               <option value="clean" />
               <option value="install" />
-              <option value="wildfly-swarm:run" />
+              <option value="thorntail:run" />
               <option value="-Dswarm.project.stage=dev" />
               <option value="-DskipTests=true" />
             </list>
@@ -26,6 +26,6 @@
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
-    <method />
+    <method v="2" />
   </configuration>
 </component>
