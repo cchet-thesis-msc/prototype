@@ -7,7 +7,7 @@ SERVICE_NAME="swagger"
 SECRET_SERVIVE="secret-${SERVICE_NAME}"
 VERSION='3.13.4'
 GIT_URL='git@github.com:cchet-thesis-msc/prototype.git'
-GIT_REF='master'
+GIT_REF=${GIT_REF:-'master'}
 CONTEXT_DIR='docker/swagger-ui/'
 
 function createSecrets() {

@@ -4,7 +4,7 @@
 cd $(dirname ${0})
 
 GIT_URL='git@github.com:cchet-thesis-msc/prototype.git'
-GIT_REF='master'
+GIT_REF=${GIT_REF:-'master'}
 
 VERSION='5.6.2'
 

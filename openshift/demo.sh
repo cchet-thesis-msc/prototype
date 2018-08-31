@@ -10,7 +10,7 @@ then
 fi
 
 function createEsbInfra() {
-  oc create new-project esb-infra
+  oc new-project esb-infra
   oc project esb-infra
   ./esb-infra/esb-infra.sh createAll
 }
@@ -21,7 +21,7 @@ function deleteEsbInfra() {
 }
 
 function createEsb() {
-  oc create new-project esb
+  oc new-project esb
   oc adm pod-network join-projects --to=esb-infra esb
   oc project esb
   ./esb/esb.sh createAll

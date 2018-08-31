@@ -14,35 +14,35 @@ fi
 function createServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh createService
+    ./${SERVICE}/oc.sh createService
   done
 }
 
 function deleteServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh deleteService
+    ./${SERVICE}/oc.sh deleteService
   done
 }
 
 function recreateServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh recreateService
+    ./${SERVICE}/oc.sh recreateService
   done
 }
 
 function createSecrets() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh createSecrets
+    ./${SERVICE}/oc.sh createSecrets
   done
 }
 
 function deleteSecrets() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh deleteSecrets
+    ./${SERVICE}/oc.sh deleteSecrets
   done
 }
 
@@ -69,7 +69,7 @@ function recreateAll() {
 function scaleAll() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh scale ${1}
+    ./${SERVICE}/oc.sh scale ${1}
   done
 }
 

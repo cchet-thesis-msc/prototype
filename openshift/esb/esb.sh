@@ -14,35 +14,35 @@ fi
 function createServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh createService
+    ./${SERVICE}/oc.sh createService
   done
 }
 
 function deleteServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh deleteService
+    ./${SERVICE}/oc.sh deleteService
   done
 }
 
 function recreateServices() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh recreateService
+    ./${SERVICE}/oc.sh recreateService
   done
 }
 
 function createSecrets() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh createSecrets
+    ./${SERVICE}/oc.sh createSecrets
   done
 }
 
 function deleteSecrets() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh deleteSecrets
+    ./${SERVICE}/oc.sh deleteSecrets
   done
 }
 
@@ -69,28 +69,28 @@ function recreateAll() {
 function deployAll() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh deploy
+    ./${SERVICE}/oc.sh deploy
   done
 }
 
 function buildAndDeployAll() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh buildAndDeploy
+    ./${SERVICE}/oc.sh buildAndDeploy
   done
 }
 
 function undeployAll() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh undeploy
+    ./${SERVICE}/oc.sh undeploy
   done
 }
 
 function scaleAll() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./services/${SERVICE}/oc.sh scale ${1}
+    ./${SERVICE}/oc.sh scale ${1}
   done
 }
 
