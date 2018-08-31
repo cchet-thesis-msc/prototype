@@ -38,6 +38,7 @@ public class PartialRestClientProxyBean implements InvocationHandler {
     @Inject
     private RestClientConfiguration restClientConfiguration;
 
+    // getMyProp = MY_PROP
     @Override
     @Logging(mdcConfig = Logging.MDCConfig.GROUP_REST_CLIENT)
 //    @Retry(delay = 100L, maxRetries = 3, retryOn = {RestClientExcepton.class})
