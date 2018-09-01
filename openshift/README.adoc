@@ -1,18 +1,24 @@
-# Openshift Resources for managing the Openshift Project
+= Openshift Resources for managing the Openshift Project
 
-This document describes the implemented Openshift Resources for managing the Openshift Project, which
-hosts the monitoring service, security services and integration services.
+This document describes the implemented Openshift Resources for managing the Openshift Project, which hosts the monitoring service, security services and ESB services.
 
-## Infrastructure Services
+The Openshift Resources and scripts have been split into the two directories 
 
-### Setup secrets and configurations
+* __esb-infra__, which holds the infrastructure related resources, and
+* __esb__, which holds the ESB service related resources.
 
-### Setup Services
+Due to the fact, that ``oc cluster up`` created Openshift Clusters don't have a proper network plugin, it is not possible to create two separate Openshift Projects, whereby the POD networks of the projects are joined. 
 
-## Integration Services
+== Infrastructure Services
 
-### Setup secrets and configurations
+=== Setup secrets and configurations
 
-### Setup Services
+=== Setup Services
 
-## Configuration and Secret Management
+== Integration Services
+
+=== Setup secrets and configurations
+
+=== Setup Services
+
+== Configuration and Secret Management

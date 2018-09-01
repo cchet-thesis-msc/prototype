@@ -1,18 +1,15 @@
-# Prototype ESB in Openshift with Fuse Integration Services 2.0
+= Prototype ESB in Openshift with Fuse Integration Services 2.0
 
-This repository holds the prototype for the master thesis __Implementation of an Enterprise Service Bus with OpenShift__
-which is public available on link:++https://github.com/cchet-thesis-msc/thesis++[Github]. The prototype uses the RedHat tooling __Fuse Integration Services 2.0__ which consists of
-a Maven Plugin (Fabric8) and Openshift Builder-Images, which allow to manage a integration service
-via a Maven Build. This readme provides introductions to setup and run the prototype on a
-Windows 10 Host. +
+This repository holds the prototype for the master thesis __Implementation of an Enterprise Service Bus with OpenShift__ which is public available on link:++https://github.com/cchet-thesis-msc/thesis++[Github]. The prototype uses the RedHat tooling __Fuse Integration Services 2.0__ which consists of
+a Maven Plugin (Fabric8) and Openshift Builder-Images, which allow to manage a  service via a Maven Build. This Readme provides introductions to setup and run the prototype on a Windows 10 Host. +
 
-## Windows 10 Setup
+== Windows 10 Setup
 This section will describe the setup of the Windows 10 environment. The following applications and features need
 to be enabled, installed and configured. +
 
 . Follow the instructions available link:++https://docs.microsoft.com/en-us/windows/wsl/install-win10++[here] to
   install and enable WSL. During the development, the Ubuntu Linux-Image has been used. +
-. Follow the instruction available link:++https://docs.docker.com/docker-for-windows/install/#install-docker-for-windows-desktop-app++[here] to
+. Follow the instruction available link:++https://docs.docker.com/docker-for-windows/install/=install-docker-for-windows-desktop-app++[here] to
   install and configure __Docker For Windows__. The installer will ask you to enable **HyperV** Windows-Feature, which will
   prevent VMWare or VirtualBox from working.
 . Download link:++https://www.python.org/downloads/windows/++[Python 3.x] for Windows and install it.
@@ -24,7 +21,7 @@ to be enabled, installed and configured. +
 ... __powershift-cluster__, provides CLI for managing __oc cluster__ created clusters.
 ... __powershift-image__, provides CLI for managing S2I Images and Builds.
 
-## Docker For Windows Setup
+== Docker For Windows Setup
 This section will describe the setup of Docker for Windows.
 
 . Go to __General__ and enable **Expose daemon via tcp://...**, so that WSL can access the Docker Daemon.
@@ -42,9 +39,9 @@ This section will describe the setup of Docker for Windows.
 }
 
 The Docker Daemon can now be accessed via the exposed URL, which will be done via the WSL. The private registry
-is used by Openshift for storing Docker Images and selinux is disabled, because there is no way to get into the backing VM of Docker For Windows.
+is used by Openshift for storing Docker Images and selinux is disabled, to prevent security related issues during running the protoype.
 
-## WSL setup
+== WSL setup
 This section will describe the setup of the WSL environment.
 
 . Execute ``sudo apt install docker.io`` to install Docker on Ubunto 18.04 WSL-Image.
@@ -56,7 +53,7 @@ Docker commands executed in the WSL, will actual be executed on the Windows Dock
 located in a HyperV VM.
 
 
-## Setup local Openshift Cluster
+== Setup local Openshift Cluster
 This section describes how to setup a local Openshift Cluster with **powershift** on a Windows 10 Host.
 
 Open a Powershell Window and execute ``powershift cluster up <PROFILE_NAME>`` to start local Openshift Cluster.
@@ -125,41 +122,38 @@ C:\>powershift cluster up prototype
     Started
 ----
 
-## Repository Structure
+== Repository Structure
 This section describes the structure of the prototype repository, which holds all needed resources. +
 
 * **.idea** is the IntelliJ directory holding IntelliJ Run-Configurations.
 * **/docker** is the directory which holds all Docker relevant resources.
 * **/docker/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
-* **/openshift** is the directory which contains all Openshift relevant resource, which are managed outside of
-  the integration service code bases.
-* **/openshift/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
-* **/openshift/<SERVICE_NAME>/config/** is the directory holding all service relevant configurations over all stages.
-* **/openshift/<SERVICE_NAME>/config/<STAGE>** is the directory holding all service relevant configuration for a specific stage.
+* **/openshift** is the directory which contains all Openshift resource, which are managed outside of the  service code bases.
+* **/openshift/esb-infra** is the directory holding all infrastructure relevant Openshift related resources, such as Jaeger-UI.
+* **/openshift/esb** is the directory holding all service relevant Openshift related resources.
+* **/openshift/[esb|esb-infra]/<SERVICE_NAME>** is the directory holding all service relevant Openshift related resources.
+* **/openshift/[esb|esb-infra]/<SERVICE_NAME>/config/** is the directory holding all service relevant configurations for the different stages.
+* **/openshift/[esb|esb-infra]/<SERVICE_NAME>/config/<STAGE>** is the directory holding all service relevant configuration for a specific stage.
 * **/services** is the directory holding the service code bases
 * **/services/<SERVICE_NAME>** is the directory holding the service related code base.
 
 The service code bases are completely separated from each other and would normally reside in their own repositories, but
-for demonstration purpose all resources where kept in one repository. See the following links for the documentation
-of the different parts of the prototype. +
+for demonstration purpose all resources where kept in one repository. +
 
-## Run prototype
+== Run prototype
 This section describes how to run the prototype on a running Openshift Cluster. +
 
 * Open a Powershell and execute ``bash`` to get to the WSL
 * Login to the Openshift Cluster via ``oc login``
 * Switch to the project, the prototype should be deployed on
-* Execute ``STAGE=local openshift/esb-infra.sh createAll`` to create all infrastructure services such as Graylog
+* Execute ``STAGE=local [GIT_REF=master] openshift/demo.sh createEsbInfra`` to create all infrastructure services such as Graylog
 * Wait until all infrastructure services are up
-* Execute ``STAGE=local openshift/esb.sh createAll`` to create all integration services
-* Wait until all integration services are up
+* Execute ``STAGE=local [GIT_REF=master] openshift/demo.sh createEsb`` to create all services
+* Wait until all  services are up
 
-See link:services/README.adoc[here] for documentation how to prepare and access the deployed integration services. +
-See link:openshift/README.adoc[here] for documentation how to prepare the deployed infrastructure services. +
+== Further documentation
 
-## Further documentation
-
-* link:services/README.adoc[services/README.adoc] holds the documentation of the implemented integration services.
+* link:services/README.adoc[services/README.adoc] holds the documentation of the implemented  services.
 * link:openshift/README.adoc[openshift/README.adoc] holds the documentation of the implemented resources, which manage
   a Openshift Project.
 * link:https://maven.fabric8.io/[fabric8-maven-plugin] holds the documentation of the fabric8 maven plugin
