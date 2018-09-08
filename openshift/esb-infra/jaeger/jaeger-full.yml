@@ -75,6 +75,8 @@ objects:
                   protocol: TCP
                 - containerPort: 5778
                   protocol: TCP
+                - containerPort: 14268
+                  protocol: TCP
               readinessProbe:
                 httpGet:
                   path: /
@@ -202,3 +204,17 @@ objects:
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect
+
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: ${JAEGER_SERVICE_NAME}-collector
+    labels:
+      app: "${APP}"
+      jaeger-infra: collector-route
+  spec:
+    to:
+      kind: Service
+      name: ${JAEGER_SERVICE_NAME}-collector
+    port:
+      targetPort: jaeger-collector-http

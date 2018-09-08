@@ -11,15 +11,6 @@ swarm:
       CONSOLE:
         named-formatter: DEFAULT_LOG_PATTERN
 ---
-# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: "${project.build.finalName}"
-JAEGER_AGENT_HOST: "localhost"
-JAEGER_AGENT_PORT: "6831"
-JAEGER_REPORTER_LOG_SPANS: "true"
-JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
-JAEGER_SAMPLER_TYPE: "const"
-JAEGER_SAMPLER_PARAM: "1"
-
 project:
   stage: dev
 swarm:
@@ -60,49 +51,41 @@ swarm:
           properties:
             service.db.base-url: http://localhost:8082
 ---
-# Necessary because config set via 'swarm.jaeger.*', breaks jaeger integration
-JAEGER_SERVICE_NAME: "${project.build.finalName}"
-JAEGER_AGENT_HOST: "${env.JAEGER_HOST}"
-JAEGER_AGENT_PORT: "${env.JAEGER_PORT}"
-JAEGER_REPORTER_LOG_SPANS: "true"
-JAEGER_REPORTER_FLUSH_INTERVAL: "1000"
-JAEGER_SAMPLER_TYPE: "const"
-JAEGER_SAMPLER_PARAM: "1"
-
+# Fraction does not support this parameter
+JAEGER_ENDPOINT: "${env.JAEGER_HOST}"
 GRAYLOG_HOST: "${env.GRAYLOG_HOST}"
-GRAYLOG_PORT: "${env.GRAYLOG_PORT}"
-GRAYLOG_PROT: "${env.GRAYLOG_PROT}"
+
 project:
   stage: openshift
 swarm:
+  jaeger:
+    service-name: "${project.build.finalName}"
+    reporter-log-spans: true
+    reporter-flush-interval: 100
+    sampler-type: const
+    sampler-parameter: 1
   logging:
     file-handlers:
     custom-handlers:
-      SYSLOGGER:
-        named-formatter: DEFAULT_LOG_PATTERN
-        attribute-class: org.jboss.logmanager.handlers.SyslogHandler
-        module: org.jboss.logmanager
+      GELF-HTTP:
+        attribute-class: biz.paluch.logging.gelf.wildfly.WildFlyGelfLogHandler
+        module: biz.paluch.logging
         properties:
-          serverHostname: ${GRAYLOG_HOST}
-          hostname: ${project.build.finalName}
-          port: ${GRAYLOG_PORT}
-          protocol: ${GRAYLOG_PROT}
+          host: ${GRAYLOG_HOST}
+          extractStackTrace: true
+          includeFullMdc: true
+          maximumMessageSize: 1048576
     root-logger:
       level: WARN
       handlers:
         - CONSOLE
-        - SYSLOGGER
+        - GELF-HTTP
     loggers:
       com.gepardec:
         level: INFO
         handlers:
           - CONSOLE
-          - SYSLOGGER
-      org.keycloak:
-        level: TRACE
-        handlers:
-          - CONSOLE
-          - SYSLOGGER
+          - GELF-HTTP
   keycloak:
     json:
       path: ${oc.secret-service-app-keycloak.dir}/keycloak.json

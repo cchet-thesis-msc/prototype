@@ -1,6 +1,6 @@
 package com.gepardec.esb.prototype.integration.services.db.configuration;
 
-import org.slf4j.Logger;
+import org.jboss.logging.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,11 +23,11 @@ public class LoggerConfiguration {
     @Dependent
     Logger createLogger(final InjectionPoint ip) {
         if (ip.getBean() != null) {
-            return LoggerFactory.getLogger(ip.getBean().getBeanClass());
+            return Logger.getLogger(ip.getBean().getBeanClass());
         } else if (ip.getMember() != null) {
-            return LoggerFactory.getLogger(ip.getMember().getDeclaringClass());
+            return Logger.getLogger(ip.getMember().getDeclaringClass());
         } else {
-            return LoggerFactory.getLogger("default");
+            return Logger.getLogger("default");
         }
     }
 }

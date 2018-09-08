@@ -8,7 +8,7 @@ import com.gepardec.esb.prototype.services.app.rest.client.model.integration.dat
 import com.gepardec.esb.prototype.services.app.service.api.ReportService;
 import com.gepardec.esb.prototype.services.app.service.model.ReportModel;
 import io.opentracing.contrib.cdi.Traced;
-import org.slf4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

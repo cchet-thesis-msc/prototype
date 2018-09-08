@@ -11,7 +11,7 @@ import org.apache.deltaspike.cdise.api.ContextControl;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -42,7 +42,7 @@ public class TestRunnerJob implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         ctxCtrl.startContext(RequestScoped.class);
         final int count = COUNTER.incrementAndGet();
-        log.info("Running test job");
+        log.infof("Running test job");
         final Scope scope =
                 tracer.buildSpan(String.format("test/execute/%d", count))
                       .ignoreActiveSpan()

@@ -85,6 +85,10 @@ objects:
           protocol: "TCP"
           port: 10515
           targetPort: 10515
+        - name: "${SERVICE_NAME}-gelf-http"
+          protocol: "TCP"
+          port: 12201
+          targetPort: 12201
       selector:
         name:  "${SERVICE_NAME}"
       type: "ClusterIP"
@@ -178,6 +182,8 @@ objects:
                   protocol: UDP
                 - containerPort: 10515
                   protocol: TCP
+                - containerPort: 12202
+                  protocol: TCP
               terminationMessagePath: "/dev/termination.log"
               capabilities:
                 securityContext:
@@ -206,6 +212,21 @@ objects:
                   path: /
                   port: 9000
                   scheme: HTTP
+
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: "${SERVICE_NAME}-gelf-http"
+      labels:
+        app: "${APP}"
+    spec:
+      to:
+        kind: Service
+        name: "${SERVICE_NAME}"
+        weight: 100
+      port:
+        targetPort: "${SERVICE_NAME}-gelf-http"
+      wildcardPolicy: None
 
   - apiVersion: v1
     kind: Route

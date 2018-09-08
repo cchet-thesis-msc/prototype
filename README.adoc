@@ -1,7 +1,6 @@
 = Prototype ESB in Openshift with Fuse Integration Services 2.0
 
-This repository holds the prototype for the master thesis __Implementation of an Enterprise Service Bus with OpenShift__ which is public available on link:++https://github.com/cchet-thesis-msc/thesis++[Github]. The prototype uses the RedHat tooling __Fuse Integration Services 2.0__ which consists of
-a Maven Plugin (Fabric8) and Openshift Builder-Images, which allow to manage a  service via a Maven Build. This Readme provides introductions to setup and run the prototype on a Windows 10 Host. +
+This repository holds the prototype for the master thesis __Implementation of an Enterprise Service Bus with OpenShift__ which is public available on link:++https://github.com/cchet-thesis-msc/thesis++[Github]. The prototype uses the RedHat tooling __Fuse Integration Services 2.0__ which consists of a Maven Plugin (Fabric8) and Openshift Builder-Images, which allow to manage a  service via a Maven Build. This Readme provides introductions to setup and run the prototype on a Windows 10 Host. +
 
 == Windows 10 Setup
 This section will describe the setup of the Windows 10 environment. The following applications and features need
@@ -10,8 +9,7 @@ to be enabled, installed and configured. +
 . Follow the instructions available link:++https://docs.microsoft.com/en-us/windows/wsl/install-win10++[here] to
   install and enable WSL. During the development, the Ubuntu Linux-Image has been used. +
 . Follow the instruction available link:++https://docs.docker.com/docker-for-windows/install/=install-docker-for-windows-desktop-app++[here] to
-  install and configure __Docker For Windows__. The installer will ask you to enable **HyperV** Windows-Feature, which will
-  prevent VMWare or VirtualBox from working.
+  install and configure __Docker For Windows__. The installer will ask you to enable **HyperV** Windows-Feature, which will prevent VMWare or  VirtualBox from working.
 . Download link:++https://www.python.org/downloads/windows/++[Python 3.x] for Windows and install it.
 .. If not already added during installation process, add Python binaries to Windows $PATH.
 .. Install the following Python packages of link:++https://github.com/getwarped/powershift++[Powershift],

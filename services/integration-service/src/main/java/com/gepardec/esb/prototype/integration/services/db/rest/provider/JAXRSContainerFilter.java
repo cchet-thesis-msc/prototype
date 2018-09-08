@@ -4,8 +4,8 @@ import com.gepardec.esb.prototype.integration.services.db.annotation.Logging;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
-import org.slf4j.Logger;
-import org.slf4j.MDC;
+import org.jboss.logging.Logger;
+import org.jboss.logging.MDC;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -54,12 +54,12 @@ public class JAXRSContainerFilter {
         public void filter(ContainerRequestContext requestContext) throws IOException {
             try {
                 Span span = scope.get().span();
-                log.info("Extracting MDC transaction id from span: {}", span.context().toString());
+                log.infof("Extracting MDC transaction id from span: {}", span.context().toString());
                 // Get current span context
                 final String tracingId = span.context().toString().split(":")[0];
                 // Uber SpanContext implementation does format the id like this 'aaa:ffff:0:1', so here we are implementation dependent,
                 // because the io.opentrace spec does not expose any id
-                log.info("Setting MDC transaction id: {}", tracingId);
+                log.infof("Setting MDC transaction id: {}", tracingId);
                 MDC.put(MDC_TX_ID, tracingId);
                 span.setTag("trace.id", tracingId);
                 scope.get().span().setTag(MDC_TX_ID, tracingId);

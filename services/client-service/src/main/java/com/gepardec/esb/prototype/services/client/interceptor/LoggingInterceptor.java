@@ -1,8 +1,7 @@
 package com.gepardec.esb.prototype.services.client.interceptor;
 
 import com.gepardec.esb.prototype.services.client.annotation.Logging;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 import org.slf4j.MDC;
 
 import javax.annotation.Priority;
@@ -48,15 +47,15 @@ public class LoggingInterceptor {
                                                        : ic.getTarget().getClass().getSimpleName(),
                                                method.getName(),
                                                Arrays.stream(method.getParameterTypes()).map(Class::getSimpleName).collect(Collectors.joining(", ")));
-        final Logger log = LoggerFactory.getLogger(ic.getTarget().getClass());
-        log.info("Entering method: {} ...", methodStr);
+        final Logger log = Logger.getLogger(ic.getTarget().getClass());
+        log.infof("Entering method: {} ...", methodStr);
 
         boolean error = false;
         try {
             result = ic.proceed();
         } catch (Throwable t) {
             error = true;
-            log.info("Left method: {} -> exception: {} | message: {}", methodStr, t.getClass(), t.getMessage());
+            log.infof("Left method: {} -> exception: {} | message: {}", methodStr, t.getClass(), t.getMessage());
             throw t;
         } finally {
             if (!Logging.MDCConfig.DEFAULT.equals(mdcConfig)) {
@@ -66,7 +65,7 @@ public class LoggingInterceptor {
                 final String finalResult = (voidReturnType) ? "void"
                         : (!ann.skipResult() && result != null) ? result.toString()
                         : (ann.skipResult() && result != null) ? "skipped" : "null";
-                log.info("Left method: {} -> {}", methodStr, finalResult);
+                log.infof("Left method: {} -> {}", methodStr, finalResult);
             }
         }
 

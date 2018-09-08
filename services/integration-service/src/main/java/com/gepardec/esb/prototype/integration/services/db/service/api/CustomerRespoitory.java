@@ -13,15 +13,18 @@ import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
+import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
+
 /**
  * @author Thomas Herzog <herzog.thomas81@gmail.com>
  * @since 06/15/18
  */
-@Repository(forEntity = Customer.class)
-@MappingConfig(CustomerInOutMapper.class)
-public interface CustomerRespoitory extends EntityRepository<CustomerDto, Long> {
+//@ApplicationScoped
+//@Repository(forEntity = Customer.class)
+//@MappingConfig(CustomerInOutMapper.class)
+public interface CustomerRespoitory {//extends EntityRepository<CustomerDto, Long> {
 
-    @Override
     @Counted(name = "findBy", monotonic = true)
     @Timed(name = "duration-findBy", unit = MetricUnits.SECONDS)
     CustomerDto findBy(Long primaryKey);
@@ -31,4 +34,11 @@ public interface CustomerRespoitory extends EntityRepository<CustomerDto, Long> 
     @Counted(name = "deleteAll", monotonic = true)
     @Timed(name = "duration-deleteAll", unit = MetricUnits.SECONDS)
     void deleteAll();
+
+    // Needed because DeltaSpike-Data is broken
+    List<CustomerDto> findAll();
+
+    CustomerDto save(CustomerDto customer);
+
+    void flush();
 }

@@ -3,9 +3,10 @@
     <option name="MAIN_CLASS_NAME" value="org.wildfly.swarm.Swarm" />
     <module name="integration-service" />
     <option name="VM_PARAMETERS" value="-Dswarm.project.stage=dev" />
-    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
-    <method>
-      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="resources:resources wildfly-swarm:package" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="resources:resources thorntail:package" />
     </method>
   </configuration>
 </component>

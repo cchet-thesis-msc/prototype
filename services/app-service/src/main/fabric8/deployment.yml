@@ -72,23 +72,8 @@ spec:
                 secretKeyRef:
                   name: ${oc.secret-service-app}
                   key: jaeger.host
-            - name: "JAEGER_PORT"
-              valueFrom:
-                secretKeyRef:
-                  name: ${oc.secret-service-app}
-                  key: jaeger.port
             - name: "GRAYLOG_HOST"
               valueFrom:
                 secretKeyRef:
                   name: ${oc.secret-service-app}
                   key: graylog.host
-            - name: "GRAYLOG_PORT"
-              valueFrom:
-                secretKeyRef:
-                  name: ${oc.secret-service-app}
-                  key: graylog.port
-            - name: "GRAYLOG_PROT"
-              valueFrom:
-                secretKeyRef:
-                  name: ${oc.secret-service-app}
-                  key: graylog.protocol

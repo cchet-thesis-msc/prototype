@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.gepardec.esb.prototype.services.app.annotation.Logging;
-import org.slf4j.Logger;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.ext.ContextResolver;

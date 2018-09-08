@@ -23,12 +23,10 @@
         <!-- Dependency versions -->
         <!-- Wildfly-Swarm Dependency versions 'wildfly-swarm:build-parent' -->
         <thorntail-io.version>2.1.0.Final</thorntail-io.version>
-        <slf4j.jbopss-logging.version>1.1.0.Final</slf4j.jbopss-logging.version>
         <io-opentracing.opentracing-api.version>0.31.0</io-opentracing.opentracing-api.version>
         <io-opentracing-contrib.opentracing-cdi.version>0.1.0</io-opentracing-contrib.opentracing-cdi.version>
         <io-opentracing.opentracing-jaxrs2.version>0.1.6</io-opentracing.opentracing-jaxrs2.version>
         <jaeger.version>0.30.2</jaeger.version>
-        <org.wildfly.config-api.version>1.3.1</org.wildfly.config-api.version> <!-- Fix for https://issues.jboss.org/browse/SWARM-2015 -->
         <h2-database.h2.version>1.4.197</h2-database.h2.version>
         <org.postgresql.postgresql.version>42.2.2</org.postgresql.postgresql.version>
 
@@ -104,6 +102,12 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>biz.paluch.logging</groupId>
+            <artifactId>logstash-gelf</artifactId>
+            <version>1.12.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Dependencies wildfly-swarm fractions -->
         <dependency>
             <groupId>io.thorntail</groupId>
@@ -176,6 +180,18 @@
             <artifactId>jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.3.1.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -202,16 +218,6 @@
         <dependency>
             <groupId>org.apache.deltaspike.modules</groupId>
             <artifactId>deltaspike-partial-bean-module-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.deltaspike.modules</groupId>
-            <artifactId>deltaspike-proxy-module-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.deltaspike.modules</groupId>
-            <artifactId>deltaspike-proxy-module-impl-asm</artifactId>
         </dependency>
 
         <dependency>
@@ -256,11 +262,11 @@
             <version>${org-jboss.resteasy-client.version}</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.jboss.slf4j</groupId>
             <artifactId>slf4j-jboss-logging</artifactId>
             <version>${slf4j.jbopss-logging.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>io.opentracing</groupId>

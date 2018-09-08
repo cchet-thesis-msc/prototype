@@ -32,14 +32,14 @@ public class AdminRestServiceimpl implements AdminRestService {
     public Response init(final Integer customerCount,
                          final Integer customerOrderCount) {
         if (running.compareAndSet(false, true)) {
-            clear();
             try {
+                clear();
                 dbInitializer.initialize(customerCount,
                                          customerOrderCount);
+                return Response.ok().entity("Initialized.").build();
             } finally {
                 running.set(false);
             }
-            return Response.ok().entity("Initialized.").build();
         }
 
         return Response.status(Response.Status.CONFLICT).entity("Already initializing").build();

@@ -104,6 +104,12 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>biz.paluch.logging</groupId>
+            <artifactId>logstash-gelf</artifactId>
+            <version>1.12.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Dependencies wildfly-swarm fractions -->
         <dependency>
             <groupId>io.thorntail</groupId>
