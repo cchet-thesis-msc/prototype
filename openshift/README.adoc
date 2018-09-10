@@ -1,8 +1,7 @@
-= Openshift Resources for managing the Openshift Project
+= ESB-INFRA and ESB Openshift Projects
 
-This document describes the implemented Openshift Resources for managing the Openshift Project, which hosts the monitoring service, security services and ESB services.
-
-The Openshift Resources and scripts have been split into the two directories 
+This document describes the implemented resources for managing the Openshift Projects, which hosts the supporting infrastructure services and ESB services.
+The Openshift Resources and scripts have been split into the two directories
 
 * __esb-infra__, which holds the infrastructure related resources, and
 * __esb__, which holds the ESB service related resources.
@@ -29,7 +28,7 @@ If possible, then the logs should be send to a UDP collector endpoint instead of
 This section describes briefly the __esb-infra__ contained services, and their necessary configuration.
 
 ==== Jaeger Service
-The Jaeger service does not need any special configuration, and can be used as is. 
+The Jaeger service does not need any special configuration, and can be used as is.
 
 ==== Graylog Service
 The graylog service configuration should work on your windows host as is, but could need to be modified, especially when the route suffix differs.
@@ -47,7 +46,7 @@ The Graylog service needs an input source configured, which is the endpoint wher
 
 . Go tou __System / Inputs__ menu
 . Launch new __GELF HTTP__ input
-. Select __Global__ 
+. Select __Global__
 . Define a __Title__ for the input source
 
 ==== Keycloak Service
