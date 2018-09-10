@@ -1,4 +1,13 @@
 swarm:
+  deployment:
+    ${project.build.finalName}.war:
+      swagger:
+        root: "/rest-api"
+        title: "${project.build.finalName}"
+        version: "1"
+        packages:
+          - "com.gepardec.esb.prototype.services.app.configuration"
+          - "com.gepardec.esb.prototype.services.app.rest"
   http:
     port: 8080
   contex:
@@ -68,6 +77,7 @@ swarm:
     file-handlers:
     custom-handlers:
       GELF-HTTP:
+        named-formatter: DEFAULT_LOG_PATTERN
         attribute-class: biz.paluch.logging.gelf.wildfly.WildFlyGelfLogHandler
         module: biz.paluch.logging
         properties:

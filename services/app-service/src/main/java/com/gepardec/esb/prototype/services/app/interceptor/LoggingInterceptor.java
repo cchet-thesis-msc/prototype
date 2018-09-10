@@ -49,14 +49,14 @@ public class LoggingInterceptor {
                                                method.getName(),
                                                Arrays.stream(method.getParameterTypes()).map(Class::getSimpleName).collect(Collectors.joining(", ")));
         final Logger log = Logger.getLogger(ic.getTarget().getClass());
-        log.infof("Entering method: {} ...", methodStr);
+        log.infof("Entering method: %s ...", methodStr);
 
         boolean error = false;
         try {
             result = ic.proceed();
         } catch (Throwable t) {
             error = true;
-            log.infof("Left method: {} -> exception: {} | message: {}", methodStr, t.getClass(), t.getMessage());
+            log.infof("Left method: %s -> exception: %s | message: %s", methodStr, t.getClass(), t.getMessage());
             throw t;
         } finally {
             if (!Logging.MDCConfig.DEFAULT.equals(mdcConfig)) {
@@ -66,7 +66,7 @@ public class LoggingInterceptor {
                 final String finalResult = (voidReturnType) ? "void"
                         : (!ann.skipResult() && result != null) ? result.toString()
                         : (ann.skipResult() && result != null) ? "skipped" : "null";
-                log.infof("Left method: {} -> {}", methodStr, finalResult);
+                log.infof("Left method: %s -> %s", methodStr, finalResult);
             }
         }
 

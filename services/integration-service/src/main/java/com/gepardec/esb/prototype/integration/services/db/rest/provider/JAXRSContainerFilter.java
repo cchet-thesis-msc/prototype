@@ -54,12 +54,12 @@ public class JAXRSContainerFilter {
         public void filter(ContainerRequestContext requestContext) throws IOException {
             try {
                 Span span = scope.get().span();
-                log.infof("Extracting MDC transaction id from span: {}", span.context().toString());
+                log.infof("Extracting MDC transaction id from span: %s", span.context().toString());
                 // Get current span context
                 final String tracingId = span.context().toString().split(":")[0];
                 // Uber SpanContext implementation does format the id like this 'aaa:ffff:0:1', so here we are implementation dependent,
                 // because the io.opentrace spec does not expose any id
-                log.infof("Setting MDC transaction id: {}", tracingId);
+                log.infof("Setting MDC transaction id: %s", tracingId);
                 MDC.put(MDC_TX_ID, tracingId);
                 span.setTag("trace.id", tracingId);
                 scope.get().span().setTag(MDC_TX_ID, tracingId);

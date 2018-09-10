@@ -15,8 +15,6 @@ swarm:
 project:
   stage: dev
 swarm:
-  # Secure the deployment
-  deployment: "${project.build.finalName}.war"
   http:
     port: 8080
   management:
@@ -78,6 +76,7 @@ swarm:
   logging:
     custom-handlers:
       GELF-HTTP:
+        named-formatter: DEFAULT_LOG_PATTERN
         attribute-class: biz.paluch.logging.gelf.wildfly.WildFlyGelfLogHandler
         module: biz.paluch.logging
         properties:

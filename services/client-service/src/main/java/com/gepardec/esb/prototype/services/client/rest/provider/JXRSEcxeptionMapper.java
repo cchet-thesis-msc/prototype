@@ -6,6 +6,7 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.log.Fields;
 import io.opentracing.tag.Tags;
+import io.opentracing.util.GlobalTracer;
 import org.apache.deltaspike.core.api.provider.BeanProvider;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 
@@ -70,18 +71,20 @@ public class JXRSEcxeptionMapper {
     }
 
     public static final void markSpanError(Throwable exception) {
-        final Scope scope = BeanProvider.getDependent(Scope.class).get();
-        final Span span = scope.span();
-        final String tracingId = span.context().toString().split(":")[0];
-        Tags.ERROR.set(span, true);
-        span.log(new HashMap<String, Object>() {{
-            StringWriter sw = new StringWriter();
-            exception.printStackTrace(new PrintWriter(sw));
-            put(Fields.EVENT, "error");
-            put(Fields.ERROR_KIND, "Exception");
-            put(Fields.ERROR_OBJECT, exception);
-            put("trace.id", tracingId);
-            put(Fields.STACK, sw.toString());
-        }});
+        final Scope scope = GlobalTracer.get().scopeManager().active();
+        if (scope != null) {
+            final Span span = scope.span();
+            final String tracingId = span.context().toString().split(":")[0];
+            Tags.ERROR.set(span, true);
+            span.log(new HashMap<String, Object>() {{
+                StringWriter sw = new StringWriter();
+                exception.printStackTrace(new PrintWriter(sw));
+                put(Fields.EVENT, "error");
+                put(Fields.ERROR_KIND, "Exception");
+                put(Fields.ERROR_OBJECT, exception);
+                put("trace.id", tracingId);
+                put(Fields.STACK, sw.toString());
+            }});
+        }
     }
 }
