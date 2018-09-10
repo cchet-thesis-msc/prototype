@@ -58,27 +58,26 @@ function recreateAll() {
   createAll
 }
 
-function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
+function scaleUp() {
+  oc scale --replicas=1 dc/${SERVICE_NAME}
+}
+
+function scaleDown() {
+  oc scale --replicas=0 dc/${SERVICE_NAME}
 }
 
 case ${1} in
-   scale)
-      if [ $# -ne 1 ]; then
-        scale ${2}
-      fi
-      ;;
    createAll|deleteAll|recreateAll|\
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
-   scale)
+   scaleUp|scaleDown)
       ${1}
       ;;
    *)
      echo "${0} [   createAll|deleteAll|recreateAll|\
-        createSecrets|deleteSecrets|recreateSecrets|\
-        createService|deleteService|recreateService|\
-        scale]"
+     createSecrets|deleteSecrets|recreateSecrets|\
+     createService|deleteService|recreateService|\
+     scaleUp|scaleDown]"
      exit 1
       ;;
 esac

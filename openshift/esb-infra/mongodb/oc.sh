@@ -30,16 +30,20 @@ function recreateService() {
   createService
 }
 
-function scale() {
-  oc scale --replicas=${1} dc/${2}
+function scaleUp() {
+  oc scale --replicas=1 dc/${1}
+}
+
+function scaleDown() {
+  oc scale --replicas=0 dc/${1}
 }
 
 case ${1} in
-   scale)
-      if [ $# -eq 3 ]; then
-        scale ${2} ${3}
+   scaleUp|scaleDown)
+      if [ $# -eq 2 ]; then
+        ${1} ${2}
       else
-        echo "Scale | service_name must be given !!!!"
+        echo "service_name must be given !!!!"
         exit 1
       fi
       ;;
@@ -61,7 +65,7 @@ case ${1} in
       ;;
    *)
      echo "${0} [createService|deleteService|recreateService|\
-        scale]"
+     scaleUp|scaleDown]"
         exit 1
       ;;
 esac

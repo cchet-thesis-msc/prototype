@@ -66,31 +66,33 @@ function recreateAll() {
   createAll
 }
 
-function scaleAll() {
+function scaleDown() {
   for SERVICE in "${SERVICES[@]}"
   do
-    ./${SERVICE}/oc.sh scale ${1}
+    ./${SERVICE}/oc.sh scaleDown
+  done
+}
+
+function scaleUp() {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    ./${SERVICE}/oc.sh scaleUp
   done
 }
 
 case ${1} in
    createSecrets|deleteSecrets|recreateSecrets|\
-   createService|deleteService|recreateService|\
-   createAll|deleteAll|recreateAll)
+   createServices|deleteServices|recreateServices|\
+   createAll|deleteAll|recreateAll|\
+   scaleDown|scaleUp)
       ${1}
-      ;;
-   scaleAll)
-      if [ $# -eq 2 ]; then
-        scaleAll ${2}
-      else
-        echo "Scale count must be given"
-      fi
+      exit ${?}
       ;;
    *)
      echo -e "${0} [createSecrets|deleteSecrets|recreateSecrets|\
-     createService|deleteService|recreateService|\
+     createServices|deleteServices|recreateServices|\
      createAll|deleteAll|recreateAll|\
-     scaleAll]"
+     scaleDown|scaleUp]"
      exit 1
       ;;
 esac

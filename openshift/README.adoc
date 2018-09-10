@@ -7,18 +7,93 @@ The Openshift Resources and scripts have been split into the two directories
 * __esb-infra__, which holds the infrastructure related resources, and
 * __esb__, which holds the ESB service related resources.
 
-Due to the fact, that ``oc cluster up`` created Openshift Clusters don't have a proper network plugin, it is not possible to create two separate Openshift Projects, whereby the POD networks of the projects are joined. 
+== ESB-INFRA Openshift Project
+The __esb-infra__ openshift project contains the following services, which are representing the supporting infrastructure for the implemented ESB.
 
-== Infrastructure Services
+* **Jaeger** is the tracing service, whereby the traces are send to the exposed HTTP collector endpoint.
 
-=== Setup secrets and configurations
+[TIP]
+===============================
+If possible, then the traces should be send to the UDP collector endpoint instead of the HTTP collector endpoint.
+===============================
+* **Graylog** is the log aggregation service, whereby the logs are send to the created GELF HTTP input source.
 
-=== Setup Services
+[TIP]
+===============================
+If possible, then the logs should be send to a UDP collector endpoint instead of a HTTP collector endpoint.
+===============================
+* **Keycloak** is the authentication service, which provides the Oauth2 scheme.
+* **Swagger** is the utility UI which allows to see and test a swagger documented endpoint.
 
-== Integration Services
+=== Services
+This section describes briefly the __esb-infra__ contained services, and their necessary configuration.
 
-=== Setup secrets and configurations
+==== Jaeger Service
+The Jaeger service does not need any special configuration, and can be used as is. 
 
-=== Setup Services
+==== Graylog Service
+The graylog service configuration should work on your windows host as is, but could need to be modified, especially when the route suffix differs.
 
-== Configuration and Secret Management
+./openshift/esb-infra/graylog/config/<STAGE>/graylog.conf
+[source,properties]
+----
+rest_transport_uri = http://graylog-web-esb-infra.10.0.75.2.nip.io/api
+root_username      = admin
+# The SHA2 value of admin
+root_password_sha2 = 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+----
+
+The Graylog service needs an input source configured, which is the endpoint where the logs are sent. The input source needs to be configured each time the service is newly created.
+
+. Go tou __System / Inputs__ menu
+. Launch new __GELF HTTP__ input
+. Select __Global__ 
+. Define a __Title__ for the input source
+
+==== Keycloak Service
+The keycloak service uses a backup, which gets restored each time the service starts, and can be used as is.
+
+=== Scripts
+The following lists describe the shell functions provided by the scripts for the esb-infra openshift project.
+
+./openshift/esb-infra/oc.sh
+* __createSecrets__ +
+is the function, which creates all secrets of all services.
+* __deleteSecrets__ +
+is the function, which deletes all created secrets of all services.
+* __recreateSecrets__ +
+is the function, which deletes and creates all secrets of all services.
+* __createServices__ +
+is the function, which creates all services, without the secretss
+* __deleteServices__ +
+is the function, which deletes all created service, but not the secrets.s
+* __recreateServices__ +
+is the function, which deletes and creates the services without the secrets.
+* __createAll__ +
+is the function which creates all secrets and services.
+* __deleteAll__ +
+is the function which deletes all secrets and services.
+* __recreateAll__ +
+is the function which deletes and creates all secrets and services
+* __scaleDown__ +
+is the function which scales all services to 0.
+* __scaleUp__ +
+is the function which scales all services to 1.
+
+./openshift/esb-infra/<SERVICE>/oc.sh
+* __createSecrets__ +
+is the function, which creates all secrets of the service.
+* __deleteSecrets__ +
+is the function, which deletes all created secrets of the service.
+* __recreateSecrets__ +
+is the function, which deletes and creates all secrets of the service.
+* __createService__ +
+is the function, which creates the services, without the secrets
+* __deleteService__ +
+is the function, which deletes the service, but not the secrets.
+* __recreateService__ +
+is the function, which deletes and creates the service without the secrets.
+* __scaleDown__ +
+is the function which scales the service to 0.
+* __scaleUp__ +
+is the function which scales th service to 1.

@@ -87,28 +87,28 @@ function recreateAll() {
   createAll
 }
 
-function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
-  ../postgres/oc.sh scale ${1} ${SERVICE_DB}
+function scaleUp() {
+  ../postgres/oc.sh scaleUp ${SERVICE_DB}
+  oc scale --replicas=1 dc/${SERVICE_NAME}
+}
+
+function scaleDown() {
+  oc scale --replicas=0 dc/${SERVICE_NAME}
+  ../postgres/oc.sh scaleDown ${SERVICE_DB}
 }
 
 case ${1} in
-   scale)
-      if [ $# -eq 2 ]; then
-        scale ${2}
-      fi
-      ;;
    createAll|deleteAll|recreateAll|\
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
-   scale)
+   scaleUp|scaleDown)
       ${1}
       ;;
    *)
-     echo "${0} [   createAll|deleteAll|recreateAll|\
-        createSecrets|deleteSecrets|recreateSecrets|\
-        createService|deleteService|recreateService|\
-        scale]"
+     echo "${0} [createAll|deleteAll|recreateAll|\
+     createSecrets|deleteSecrets|recreateSecrets|\
+     createService|deleteService|recreateService|\
+     scaleUp|scaleDown]"
      exit 1
       ;;
 esac

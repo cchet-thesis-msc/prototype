@@ -59,7 +59,7 @@ function createEsbInfra() {
   ###############################################"
   createProject ${PROJ_ESB_INFRA}
   switchProject ${PROJ_ESB_INFRA}
-  ./esb-infra/esb-infra.sh createAll
+  ./esb-infra/oc.sh createAll
   echo -e "###############################################\n
   cREATED ${PROJ_ESB_INFRA} Openshift Project\n
   ###############################################"
@@ -70,7 +70,7 @@ function deleteEsbInfra() {
   Deleting ${PROJ_ESB_INFRA} Openshift Project...\n
   ###############################################"
   switchProject ${PROJ_ESB_INFRA}
-  ./esb-infra/esb-infra.sh deleteAll
+  ./esb-infra/oc.sh deleteAll
   switchProject myproject
   deleteProject ${PROJ_ESB_INFRA}
   echo -e "###############################################\n
@@ -84,7 +84,7 @@ function createEsb() {
   ###############################################"
   createProject ${PROJ_ESB}
   switchProject ${PROJ_ESB}
-  ./esb/esb.sh createAll
+  ./esb/oc.sh createAll
   echo -e "###############################################\n
   Created ${PROJ_ESB} Openshift Project\n
   ###############################################"
@@ -95,7 +95,7 @@ function deleteEsb() {
   Deleting ${PROJ_ESB} Openshift Project...\n
   ###############################################"
   switchProject ${PROJ_ESB}
-  ./esb/esb.sh deleteAll
+  ./esb/oc.sh deleteAll
   deleteProject ${PROJ_ESB}
   echo -e "###############################################\n
   Deleted ${PROJ_ESB} Openshift Project\n
@@ -114,16 +114,16 @@ function deleteAll() {
 
 function scaleDown() {
   switchProject ${PROJ_ESB}
-  ./esb/esb.sh scaleAll 0
+  ./esb/oc.sh scaleAll 0
   switchProject ${PROJ_ESB_INFRA}
-  ./esb-infra/esb-infra.sh scaleAll 0
+  ./esb-infra/oc.sh scaleDown
 }
 
 function scaleUp() {
   switchProject ${PROJ_ESB_INFRA}
-  ./esb-infra/esb-infra.sh scaleAll 1
+  ./esb-infra/oc.sh scaleUp
   switchProject ${PROJ_ESB}
-  ./esb/esb.sh scaleAll 1
+  ./esb/oc.sh scaleAll 1
 }
 
 case ${1} in

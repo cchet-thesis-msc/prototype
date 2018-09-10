@@ -74,27 +74,28 @@ function recreateService() {
   createService
 }
 
-function scale() {
-  oc scale --replicas=${1} dc/${SERVICE_NAME}
-  ../mongodb/oc.sh scale ${1} ${SERVICE_NAME_MONGO}
-  ../elasticsearch/oc.sh scale ${1} ${SERVICE_NAME_ELASTIC}
+function scaleUp() {
+  ../mongodb/oc.sh scaleUp ${SERVICE_NAME_MONGO}
+  ../elasticsearch/oc.sh scaleUp ${SERVICE_NAME_ELASTIC}
+  oc scale --replicas=1 dc/${SERVICE_NAME}
+}
+
+function scaleDown() {
+  oc scale --replicas=0 dc/${SERVICE_NAME}
+  ../mongodb/oc.sh scaleDown ${SERVICE_NAME_MONGO}
+  ../elasticsearch/oc.sh scaleDown ${SERVICE_NAME_ELASTIC}
 }
 
 case ${1} in
-   scale)
-      if [ $# -eq 2 ]; then
-        scale ${2}
-      fi
-      ;;
    createSecrets|deleteSecrets|recreateSecrets|\
    createService|deleteService|recreateService|\
-   deploy)
+   scaleUp|scaleDown)
       ${1}
       ;;
    *)
      echo "${0} [createSecrets|deleteSecrets|recreateSecrets|\
      createService|deleteService|recreateService|\
-     scale]"
+     scaleUp|scaleDown]"
      exit 1
       ;;
 esac
