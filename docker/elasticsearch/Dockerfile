@@ -1,5 +1,5 @@
 FROM centos:7
-LABEL maintainer="Thomas Herzog <herzog.thomas81@gmail.com>"
+MAINTAINER <thomas.herzog@gepardec.com>
 
 ARG VERSION
 ARG URL="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${VERSION}.tar.gz"

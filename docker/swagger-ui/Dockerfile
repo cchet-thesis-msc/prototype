@@ -1,5 +1,5 @@
 FROM nginx:1.13
-MAINTAINER <christoph.ruhsam@gepardec.com>
+MAINTAINER <thomas.herzog@gepardec.com>
 
 ARG VERSION
 
